@@ -1,0 +1,11 @@
+{
+  "@type": "FlowProperty",
+  "@id": "c0000000-0000-4000-8000-000000000001",
+  "name": "Mass",
+  "flowPropertyType": "PHYSICAL_QUANTITY",
+  "unitGroup": {
+    "@type": "UnitGroup",
+    "@id": "d0000000-0000-4000-8000-000000000001",
+    "name": "Units of mass"
+  }
+}

@@ -1,0 +1,22 @@
+name: Study diff demo
+
+# The demo studies in src/headwater/demo are a studies repository in miniature. A pull request
+# that changes one gets the results comment, through the reusable workflow, on the toy release.
+
+on:
+  pull_request:
+    paths:
+      - src/headwater/demo/**
+
+permissions: {}
+
+jobs:
+  diff:
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/study-diff.yml
+    with:
+      studies-path: src/headwater/demo
+      releases: src/headwater/demo/releases
+      headwater-ref: ${{ github.sha }}

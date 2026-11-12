@@ -1,0 +1,89 @@
+name: Release
+
+# Pushing a tag v<version> publishes that version: built once, uploaded to TestPyPI, then to PyPI
+# once the owner approves the `pypi` environment. Trusted publishing: PyPI and TestPyPI trust this
+# workflow through OpenID Connect, so the repository holds no secret. Each index needs a trusted
+# publisher for this repository, this workflow and its environment before the first tag.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build and check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: "0.13.0"
+          python-version: "3.13"
+      - name: Check that the tag is v plus the version in pyproject.toml
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version="$(uv version --short)"
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::the tag $TAG is not v$version, the version in pyproject.toml"
+            exit 1
+          fi
+      - run: uv build
+      - name: Check the metadata and the README as PyPI renders it
+        run: uvx twine@7.0.0 check --strict dist/*
+      - name: Run the README quick start from the wheel in a clean venv
+        run: |
+          uv venv "$RUNNER_TEMP/clean"
+          VIRTUAL_ENV="$RUNNER_TEMP/clean" uv pip install dist/*.whl
+          HEADWATER_QUICK_START_BIN="$RUNNER_TEMP/clean/bin" \
+            uv run --locked pytest tests/test_readme.py -k quick_start
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  testpypi:
+    name: publish to TestPyPI
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/headwater
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          # A rerun of the whole workflow, after PyPI failed, finds this version already there.
+          skip-existing: true
+
+  pypi:
+    name: publish to PyPI
+    needs: testpypi
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # The owner approves this environment (a required reviewer) before the upload.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/headwater
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3

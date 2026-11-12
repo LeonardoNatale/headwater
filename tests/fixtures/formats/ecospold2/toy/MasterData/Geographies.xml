@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validGeographies majorRelease="1" minorRelease="0" majorRevision="0" minorRevision="0" xmlns="http://www.EcoInvent.org/EcoSpold02">
+  <contextName xml:lang="en">ecoinvent</contextName>
+  <geography id="a4000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">Global</name>
+    <shortname xml:lang="en">GLO</shortname>
+  </geography>
+</validGeographies>

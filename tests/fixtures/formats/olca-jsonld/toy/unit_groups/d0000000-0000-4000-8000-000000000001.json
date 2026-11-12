@@ -1,0 +1,14 @@
+{
+  "@type": "UnitGroup",
+  "@id": "d0000000-0000-4000-8000-000000000001",
+  "name": "Units of mass",
+  "units": [
+    {
+      "@type": "Unit",
+      "@id": "50000000-0000-4000-8000-000000000001",
+      "name": "kg",
+      "conversionFactor": 1.0,
+      "isRefUnit": true
+    }
+  ]
+}

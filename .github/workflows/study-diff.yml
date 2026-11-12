@@ -1,0 +1,97 @@
+name: Study diff
+
+# Reusable: call it from a pull_request workflow of a repository that holds databases and studies.
+#
+#   jobs:
+#     diff:
+#       permissions:
+#         contents: read
+#         pull-requests: write
+#       uses: LeonardoNatale/headwater/.github/workflows/study-diff.yml@<commit sha>
+#       with:
+#         headwater-ref: <the same commit sha>
+#
+# The caller must grant the permissions above: a called workflow cannot have more than its caller.
+
+on:
+  workflow_call:
+    inputs:
+      studies-path:
+        description: Only look at databases and studies inside this folder of the repository.
+        type: string
+        default: "."
+      releases:
+        description: >-
+          Release folders to pull into the cache, one path per line: a release folder (name@hash)
+          or a folder that holds release folders.
+        type: string
+        default: ""
+      headwater-home:
+        description: Use this folder as HEADWATER_HOME, for releases already in a cache folder.
+        type: string
+        default: ""
+      methods:
+        description: >-
+          Method folders, one path per line, for the methods that databases and studies name by id
+          and their releases do not hold.
+        type: string
+        default: ""
+      headwater-repository:
+        description: The repository that holds headwater and this action.
+        type: string
+        default: LeonardoNatale/headwater
+      headwater-ref:
+        description: A commit of that repository. Pin a full commit sha.
+        type: string
+        required: true
+    secrets:
+      headwater-token:
+        description: A token that can read headwater-repository, when it is private.
+        required: false
+
+permissions: {}
+
+jobs:
+  study-diff:
+    name: study diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Only comment writing is granted beyond reading the code.
+    permissions:
+      contents: read
+      pull-requests: write
+    # A literal prefix: inside a called workflow `github.workflow` is the caller's name.
+    concurrency:
+      group: study-diff-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    steps:
+      # The merge of the pull request into its base: what would be on the base after merging.
+      - name: Check out the pull request merged into its base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check out headwater
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.headwater-repository }}
+          ref: ${{ inputs.headwater-ref }}
+          token: ${{ secrets.headwater-token || github.token }}
+          path: .headwater
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: "0.13.0"
+          enable-cache: false
+      - name: Install headwater from its lock file
+        run: uv sync --project .headwater --locked --no-dev
+      - uses: ./.headwater/.github/actions/study-diff
+        with:
+          headwater: ${{ github.workspace }}/.headwater/.venv/bin/headwater
+          studies-path: ${{ inputs.studies-path }}
+          releases: ${{ inputs.releases }}
+          headwater-home: ${{ inputs.headwater-home }}
+          methods: ${{ inputs.methods }}
+          # A pull request from a fork gets a read-only token: it cannot comment.
+          comment: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+          github-token: ${{ github.token }}

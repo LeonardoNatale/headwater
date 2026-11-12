@@ -1,0 +1,47 @@
+{
+ "machine": "macOS-26.6.2-arm64-arm-64bit-Mach-O, arm, Python 3.14.3",
+ "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+ "tolerance": 1e-06,
+ "import_s": 5.97,
+ "activities": 40,
+ "exchange_rows": 759,
+ "lines": {
+  "mapped": 759
+ },
+ "linked_by": {
+  "biosphere-unspecified": 64,
+  "reference": 40,
+  "release": 599,
+  "workbook": 56
+ },
+ "parameters_copied": 0,
+ "notes": 1,
+ "clean": false,
+ "validation_errors": {
+  "no-factor": 4
+ },
+ "processes": 40,
+ "indicators": 25,
+ "against_study": {
+  "products": 40,
+  "products_within_tolerance": 40,
+  "products_differ": 0,
+  "only_in_import": 0,
+  "only_in_reference": 0,
+  "scores": 1000,
+  "scores_over_tolerance": 0,
+  "max_relative_difference": 0.0
+ },
+ "against_brightway": {
+  "products": 40,
+  "products_within_tolerance": 40,
+  "products_differ": 0,
+  "only_in_import": 0,
+  "only_in_reference": 0,
+  "scores": 1000,
+  "scores_over_tolerance": 0,
+  "max_relative_difference": 1.8803570438904466e-07,
+  "rows_not_matched": 0
+ },
+ "nonfinite_scores": 0
+}

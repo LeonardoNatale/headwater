@@ -1,0 +1,75 @@
+{
+  "format": "headwater-release/2",
+  "kind": "source",
+  "name": "toy-background",
+  "source": "toy",
+  "version": "1",
+  "system_model": "cutoff",
+  "licence": "CC0-1.0",
+  "flow_list": "toy",
+  "methods": [
+    {
+      "id": "toy-climate",
+      "version": "1",
+      "variant": null,
+      "flow_list": "toy",
+      "indicators": [
+        {
+          "id": "climate-change",
+          "name": "Climate change",
+          "unit": "kg CO2-eq"
+        }
+      ],
+      "hash": "c2180f15db23e74f41ce2a980e392ff31ea786d31d2a0dedf9b67e0602f7236d"
+    }
+  ],
+  "parent": null,
+  "recipe": null,
+  "provenance": null,
+  "tables": {
+    "exchanges.parquet": {
+      "rows": 9,
+      "content_sha256": "7de3e281e152ecd479734cc0391054d4197ae0b03a7f3227b9d7090abeba2d6b"
+    },
+    "flow_properties.parquet": {
+      "rows": 0,
+      "content_sha256": "a63d31b63ce7cd9fbf77d2468ecf388e3f4076615cdb204ee96e61f7a9b0d6c6"
+    },
+    "flows.parquet": {
+      "rows": 5,
+      "content_sha256": "7f6d8425b3acb320564dce11307595e72a0aac78ae5574810293d4d29d42fd95"
+    },
+    "geographies.parquet": {
+      "rows": 0,
+      "content_sha256": "d25591e4ffbd5fdc9380e830190ebf85c4acf530c8cb27983974b3b2f1a9f063"
+    },
+    "issues.parquet": {
+      "rows": 0,
+      "content_sha256": "3a0edb2afb9894683960df73cfafaefbf46c8621f4ffcbfdf9eec7384c1cd358"
+    },
+    "methods/toy-climate/factors.parquet": {
+      "rows": 2,
+      "content_sha256": "9ab434f093ca1814f1f9e679351d96744ca722c4bfbeac246a6812dce1684672"
+    },
+    "processes.parquet": {
+      "rows": 3,
+      "content_sha256": "f5b3a35a81b03196a844d53b85e2e12c18dda3a6c61ae24a778c700e0d7a7ce4"
+    },
+    "units.parquet": {
+      "rows": 2,
+      "content_sha256": "a7651f367b056da1babeb0bbf437f2c26b4e1d2013f56c7c627dbf54510be085"
+    }
+  },
+  "hash": "6864b7dbb65d3138e5bca0857d39b792b03c036f241475c8c230fe00eeb0041b",
+  "engine_version": "0.1.0.dev0",
+  "files": {
+    "exchanges.parquet": "cc0a33fc09162da053227e47d3da70ec9f718b528412b6c899a2c76ca4b0664d",
+    "flow_properties.parquet": "2105a41b39736e87f0bb4cfbc3aa375c3abb2d9b1df3728766780c7fa2f870ee",
+    "flows.parquet": "211df8c48f8903378e0a6f2e1db8565af4e2ecd53004ff396c526787ad6d2c8f",
+    "geographies.parquet": "42d605373005a62c679f8773e977d1cfed01e217623647600b970117185d7703",
+    "issues.parquet": "9280fb149989557c0354d5093e87f8f2bda3a51c4b4c10ae7a187692399d7f59",
+    "methods/toy-climate/factors.parquet": "865f67665e24e65d383a544b587757a3593dbb385d9953b357160ef3c3f8ef40",
+    "processes.parquet": "cdda28699528a9fe8a16b300d2c303bff37c496fd946b032577c238ec0bebe23",
+    "units.parquet": "7329a0adc0feea5e862e93e6ef44663f8f324eaf2a5fe808e5a3eeae794c95ea"
+  }
+}

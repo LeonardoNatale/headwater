@@ -1,0 +1,57 @@
+{
+  "machine": "arm64 Darwin 25.6.0",
+  "python": "3.14.3",
+  "release": "ecoinvent-3.10-cutoff@07ebaa9e28bc",
+  "workbook": {
+    "activities": 40,
+    "exchange_rows": 759,
+    "parameter_rows": 0
+  },
+  "brightway": {
+    "python": "3.12.11",
+    "bw2data": "4.7",
+    "bw2calc": "2.5.0",
+    "bw2io": "0.9.17",
+    "edges": {
+      "production": 40,
+      "technosphere": 655,
+      "biosphere": 64
+    }
+  },
+  "workbook_as_written": {
+    "without_mapping_file": {
+      "mapped": 675,
+      "unmapped": 84,
+      "unexpressible": 0,
+      "waiting": 0,
+      "unmapped_by_code": {
+        "not-in-release": 84
+      },
+      "distinct_unmapped_lines": 2
+    },
+    "with_mapping_file": {
+      "mapped": 759,
+      "unmapped": 0,
+      "unexpressible": 0,
+      "waiting": 0,
+      "unmapped_by_code": {},
+      "distinct_unmapped_lines": 0
+    }
+  },
+  "prepared_workbook": {
+    "mapped": 759,
+    "mapped_by": {
+      "biosphere-unspecified": 64,
+      "reference": 40,
+      "release": 599,
+      "workbook": 56
+    },
+    "unmapped": 0,
+    "unexpressible": 0
+  },
+  "flows_given_a_zero_factor": 5,
+  "activities_compared": 40,
+  "largest_relative_difference": 9.105527839793307e-08,
+  "within_1e-6": 40,
+  "within_1e-4": 40
+}

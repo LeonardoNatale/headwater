@@ -1,0 +1,5 @@
+description: The grid emits 0.3 kg CO2 per kWh instead of 0.5, for every process that buys electricity.
+changes:
+  - process: toy:electricity-production
+    line: e02
+    amount: 0.3

@@ -1,0 +1,274 @@
+{
+ "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+ "methods": [
+  "EF-3.1",
+  "IPCC-2021-incl-biogenic-CO2",
+  "IPCC-2021"
+ ],
+ "machine": "arm64, Darwin 25.6.0",
+ "python": "3.14.3",
+ "cancels_below": 0.001,
+ "indicators": {
+  "EF-3.1/acidification": {
+   "products": 26533,
+   "exact_zeros": 2018,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/climate-change": {
+   "products": 26533,
+   "exact_zeros": 1779,
+   "both_signs": 24372,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 5,
+   "flagged": 0
+  },
+  "EF-3.1/climate-change-biogenic": {
+   "products": 26533,
+   "exact_zeros": 2081,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/climate-change-fossil": {
+   "products": 26533,
+   "exact_zeros": 2039,
+   "both_signs": 24302,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/climate-change-land-use-and-land-use-change": {
+   "products": 26533,
+   "exact_zeros": 1910,
+   "both_signs": 24372,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 1,
+   "flagged": 0
+  },
+  "EF-3.1/ecotoxicity-freshwater": {
+   "products": 26533,
+   "exact_zeros": 1889,
+   "both_signs": 24378,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/ecotoxicity-freshwater-inorganics": {
+   "products": 26533,
+   "exact_zeros": 1891,
+   "both_signs": 24378,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/ecotoxicity-freshwater-organics": {
+   "products": 26533,
+   "exact_zeros": 2003,
+   "both_signs": 24322,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/energy-resources-non-renewable": {
+   "products": 26533,
+   "exact_zeros": 2147,
+   "both_signs": 8,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/eutrophication-freshwater": {
+   "products": 26533,
+   "exact_zeros": 1976,
+   "both_signs": 3,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/eutrophication-marine": {
+   "products": 26533,
+   "exact_zeros": 1919,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/eutrophication-terrestrial": {
+   "products": 26533,
+   "exact_zeros": 2015,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/human-toxicity-carcinogenic": {
+   "products": 26533,
+   "exact_zeros": 1894,
+   "both_signs": 24329,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 2,
+   "below_0.01_of_gross": 12,
+   "flagged": 2
+  },
+  "EF-3.1/human-toxicity-carcinogenic-inorganics": {
+   "products": 26533,
+   "exact_zeros": 1899,
+   "both_signs": 24314,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 6,
+   "flagged": 0
+  },
+  "EF-3.1/human-toxicity-carcinogenic-organics": {
+   "products": 26533,
+   "exact_zeros": 2099,
+   "both_signs": 24322,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/human-toxicity-non-carcinogenic": {
+   "products": 26533,
+   "exact_zeros": 1887,
+   "both_signs": 24376,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/human-toxicity-non-carcinogenic-inorganics": {
+   "products": 26533,
+   "exact_zeros": 1893,
+   "both_signs": 24372,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 3,
+   "flagged": 0
+  },
+  "EF-3.1/human-toxicity-non-carcinogenic-organics": {
+   "products": 26533,
+   "exact_zeros": 2001,
+   "both_signs": 24320,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/ionising-radiation-human-health": {
+   "products": 26533,
+   "exact_zeros": 2142,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/land-use": {
+   "products": 26533,
+   "exact_zeros": 1645,
+   "both_signs": 24885,
+   "below_1e-06_of_gross": 200,
+   "below_0.001_of_gross": 281,
+   "below_0.01_of_gross": 372,
+   "flagged": 281
+  },
+  "EF-3.1/material-resources-metals-minerals": {
+   "products": 26533,
+   "exact_zeros": 2155,
+   "both_signs": 24310,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/ozone-depletion": {
+   "products": 26533,
+   "exact_zeros": 2154,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/particulate-matter-formation": {
+   "products": 26533,
+   "exact_zeros": 2003,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/photochemical-oxidant-formation-human-health": {
+   "products": 26533,
+   "exact_zeros": 2013,
+   "both_signs": 24378,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "EF-3.1/water-use": {
+   "products": 26533,
+   "exact_zeros": 2091,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "IPCC-2021-incl-biogenic-CO2/climate-change-biogenic-emissions-incl-co2": {
+   "products": 26533,
+   "exact_zeros": 2081,
+   "both_signs": 0,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 0,
+   "flagged": 0
+  },
+  "IPCC-2021-incl-biogenic-CO2/climate-change-biogenic-incl-co2": {
+   "products": 26533,
+   "exact_zeros": 2062,
+   "both_signs": 24378,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 183,
+   "below_0.01_of_gross": 1460,
+   "flagged": 183
+  },
+  "IPCC-2021-incl-biogenic-CO2/climate-change-biogenic-removals-incl-co2": {
+   "products": 26533,
+   "exact_zeros": 2136,
+   "both_signs": 24324,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 2,
+   "flagged": 0
+  },
+  "IPCC-2021/climate-change-direct-land-use-change": {
+   "products": 26533,
+   "exact_zeros": 1910,
+   "both_signs": 24372,
+   "below_1e-06_of_gross": 0,
+   "below_0.001_of_gross": 0,
+   "below_0.01_of_gross": 1,
+   "flagged": 0
+  }
+ }
+}

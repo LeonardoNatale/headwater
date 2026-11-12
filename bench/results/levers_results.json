@@ -1,0 +1,17 @@
+{
+  "machine": "arm64 Darwin 25.6.0",
+  "software": "Python 3.14.3, NumPy 2.5.3, SciPy 1.18.1, DuckDB 1.5.6, PyArrow 26.0.0",
+  "date": "2026-10-11",
+  "rounds": 3,
+  "line_columns_mb": 21.8,
+  "score": 144.83027780025722,
+  "load": 7.0357,
+  "assemble": 0.6087,
+  "calc": 0.0419,
+  "validate": 0.0375,
+  "explain": 0.0025,
+  "levers_first": 0.0276,
+  "levers_second": 0.0254,
+  "levers_all": 1.3357,
+  "levers_all_count": 595617
+}

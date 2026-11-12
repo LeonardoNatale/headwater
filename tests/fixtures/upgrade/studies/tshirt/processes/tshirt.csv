@@ -1,0 +1,7 @@
+line,role,flow,amount,unit,supplier,flow_name,comment
+e01,reference,tshirt:tshirt,1,unit,,T-shirt,
+e02,input,toy:cotton-fabric,0.25,kg,toy:1:fabric-a,cotton fabric,"bought in RoW, ""as usual"""
+e03,input,toy:electricity,0.5,kWh,toy:1:market-elec,electricity,
+e04,input,toy:dye,0.01,kg,toy:1:dye,dye,
+e05,emission,toy:ch4,0.001,kg,,"Methane, fossil",
+e06,input,toy:tape,0.01,kg,toy:1:tape,tape,

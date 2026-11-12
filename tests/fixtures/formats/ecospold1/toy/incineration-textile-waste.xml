@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecoSpold xmlns="http://www.EcoInvent.org/EcoSpold01">
+  <dataset number="3">
+    <metaInformation>
+      <processInformation>
+        <referenceFunction datasetRelatesToProduct="true" name="incineration of textile waste" localName="incineration of textile waste" infrastructureProcess="false" amount="-1" unit="kg" category="waste treatment" subCategory="incineration" localCategory="waste treatment" localSubCategory="incineration"/>
+        <geography location="GLO"/>
+        <timePeriod dataValidForEntirePeriod="true">
+          <startYear>2020</startYear>
+          <endYear>2025</endYear>
+        </timePeriod>
+        <dataSetInformation type="1" impactAssessmentResult="false" timestamp="2026-10-25T00:00:00" version="1.0" internalVersion="1.0" energyValues="0"/>
+      </processInformation>
+    </metaInformation>
+    <flowData>
+      <exchange number="1" name="textile waste" location="GLO" unit="kg" meanValue="-1" generalComment="A treatment: its reference amount is negative, as in ecoSpold2.">
+        <outputGroup>0</outputGroup>
+      </exchange>
+      <exchange number="2" name="Carbon dioxide, fossil" category="air" subCategory="unspecified" unit="kg" meanValue="1.2" CASNumber="000124-38-9">
+        <outputGroup>4</outputGroup>
+      </exchange>
+    </flowData>
+  </dataset>
+</ecoSpold>

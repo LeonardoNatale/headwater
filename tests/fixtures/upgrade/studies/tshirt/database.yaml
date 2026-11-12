@@ -1,0 +1,3 @@
+name: tshirt
+background: toy-1@PIN  # the release the tests build
+methods: [toy-climate]

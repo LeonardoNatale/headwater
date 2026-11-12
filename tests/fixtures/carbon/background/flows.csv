@@ -1,0 +1,9 @@
+id,name,kind,unit,compartment,cas
+carbon:fabric,cotton fabric,product,kg,,
+carbon:residue,fabric residue,waste,kg,,
+carbon:co2-fossil,"Carbon dioxide, fossil",elementary,kg,air/urban air close to ground,124-38-9
+carbon:co2-from-soil,"Carbon dioxide, from soil or biomass stock",elementary,kg,air/urban air close to ground,124-38-9
+carbon:co2-in-air,"Carbon dioxide, in air",elementary,kg,natural resource/in air,124-38-9
+carbon:co2-non-fossil,"Carbon dioxide, non-fossil",elementary,kg,air/urban air close to ground,124-38-9
+carbon:co2-to-soil,"Carbon dioxide, to soil or biomass stock",elementary,kg,soil/agricultural,124-38-9
+carbon:ch4-non-fossil,"Methane, non-fossil",elementary,kg,air/urban air close to ground,74-82-8

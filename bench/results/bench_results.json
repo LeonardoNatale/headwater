@@ -1,0 +1,101 @@
+{
+  "biosphere_import": {
+    "seconds": 0.576,
+    "peak_rss_mb": 261.0,
+    "flows": 4362
+  },
+  "ecoinvent_extract": {
+    "seconds": 27.378,
+    "peak_rss_mb": 3354.3,
+    "datasets": 23522
+  },
+  "ecoinvent_strategies": {
+    "seconds": 2.617,
+    "peak_rss_mb": 3449.5,
+    "strategies": 22
+  },
+  "ecoinvent_statistics": {
+    "seconds": 0.16,
+    "peak_rss_mb": 3449.5,
+    "datasets_exchanges_unlinked": [
+      23522,
+      743398,
+      0,
+      0
+    ]
+  },
+  "ecoinvent_write": {
+    "seconds": 47.328,
+    "peak_rss_mb": 3980.0
+  },
+  "counts": {
+    "activities": 23522,
+    "exchanges_by_type": {
+      "biosphere": 449615,
+      "production": 23522,
+      "technosphere": 270261
+    },
+    "activity_types": {
+      "economic": 5,
+      "emission": 4000,
+      "inventory indicator": 13,
+      "natural resource": 344,
+      "processwithreferenceproduct": 23522
+    }
+  },
+  "node_fields_sample": [
+    "activity",
+    "activity type",
+    "authors",
+    "classifications",
+    "code",
+    "comment",
+    "database",
+    "end_date",
+    "filename",
+    "flow",
+    "included_activities_end",
+    "included_activities_start",
+    "location",
+    "name",
+    "parameters",
+    "production amount",
+    "reference product",
+    "start_date",
+    "synonyms",
+    "type",
+    "unit",
+    "valid_for_entire_period"
+  ],
+  "sizes_mb": {
+    "lci_databases_db": 1365.3,
+    "processed_dir": 32.0,
+    "search_dir": 101.4,
+    "project_total": 1498.9
+  },
+  "first_lca_build_factorize_solve": {
+    "seconds": 59.437,
+    "peak_rss_mb": 5545.2,
+    "technosphere_shape": [
+      23522,
+      23522
+    ],
+    "technosphere_nnz": 292955,
+    "biosphere_shape": [
+      2648,
+      23522
+    ]
+  },
+  "100_redo_lcia_factorized": {
+    "seconds": 4.149,
+    "peak_rss_mb": 5545.8
+  },
+  "second_lca_cold_object": {
+    "seconds": 2.357,
+    "peak_rss_mb": 5616.8
+  },
+  "multilca_1000_demands": {
+    "seconds": 17.021,
+    "peak_rss_mb": 7643.1
+  }
+}

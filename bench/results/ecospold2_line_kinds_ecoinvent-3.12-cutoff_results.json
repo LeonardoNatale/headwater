@@ -1,0 +1,98 @@
+{
+  "folder": "3.12-cutoff",
+  "system_model": "cutoff",
+  "files": 26533,
+  "product_lines": 339051,
+  "rejected_lines": 0,
+  "kinds": [
+    {
+      "side": "input",
+      "class": "Recyclable",
+      "sign": "negative",
+      "lines": 2426,
+      "role": "recyclable, amount negated",
+      "with_supplier": 2426,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "Recyclable, positive": 2426
+      }
+    },
+    {
+      "side": "input",
+      "class": "Recyclable",
+      "sign": "positive",
+      "lines": 1425,
+      "role": "input",
+      "with_supplier": 1425,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "Recyclable, positive": 1425
+      }
+    },
+    {
+      "side": "input",
+      "class": "Waste",
+      "sign": "negative",
+      "lines": 47740,
+      "role": "waste_to_treatment, amount negated",
+      "with_supplier": 47740,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "Waste, negative": 47740
+      }
+    },
+    {
+      "side": "input",
+      "class": "allocatable product",
+      "sign": "positive",
+      "lines": 260927,
+      "role": "input",
+      "with_supplier": 260927,
+      "supplier_is_itself": 856,
+      "supplier_reference": {
+        "allocatable product, positive": 260927
+      }
+    },
+    {
+      "side": "reference",
+      "class": "Recyclable",
+      "sign": "positive",
+      "lines": 319,
+      "role": "reference",
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    },
+    {
+      "side": "reference",
+      "class": "Waste",
+      "sign": "negative",
+      "lines": 4623,
+      "role": "reference, amount negated",
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    },
+    {
+      "side": "reference",
+      "class": "allocatable product",
+      "sign": "positive",
+      "lines": 21591,
+      "role": "reference",
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    }
+  ],
+  "elementary": {
+    "output 4, input None": 504510,
+    "output None, input 4": 49382
+  },
+  "seconds": 21.1,
+  "machine": "arm64 Darwin 25.6.0",
+  "load_average_at_start": [
+    9.54,
+    8.31,
+    6.02
+  ]
+}

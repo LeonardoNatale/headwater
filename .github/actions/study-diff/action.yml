@@ -1,0 +1,118 @@
+name: Study results diff
+description: >-
+  Validate the databases and studies a pull request changed, and those that reach a changed
+  database, compare their results with the base branch, and
+  post one comment that shows what changed and why. Run it on the merge ref of a pull request,
+  checked out with full history, with headwater installed.
+
+inputs:
+  headwater:
+    description: The command that runs headwater, as a shell line. For example /path/to/.venv/bin/headwater.
+    default: headwater
+  studies-path:
+    description: Only look at databases and studies inside this folder.
+    default: "."
+  releases:
+    description: >-
+      Release folders to pull into the cache before anything runs, one path per line. A path is a
+      release folder (name@hash) or a folder that holds release folders.
+    default: ""
+  headwater-home:
+    description: >-
+      Use this folder as HEADWATER_HOME, for releases that are already in a cache folder, for
+      example a mounted bucket. Default: the runner's own.
+    default: ""
+  methods:
+    description: >-
+      Method folders, one path per line, for the methods that databases and studies name by id
+      and their releases do not hold, such as EF-3.1 imported from ecoinvent's workbook. A folder
+      whose id nothing names is not used.
+    default: ""
+  base:
+    description: >-
+      The commit to compare with. Default: the first parent of HEAD, which is the base branch
+      when HEAD is the merge of the pull request.
+    default: ""
+  comment:
+    description: >-
+      "true" to post the comment, "false" to write only the job summary. Use "false" for pull
+      requests from forks, where the token cannot write.
+    default: "true"
+  github-token:
+    description: A token that can write pull request comments, for the comment only.
+    default: ${{ github.token }}
+
+outputs:
+  folders:
+    description: How many databases and studies the comment lists.
+    value: ${{ steps.collect.outputs.folders }}
+  failed:
+    description: "true when a database or a study did not validate or could not be compared."
+    value: ${{ steps.collect.outputs.failed }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate and diff the changed databases and studies
+      id: collect
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        HEADWATER: ${{ inputs.headwater }}
+        STUDIES_PATH: ${{ inputs.studies-path }}
+        RELEASES: ${{ inputs.releases }}
+        HEADWATER_HOME_INPUT: ${{ inputs.headwater-home }}
+        METHODS: ${{ inputs.methods }}
+        BASE: ${{ inputs.base }}
+        BASE_LABEL: ${{ github.base_ref }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        if [ -n "$HEADWATER_HOME_INPUT" ]; then export HEADWATER_HOME="$HEADWATER_HOME_INPUT"; fi
+        head_label=""
+        if [ -n "$PR_NUMBER" ]; then head_label="merge of #$PR_NUMBER"; fi
+        python3 "$ACTION_PATH/collect.py" \
+          --out "$RUNNER_TEMP/study-diff-report.json" \
+          --base "$BASE" \
+          --base-label "$BASE_LABEL" \
+          --head-label "$head_label" \
+          --under "$STUDIES_PATH" \
+          --headwater "$HEADWATER" \
+          --releases "$RELEASES" \
+          --methods "$METHODS"
+
+    - name: Write the comment
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      run: |
+        python3 "$ACTION_PATH/render.py" \
+          --report "$RUNNER_TEMP/study-diff-report.json" \
+          --out "$RUNNER_TEMP/study-diff-comment.md" \
+          --summary "$GITHUB_STEP_SUMMARY" \
+          --run-url "$RUN_URL"
+
+    - name: Post or update the comment
+      if: inputs.comment == 'true' && github.event.pull_request.number != ''
+      shell: bash
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        FOLDERS: ${{ steps.collect.outputs.folders }}
+      run: |
+        only=""
+        if [ "$FOLDERS" = "0" ]; then only="--only-existing"; fi
+        python3 "$ACTION_PATH/comment.py" \
+          --repo "$REPO" \
+          --number "$PR_NUMBER" \
+          --body-file "$RUNNER_TEMP/study-diff-comment.md" \
+          $only
+
+    - name: Fail when a database or a study failed
+      if: steps.collect.outputs.failed == 'true'
+      shell: bash
+      run: |
+        echo "::error::A database or a study did not validate or its results could not be compared. See the comment or the job summary."
+        exit 1

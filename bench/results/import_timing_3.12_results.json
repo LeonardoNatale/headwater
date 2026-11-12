@@ -1,0 +1,61 @@
+{
+  "3.12": {
+    "machine": "arm64, Darwin 25.6.0",
+    "cpus": 10,
+    "python": "3.14.3",
+    "pyarrow": "26.0.0",
+    "lxml": "6.1.3",
+    "date": "2026-10-25",
+    "runs": [
+      {
+        "read_s": 27.33,
+        "freeze_s": 6.37,
+        "total_s": 33.7,
+        "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+        "hash": "b9428cdd8045742a211775b2c990ca21d3a39dfa8ed5dd9d99d1a2ec1db53d16",
+        "rows": {
+          "exchanges.parquet": 892943,
+          "flow_properties.parquet": 12121,
+          "flows.parquet": 14249,
+          "geographies.parquet": 541,
+          "issues.parquet": 0,
+          "processes.parquet": 26533,
+          "units.parquet": 23
+        },
+        "load_before": 4.78
+      },
+      {
+        "read_s": 31.29,
+        "freeze_s": 6.0,
+        "total_s": 37.28,
+        "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+        "hash": "b9428cdd8045742a211775b2c990ca21d3a39dfa8ed5dd9d99d1a2ec1db53d16",
+        "rows": {
+          "exchanges.parquet": 892943,
+          "flow_properties.parquet": 12121,
+          "flows.parquet": 14249,
+          "geographies.parquet": 541,
+          "issues.parquet": 0,
+          "processes.parquet": 26533,
+          "units.parquet": 23
+        },
+        "load_before": 10.58
+      }
+    ],
+    "best": {
+      "read_s": 27.33,
+      "freeze_s": 6.37,
+      "total_s": 33.7
+    },
+    "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+    "rows": {
+      "exchanges.parquet": 892943,
+      "flow_properties.parquet": 12121,
+      "flows.parquet": 14249,
+      "geographies.parquet": 541,
+      "issues.parquet": 0,
+      "processes.parquet": 26533,
+      "units.parquet": 23
+    }
+  }
+}

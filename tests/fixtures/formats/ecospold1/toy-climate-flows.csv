@@ -1,0 +1,3 @@
+source_id,source_name,source_compartment,target,who,when,comment
+toy:co2,,,toy-1.0:flow:3c365c3d-09c8-53ce-91df-55af28fc25d8,fixture author,2026-10-25,"Carbon dioxide, fossil to air/unspecified, as the ecoSpold1 toy names it"
+toy:ch4,,,toy-1.0:flow:3ffee188-a44b-5a1a-8bbb-f5980c4bdef2,fixture author,2026-10-25,"Methane, fossil to air/unspecified"

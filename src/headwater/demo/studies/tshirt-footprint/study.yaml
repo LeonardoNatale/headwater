@@ -1,0 +1,8 @@
+name: tshirt-footprint
+goal: Footprint of one dyed T-shirt, a demo of the results diff
+functional_unit: 1 dyed T-shirt
+products:
+  - {process: tshirt-dyed:tshirt, amount: 1}
+boundary: cradle-to-gate
+methods: [toy-climate]
+cut_off: {criteria: [mass, energy], max_cumulative: 0.03}

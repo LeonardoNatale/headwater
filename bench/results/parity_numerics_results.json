@@ -1,0 +1,176 @@
+{
+  "scope": {
+    "machine": "arm64 Darwin 25.6.0",
+    "python": "3.14.3",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pyarrow": "26.0.0",
+    "release": "ecoinvent-3.10-cutoff@74d864daab6b",
+    "date": "2026-10-11"
+  },
+  "load_s": 3.9,
+  "matrix": {
+    "processes": 23522,
+    "non_zeros": 291074,
+    "method_flows": 13
+  },
+  "headwater": {
+    "path": [
+      "lu"
+    ],
+    "residual": 3.046701899822614e-15,
+    "condition": 29.32356316150911,
+    "pivoted": false
+  },
+  "factorize_s": 2.75,
+  "solver_settings": [
+    {
+      "ordering": "COLAMD",
+      "diag_pivot_thresh": 1.0,
+      "scaled": true,
+      "factorize_s": 17.83,
+      "lu_non_zeros": 26438480,
+      "rows_swapped": true,
+      "solve_ms": 37.703,
+      "raw": {
+        "max": 1.0,
+        "p99": 6.68055979396686e-09,
+        "above_1e-14": 6009,
+        "above_1e-12": 3421
+      },
+      "zeros_exact_and_refined": {
+        "max": 4.0721099686390537e-14,
+        "p99": 2.1894003432487236e-16,
+        "above_1e-14": 2,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "COLAMD",
+      "diag_pivot_thresh": 0.0,
+      "scaled": true,
+      "factorize_s": 37.9,
+      "lu_non_zeros": 42291018,
+      "rows_swapped": false,
+      "solve_ms": 57.349,
+      "raw": {
+        "max": 8.074424712023776e-15,
+        "p99": 4.069549064819726e-15,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      },
+      "zeros_exact_and_refined": {
+        "max": 4.436358888598637e-16,
+        "p99": 1.58917163210783e-16,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "MMD_AT_PLUS_A",
+      "diag_pivot_thresh": 1.0,
+      "scaled": true,
+      "factorize_s": 3.74,
+      "lu_non_zeros": 6098611,
+      "rows_swapped": true,
+      "solve_ms": 7.806,
+      "raw": {
+        "max": 1.0,
+        "p99": 1.4211101855306874e-09,
+        "above_1e-14": 2484,
+        "above_1e-12": 1570
+      },
+      "zeros_exact_and_refined": {
+        "max": 1.4452328955379713e-15,
+        "p99": 2.122447864576583e-16,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "MMD_AT_PLUS_A",
+      "diag_pivot_thresh": 0.0,
+      "scaled": true,
+      "factorize_s": 2.85,
+      "lu_non_zeros": 3389033,
+      "rows_swapped": false,
+      "solve_ms": 4.312,
+      "raw": {
+        "max": 3.046701899822614e-15,
+        "p99": 1.1310432143602361e-15,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      },
+      "zeros_exact_and_refined": {
+        "max": 2.6245043642151663e-16,
+        "p99": 1.275332157611936e-16,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "COLAMD",
+      "diag_pivot_thresh": 1.0,
+      "scaled": false,
+      "note": "SciPy defaults, as bw2calc's factorized solver",
+      "factorize_s": 61.79,
+      "lu_non_zeros": 52832237,
+      "raw": {
+        "max": 4.498377694029008e-05,
+        "p99": 6.149805611888231e-08,
+        "above_1e-14": 9927,
+        "above_1e-12": 8524
+      }
+    }
+  ],
+  "condition": {
+    "componentwise": 29.32356316150911,
+    "componentwise_ms": 15.784,
+    "loop_gain_check_min_burden": 1.0,
+    "normwise_scaled": 362499625581559.06,
+    "normwise_unscaled": 1.0472277372568772e+24
+  },
+  "forward_solves": {
+    "products": 23522,
+    "seconds": 78.5,
+    "largest_error": 4.991085749127246e-15,
+    "p99_of_largest": 3.4971766705177073e-15,
+    "solves_above_1e-14": 0,
+    "solves_above_1e-12": 0
+  },
+  "transposed_solve": {
+    "max": 3.046701899822614e-15,
+    "p99": 1.1310432143602361e-15,
+    "above_1e-14": 0,
+    "above_1e-12": 0
+  },
+  "zeros": {
+    "structural_zeros": 1792,
+    "of_which_recycled_content": 78,
+    "exactly_zero_in_x": 1792,
+    "structural_zeros_ms": 4.038,
+    "negative_direct_emissions": 8,
+    "net_below_1e-3_of_gross": 0,
+    "net_below_1e-6_of_gross": 0,
+    "smallest_net_share": 0.4845643753729357
+  },
+  "float32_lines": {
+    "max_relative": 1.6060336892981095e-07,
+    "above_1e-9": 19899,
+    "above_1e-7": 31,
+    "above_1e-6": 0
+  },
+  "copies_ms": {
+    "as_matrix_copy": 0.758,
+    "as_matrix_shared": 0.447,
+    "abs_A": 0.106,
+    "residual_check_computing_abs": 1.173,
+    "residual_check_stored_abs": 0.784,
+    "stacked_matrix_one_study_process": 2.814,
+    "explain_3_levels": 1.164,
+    "levers": 24.491,
+    "solve": 5.275,
+    "checked_scores_with_exact_zeros": 11.047,
+    "memory_A_mb": 4.8
+  }
+}

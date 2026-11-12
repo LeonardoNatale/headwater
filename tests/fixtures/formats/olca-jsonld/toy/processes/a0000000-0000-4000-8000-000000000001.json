@@ -1,0 +1,91 @@
+{
+  "@type": "Process",
+  "@id": "a0000000-0000-4000-8000-000000000001",
+  "name": "electricity production",
+  "category": "Toy",
+  "processType": "UNIT_PROCESS",
+  "defaultAllocationMethod": "NO_ALLOCATION",
+  "location": {
+    "@type": "Location",
+    "@id": "10000000-0000-4000-8000-000000000001",
+    "name": "Global"
+  },
+  "exchanges": [
+    {
+      "@type": "Exchange",
+      "internalId": 1,
+      "amount": 1.0,
+      "isInput": false,
+      "isQuantitativeReference": true,
+      "isAvoidedProduct": false,
+      "flow": {
+        "@type": "Flow",
+        "@id": "b0000000-0000-4000-8000-000000000001",
+        "name": "electricity",
+        "flowType": "PRODUCT_FLOW",
+        "refUnit": "kWh"
+      },
+      "unit": {
+        "@type": "Unit",
+        "@id": "50000000-0000-4000-8000-000000000002",
+        "name": "kWh"
+      },
+      "flowProperty": {
+        "@type": "FlowProperty",
+        "@id": "c0000000-0000-4000-8000-000000000002",
+        "name": "Energy"
+      }
+    },
+    {
+      "@type": "Exchange",
+      "internalId": 2,
+      "amount": 0.5,
+      "isInput": false,
+      "isQuantitativeReference": false,
+      "isAvoidedProduct": false,
+      "flow": {
+        "@type": "Flow",
+        "@id": "e0000000-0000-4000-8000-000000000001",
+        "name": "Carbon dioxide, fossil",
+        "flowType": "ELEMENTARY_FLOW",
+        "refUnit": "kg"
+      },
+      "unit": {
+        "@type": "Unit",
+        "@id": "50000000-0000-4000-8000-000000000001",
+        "name": "kg"
+      },
+      "flowProperty": {
+        "@type": "FlowProperty",
+        "@id": "c0000000-0000-4000-8000-000000000001",
+        "name": "Mass"
+      }
+    },
+    {
+      "@type": "Exchange",
+      "internalId": 3,
+      "amount": 0.001,
+      "isInput": false,
+      "isQuantitativeReference": false,
+      "isAvoidedProduct": false,
+      "flow": {
+        "@type": "Flow",
+        "@id": "e0000000-0000-4000-8000-000000000002",
+        "name": "Methane, fossil",
+        "flowType": "ELEMENTARY_FLOW",
+        "refUnit": "kg"
+      },
+      "unit": {
+        "@type": "Unit",
+        "@id": "50000000-0000-4000-8000-000000000001",
+        "name": "kg"
+      },
+      "flowProperty": {
+        "@type": "FlowProperty",
+        "@id": "c0000000-0000-4000-8000-000000000001",
+        "name": "Mass"
+      }
+    }
+  ],
+  "lastInternalId": 3
+}

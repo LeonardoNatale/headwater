@@ -1,0 +1,5 @@
+description: The residue gives back to the air all the carbon the fabric took, 1.5 kg of CO2 instead of 0.4.
+changes:
+  - process: carbon:residue-treatment
+    line: e02
+    amount: 1.5

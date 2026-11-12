@@ -1,0 +1,21 @@
+{
+  "method": "EF-3.1",
+  "method_hash": "dbb0de237f259caa43f9249d30e4dfacf134c97c387da2a6172ba7391863752e",
+  "stored_method_hash": "a4409231807ca267a99ca1aa44ac8e6829f9b48f108d839e63874696e36bfd92",
+  "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+  "indicators": 25,
+  "category_indicators_filled": 25,
+  "category_indicators_distinct": 14,
+  "products": 26533,
+  "scores_compared": 663325,
+  "scores_equal": 663325,
+  "largest_relative_difference": 0.0,
+  "load_seconds": 5.3,
+  "machine": "arm64, Darwin 25.6.0",
+  "date": "2026-11-01",
+  "python": "3.14.3",
+  "versions": {
+    "headwater": "0.1.0.dev0",
+    "numpy": "2.5.3"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "machine": "arm64 Darwin 25.6.0, 10 CPUs, Python 3.14.3, NumPy 2.5.3, SciPy 1.18.1",
+  "blas_threads": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2",
+    "VECLIB_MAXIMUM_THREADS": "2"
+  },
+  "date": "2026-11-02",
+  "rounds": 3,
+  "study": {
+    "processes": 40,
+    "products": 40,
+    "lines": 759
+  },
+  "load_average_before": 3.27,
+  "command": {
+    "reference_only": {
+      "seconds": [
+        8.61,
+        8.18,
+        8.16
+      ],
+      "median": 8.18,
+      "products": 1,
+      "results": 25,
+      "differences": 2,
+      "json_bytes": 36883
+    },
+    "every_product": {
+      "seconds": [
+        9.32,
+        9.24,
+        9.69
+      ],
+      "median": 9.32,
+      "products": 40,
+      "results": 1000,
+      "differences": 2,
+      "json_bytes": 869050
+    },
+    "ratio": 1.14
+  },
+  "load_seconds": 6.24,
+  "diff_studies": {
+    "reference_only": {
+      "seconds": [
+        1.25,
+        1.11,
+        1.04
+      ],
+      "median": 1.11,
+      "rows": 25
+    },
+    "every_product": {
+      "seconds": [
+        2.22,
+        2.24,
+        2.15
+      ],
+      "median": 2.22,
+      "rows": 1000
+    },
+    "ratio": 2.01
+  },
+  "text_every_product": {
+    "lines": 118,
+    "bytes": 11176
+  },
+  "json_every_product_bytes": 649479,
+  "products_moved": 2,
+  "load_average_after": 4.36
+}

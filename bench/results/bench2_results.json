@@ -1,0 +1,11 @@
+{
+  "lca_init_load_packages": 0.046,
+  "build_matrices": 0.089,
+  "factorize_scipy": 57.223,
+  "lci_after_factorize": 0.055,
+  "full_lca_no_factorize": 2.312,
+  "edit_one_exchange_save": 0.006,
+  "lca_after_one_edit": 12.244,
+  "copy_project": 0.422,
+  "peak_rss_mb": 1797
+}

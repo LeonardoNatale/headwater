@@ -1,0 +1,4 @@
+line,role,flow,amount,unit,supplier
+a1,reference,toy:electricity,1,kWh,
+a2,input,toy:electricity,0.5,kWh,toy:2:elec
+a3,input,toy:electricity,0.5,kWh,toy:2:wind

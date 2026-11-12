@@ -1,0 +1,8 @@
+name: garment-footprint
+goal: Biogenic carbon of one garment, a test fixture
+functional_unit: 1 garment
+products:
+  - {process: garment:garment, amount: 1}
+boundary: cradle-to-gate
+methods: [EF-3.1, IPCC-2021-incl-biogenic-CO2, IPCC-2021]
+cut_off: {criteria: [mass], max_cumulative: 0}

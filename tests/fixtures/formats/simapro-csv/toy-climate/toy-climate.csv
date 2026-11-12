@@ -1,0 +1,55 @@
+{SimaPro 9.5.0.0}
+{methods}
+{Date: 25/10/2026}
+{Time: 10:00:00}
+{Project: Toy methods}
+{CSV Format version: 9.0.0}
+{CSV separator: Semicolon}
+{Decimal separator: ,}
+{Date separator: /}
+{Short date format: dd/MM/yyyy}
+{Export platform IDs: No}
+{Skip empty fields: No}
+{Convert expressions to constants: Yes}
+{Selection: Selection (1)}
+{Related objects (system descriptions, substances, units, etc.): Yes}
+{Include sub product stages and processes: No}
+
+Method
+
+Name
+toy climate v1
+
+Version
+1;0
+
+Comment
+The toy method toy-climate, written as SimaPro exports a method, with a decimal comma.
+
+Category
+Others
+
+Use Damage Assessment
+No
+
+Use Normalization
+No
+
+Use Weighting
+No
+
+Use Addition
+No
+
+Weighting unit
+Pt
+
+Impact category
+Climate change;kg CO2-eq
+
+Substances
+Air;(unspecified);Carbon dioxide, fossil;000124-38-9;1;kg
+Air;(unspecified);Methane, fossil;000074-82-8;29,8;kg
+
+End
+

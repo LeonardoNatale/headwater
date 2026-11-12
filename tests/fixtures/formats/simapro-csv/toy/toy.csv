@@ -1,0 +1,406 @@
+{SimaPro 9.5.0.0}
+{processes}
+{Date: 25/10/2026}
+{Time: 10:00:00}
+{Project: Toy background}
+{CSV Format version: 9.0.0}
+{CSV separator: Semicolon}
+{Decimal separator: .}
+{Date separator: /}
+{Short date format: dd/MM/yyyy}
+{Export platform IDs: No}
+{Skip empty fields: No}
+{Convert expressions to constants: Yes}
+{Selection: Selection (1)}
+{Related objects (system descriptions, substances, units, etc.): Yes}
+{Include sub product stages and processes: No}
+
+Process
+
+Category type
+material
+
+Process identifier
+TOY0000000001
+
+Type
+Unit process
+
+Process name
+
+
+Status
+
+
+Time period
+Unspecified
+
+Geography
+Unspecified
+
+Technology
+Unspecified
+
+Representativeness
+Unspecified
+
+Multiple output allocation
+Unspecified
+
+Substitution allocation
+Unspecified
+
+Cut off rules
+Unspecified
+
+Capital goods
+Unspecified
+
+Boundary with nature
+Unspecified
+
+Infrastructure
+No
+
+Date
+25/10/2026
+
+Record
+
+
+Generator
+
+
+External documents
+
+
+Literature references
+
+
+Collection method
+
+
+Data treatment
+
+
+Verification
+
+
+Comment
+The toy fabric process. Données d'exemple, made up.
+
+Allocation rules
+
+
+System description
+Toy
+
+Products
+cotton fabric {GLO}| cotton fabric production;kg;1;100;not defined;Textiles\Fabric;
+
+Avoided products
+
+Resources
+
+Materials/fuels
+
+Electricity/heat
+electricity {GLO}| electricity production;kWh;3;Undefined;0;0;0;
+
+Emissions to air
+Carbon dioxide, fossil;;kg;2.0;Undefined;0;0;0;
+Methane, fossil;;kg;0.004;Undefined;0;0;0;
+
+Emissions to water
+
+Emissions to soil
+
+Final waste flows
+
+Non material emissions
+
+Social issues
+
+Economic issues
+
+Waste to treatment
+
+Input parameters
+
+Calculated parameters
+
+End
+
+Process
+
+Category type
+energy
+
+Process identifier
+TOY0000000002
+
+Type
+Unit process
+
+Process name
+
+
+Status
+
+
+Time period
+Unspecified
+
+Geography
+Unspecified
+
+Technology
+Unspecified
+
+Representativeness
+Unspecified
+
+Multiple output allocation
+Unspecified
+
+Substitution allocation
+Unspecified
+
+Cut off rules
+Unspecified
+
+Capital goods
+Unspecified
+
+Boundary with nature
+Unspecified
+
+Infrastructure
+No
+
+Date
+25/10/2026
+
+Record
+
+
+Generator
+
+
+External documents
+
+
+Literature references
+
+
+Collection method
+
+
+Data treatment
+
+
+Verification
+
+
+Comment
+
+
+Allocation rules
+
+
+System description
+Toy
+
+Products
+electricity {GLO}| electricity production;kWh;1;100;not defined;Energy\Electricity;
+
+Avoided products
+
+Resources
+
+Materials/fuels
+
+Electricity/heat
+
+Emissions to air
+Carbon dioxide, fossil;;kg;0.5;Undefined;0;0;0;
+Methane, fossil;;kg;0.001;Undefined;0;0;0;
+
+Emissions to water
+
+Emissions to soil
+
+Final waste flows
+
+Non material emissions
+
+Social issues
+
+Economic issues
+
+Waste to treatment
+
+Input parameters
+
+Calculated parameters
+
+End
+
+Process
+
+Category type
+waste treatment
+
+Process identifier
+TOY0000000003
+
+Type
+Unit process
+
+Process name
+
+
+Status
+
+
+Time period
+Unspecified
+
+Geography
+Unspecified
+
+Technology
+Unspecified
+
+Representativeness
+Unspecified
+
+Multiple output allocation
+Unspecified
+
+Substitution allocation
+Unspecified
+
+Cut off rules
+Unspecified
+
+Capital goods
+Unspecified
+
+Boundary with nature
+Unspecified
+
+Infrastructure
+No
+
+Date
+25/10/2026
+
+Record
+
+
+Generator
+
+
+External documents
+
+
+Literature references
+
+
+Collection method
+
+
+Data treatment
+
+
+Verification
+
+
+Comment
+
+
+Allocation rules
+
+
+System description
+Toy
+
+Waste treatment
+textile waste {GLO}| incineration of textile waste;kg;1;All waste types;Waste treatment\Incineration;
+
+Avoided products
+
+Resources
+
+Materials/fuels
+
+Electricity/heat
+
+Emissions to air
+Carbon dioxide, fossil;;kg;1.2;Undefined;0;0;0;
+
+Emissions to water
+
+Emissions to soil
+
+Final waste flows
+
+Non material emissions
+
+Social issues
+
+Economic issues
+
+Waste to treatment
+
+Input parameters
+
+Calculated parameters
+
+End
+
+System description
+
+Name
+Toy
+
+Category
+Others
+
+Description
+The toy background of headwater's tests.
+
+Cut-off rules
+
+
+Energy model
+
+
+Transport model
+
+
+Allocation rules
+
+
+End
+
+Airborne emissions
+Carbon dioxide, fossil;kg;124-38-9;
+Methane, fossil;kg;74-82-8;
+
+End
+
+Units
+kg;Mass;1;kg
+MJ;Energy;1;MJ
+kWh;Energy;3.6;MJ
+
+End
+
+Quantities
+Mass;Yes
+Energy;Yes
+
+End
+

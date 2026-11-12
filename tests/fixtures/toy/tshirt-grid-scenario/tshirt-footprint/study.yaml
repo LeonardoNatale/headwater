@@ -1,0 +1,8 @@
+name: tshirt-footprint
+goal: Footprint of one T-shirt, internal use, not a public comparison
+functional_unit: 1 T-shirt
+products:
+  - {process: tshirt:tshirt, amount: 1}
+boundary: cradle-to-gate
+methods: [toy-climate]
+cut_off: {criteria: [mass, energy], max_cumulative: 0.03}

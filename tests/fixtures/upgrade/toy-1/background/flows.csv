@@ -1,0 +1,9 @@
+id,name,kind,unit,compartment,cas
+toy:electricity,electricity,product,kWh,,
+toy:cotton-fabric,cotton fabric,product,kg,,
+toy:dye,dye,product,kg,,
+toy:tape,tape,product,kg,,
+toy:co2,"Carbon dioxide, fossil",elementary,kg,air,124-38-9
+toy:ch4,"Methane, fossil",elementary,kg,air,74-82-8
+toy:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2
+toy:glue,glue,product,kg,,

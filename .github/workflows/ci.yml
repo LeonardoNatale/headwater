@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    name: checks (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: "0.13.0"
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync --locked
+      - name: Python version in use
+        run: uv run python --version
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+      - run: uv run pytest
+      # Notebooks 03 and 05 need licensed data, and 04 and 05 need Brightway, which CI does not
+      # install: they are skipped.
+      - name: Run the teaching notebooks
+        run: uv run --locked --group notebooks pytest --nbmake notebooks
+      - name: Check that the kept notebook outputs are current
+        run: uv run --locked --group notebooks python notebooks/refresh_outputs.py --check
+
+  # What a pip user gets: the newest versions of the direct dependencies, and the lowest that
+  # pyproject.toml allows. Both resolve without the lock. The test tools are installed constrained
+  # by the resolved file, so they cannot move the dependencies under test.
+  dependencies:
+    name: tests (Python 3.13, ${{ matrix.resolution }} dependencies)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        resolution: [highest, lowest-direct]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: "0.13.0"
+          python-version: "3.13"
+      - name: Resolve the dependencies without the lock
+        run: >-
+          uv pip compile pyproject.toml --extra pandas --python 3.13
+          --resolution ${{ matrix.resolution }} --output-file "$RUNNER_TEMP/resolved.txt"
+      - name: Install them, headwater, and the test tools
+        run: |
+          uv venv --python 3.13
+          uv pip install --requirements "$RUNNER_TEMP/resolved.txt"
+          uv pip install --no-deps --editable .
+          uv pip install pytest jsonschema --constraints "$RUNNER_TEMP/resolved.txt"
+      - name: Versions in use
+        run: uv pip list
+      # pyproject.toml makes a UserWarning from headwater's own code an error.
+      - run: .venv/bin/python -m pytest
+      - name: Run the README quick start from the wheel in a clean venv
+        if: matrix.resolution == 'highest'
+        run: |
+          uv build
+          uv venv "$RUNNER_TEMP/clean" --python 3.13
+          VIRTUAL_ENV="$RUNNER_TEMP/clean" uv pip install dist/*.whl
+          HEADWATER_QUICK_START_BIN="$RUNNER_TEMP/clean/bin" \
+            .venv/bin/python -m pytest tests/test_readme.py -k quick_start

@@ -1,0 +1,62 @@
+{
+  "machine": "arm64, Darwin 25.6.0",
+  "cpus": 10,
+  "python": "3.14.3",
+  "pyarrow": "26.0.0",
+  "lxml": "6.1.3",
+  "date": "2026-10-25",
+  "runs": [
+    {
+      "load_before": 8.02,
+      "read_s": 16.53,
+      "stages_s": 1.09,
+      "total_s": 17.62,
+      "processes": 11947,
+      "lines": 420063,
+      "flows": 10732,
+      "open_issues": {
+        "ambiguous-supplier": 10,
+        "no-supplier": 27
+      }
+    },
+    {
+      "load_before": 10.58,
+      "read_s": 19.74,
+      "stages_s": 2.11,
+      "total_s": 21.85,
+      "processes": 11947,
+      "lines": 420063,
+      "flows": 10732,
+      "open_issues": {
+        "ambiguous-supplier": 10,
+        "no-supplier": 27
+      }
+    },
+    {
+      "load_before": 13.67,
+      "read_s": 13.34,
+      "stages_s": 1.05,
+      "total_s": 14.39,
+      "processes": 11947,
+      "lines": 420063,
+      "flows": 10732,
+      "open_issues": {
+        "ambiguous-supplier": 10,
+        "no-supplier": 27
+      }
+    }
+  ],
+  "best": {
+    "load_before": 13.67,
+    "read_s": 13.34,
+    "stages_s": 1.05,
+    "total_s": 14.39,
+    "processes": 11947,
+    "lines": 420063,
+    "flows": 10732,
+    "open_issues": {
+      "ambiguous-supplier": 10,
+      "no-supplier": 27
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "versions": {
+    "python": "3.12.11",
+    "bw2data": "4.5.4",
+    "bw2calc": "2.3",
+    "bw2io": "0.9.14",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "machine": "arm64 Darwin 25.6.0",
+    "load_average_at_start": [
+      9.67,
+      8.32,
+      6.0
+    ]
+  },
+  "biosphere_import": {
+    "seconds": 1.08,
+    "flows": 9850
+  },
+  "parse": {
+    "seconds": 166.13,
+    "datasets": 27197,
+    "exchanges": {
+      "production": 27197,
+      "technosphere": 920368,
+      "biosphere": 787003
+    }
+  },
+  "strategies": {
+    "seconds": 10.97,
+    "exchanges": {
+      "production": 27197,
+      "technosphere": 920368,
+      "biosphere": 787003
+    },
+    "unlinked": 0
+  },
+  "dropped_exchanges": {
+    "production": 0,
+    "technosphere": 0,
+    "biosphere": 0
+  },
+  "unlinked_exchanges": 0,
+  "write": {
+    "seconds": 109.72
+  },
+  "method_flows": 13,
+  "processed_dtype": "float32",
+  "load_and_factorize": {
+    "seconds": 117.55,
+    "solver": "builtin_function_or_method"
+  },
+  "matrices": {
+    "technosphere": {
+      "dtype": "float64",
+      "non_zeros": 946689,
+      "shape": [
+        27197,
+        27197
+      ]
+    },
+    "biosphere": {
+      "dtype": "float64",
+      "non_zeros": 776844,
+      "shape": [
+        3296,
+        27197
+      ]
+    }
+  },
+  "scores": {
+    "seconds": 1846.68,
+    "products": 27197
+  }
+}

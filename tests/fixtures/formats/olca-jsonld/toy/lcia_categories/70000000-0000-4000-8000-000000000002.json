@@ -1,0 +1,50 @@
+{
+  "@type": "ImpactCategory",
+  "@id": "70000000-0000-4000-8000-000000000002",
+  "name": "Climate change",
+  "refUnit": "kg CO2-eq",
+  "impactFactors": [
+    {
+      "@type": "ImpactFactor",
+      "value": 1.0,
+      "flow": {
+        "@type": "Flow",
+        "@id": "e0000000-0000-4000-8000-000000000001",
+        "name": "Carbon dioxide, fossil",
+        "flowType": "ELEMENTARY_FLOW",
+        "refUnit": "kg"
+      },
+      "flowProperty": {
+        "@type": "FlowProperty",
+        "@id": "c0000000-0000-4000-8000-000000000001",
+        "name": "Mass"
+      },
+      "unit": {
+        "@type": "Unit",
+        "@id": "50000000-0000-4000-8000-000000000001",
+        "name": "kg"
+      }
+    },
+    {
+      "@type": "ImpactFactor",
+      "value": 29.8,
+      "flow": {
+        "@type": "Flow",
+        "@id": "e0000000-0000-4000-8000-000000000002",
+        "name": "Methane, fossil",
+        "flowType": "ELEMENTARY_FLOW",
+        "refUnit": "kg"
+      },
+      "flowProperty": {
+        "@type": "FlowProperty",
+        "@id": "c0000000-0000-4000-8000-000000000001",
+        "name": "Mass"
+      },
+      "unit": {
+        "@type": "Unit",
+        "@id": "50000000-0000-4000-8000-000000000001",
+        "name": "kg"
+      }
+    }
+  ]
+}

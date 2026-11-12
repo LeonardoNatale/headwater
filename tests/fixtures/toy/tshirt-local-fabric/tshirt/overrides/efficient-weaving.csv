@@ -1,0 +1,2 @@
+process,line,role,flow,amount,unit,supplier,comment
+toy:fabric-production,e02,input,toy:electricity,2.5,kWh,toy:electricity-production,Measured at the mill

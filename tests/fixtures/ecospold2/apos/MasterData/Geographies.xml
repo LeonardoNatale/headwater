@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validGeographies majorRelease="3" minorRelease="0" majorRevision="0" minorRevision="1" xmlns="http://www.EcoInvent.org/EcoSpold02">
+  <contextName xml:lang="en">ecoinvent</contextName>
+  <geography id="a4000000-0000-4000-8000-000000000001" uNCode="0" uNRegionCode="0" uNSubregionCode="0">
+    <name xml:lang="en">Global</name>
+    <shortname xml:lang="en">GLO</shortname>
+    <comment>
+      <text xml:lang="en" index="0">Generic global geography</text>
+    </comment>
+  </geography>
+  <geography id="a4000000-0000-4000-8000-000000000002" uNCode="0" uNRegionCode="0" uNSubregionCode="0">
+    <name xml:lang="en">Rest-of-World</name>
+    <shortname xml:lang="en">RoW</shortname>
+  </geography>
+  <geography id="a4000000-0000-4000-8000-000000000003" longitude="-3.7" latitude="40.4" uNCode="0" uNRegionCode="0" uNSubregionCode="0">
+    <name xml:lang="en">Spain</name>
+    <shortname xml:lang="en">ES</shortname>
+    <kml />
+  </geography>
+  <geography id="a4000000-0000-4000-8000-000000000004">
+    <name xml:lang="en">Trinidad and Tobago</name>
+    <shortname xml:lang="en">TT</shortname>
+    <kml />
+  </geography>
+  <geography id="a4000000-0000-4000-8000-000000000005">
+    <name xml:lang="en">China, Shanxi (山西)</name>
+    <shortname xml:lang="en">CN-SX</shortname>
+    <kml />
+  </geography>
+  <geography id="a4000000-0000-4000-8000-000000000007" longitude="10.4" latitude="51.1">
+    <name xml:lang="en">Germany</name>
+    <shortname xml:lang="en">DE</shortname>
+    <kml />
+  </geography>
+  <geography id="a4000000-0000-4000-8000-000000000006">
+    <name xml:lang="en">Europe</name>
+    <shortname xml:lang="en">RER</shortname>
+    <kml />
+  </geography>
+</validGeographies>

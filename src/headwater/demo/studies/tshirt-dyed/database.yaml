@@ -1,0 +1,4 @@
+name: tshirt-dyed
+background: toy-background@6864b7dbb65d
+methods: [toy-climate]
+uses: [dyes]

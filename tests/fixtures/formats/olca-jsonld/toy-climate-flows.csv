@@ -1,0 +1,3 @@
+source_id,source_name,source_compartment,target,who,when,comment
+toy:co2,,,olca:flow:e0000000-0000-4000-8000-000000000001,fixture author,2026-10-25,the same flow in the JSON-LD toy
+toy:ch4,,,olca:flow:e0000000-0000-4000-8000-000000000002,fixture author,2026-10-25,

@@ -1,0 +1,3 @@
+supplier_id,name,product,location,unit,supplier,reason,who,when,comment
+,dye production,dye,GLO,kg,toy:2:dye-r,,test,2026-10-25,renamed reactive dye production
+toy:1:tape,,,,,toy:2:tape-rer,,test,2026-10-25,GLO is gone: RER is the closest

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validUnitConversions xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="1" minorRelease="0" majorRevision="0" minorRevision="0">
+  <unitConversion id="a3000000-0000-4000-8000-000000000001" factor="3.6">
+    <unitFromName xml:lang="en">kWh</unitFromName>
+    <unitToName xml:lang="en">MJ</unitToName>
+    <unitType xml:lang="en">energy</unitType>
+  </unitConversion>
+</validUnitConversions>

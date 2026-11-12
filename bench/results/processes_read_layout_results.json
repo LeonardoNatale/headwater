@@ -1,0 +1,30 @@
+{
+  "rows": 892943,
+  "columns": 23,
+  "row_groups": 7,
+  "rows_per_group": [
+    131072,
+    131072,
+    131072,
+    131072,
+    131072,
+    131072,
+    106511
+  ],
+  "process_ids_in_order_and_apart": true,
+  "decoded_mb_per_group": [
+    98.6,
+    96.5,
+    84.1,
+    95.9,
+    97.9,
+    95.9,
+    79.1
+  ],
+  "decoded_mb_total": 648.0,
+  "decoded_mb_largest_columns_of_group_0": {
+    "properties": 34.7,
+    "comment": 21.5,
+    "process_id": 13.0
+  }
+}

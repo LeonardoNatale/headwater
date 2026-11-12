@@ -1,0 +1,3 @@
+id,name,kind,unit,compartment,cas
+tshirt:tshirt,T-shirt,product,unit,,
+tshirt:packaging-tape,packaging tape,product,kg,,

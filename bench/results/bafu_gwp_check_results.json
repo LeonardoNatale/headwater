@@ -1,0 +1,70 @@
+{
+  "machine": "arm64, Darwin 25.6.0",
+  "date": "2026-10-25",
+  "python": "3.14.3",
+  "headwater_import": {
+    "processes": 11947,
+    "lines": 420063
+  },
+  "factors": 30,
+  "factors_with_a_flow_in_the_package": 30,
+  "bafu_rows": 11947,
+  "matched_by_name_and_location": 11836,
+  "not_converted": 0,
+  "open_lines_resolved_as_gaps": 37,
+  "processes_with_or_downstream_of_a_gap": 11540,
+  "all": {
+    "n": 11661,
+    "median": 0.0006702478226903362,
+    "p90": 0.0033196810505203836,
+    "p99": 0.027084178203794565,
+    "above_1e-3": 4589,
+    "above_1e-2": 211,
+    "above_1e-1": 29
+  },
+  "with_or_downstream_of_a_gap": {
+    "n": 11540,
+    "median": 0.0006757906202197071,
+    "p90": 0.0033145397021709056,
+    "p99": 0.023472144093848436,
+    "above_1e-3": 4571,
+    "above_1e-2": 193,
+    "above_1e-1": 26
+  },
+  "not_touched_by_a_gap": {
+    "n": 121,
+    "median": 3.562537947054184e-05,
+    "p90": 0.019334886219154086,
+    "p99": 1.0,
+    "above_1e-3": 18,
+    "above_1e-2": 18,
+    "above_1e-1": 3
+  },
+  "nm3": {
+    "lines": 40,
+    "processes": 29,
+    "one_m3_is_one_nm3": {
+      "n": 29,
+      "median": 8.681039430668954e-05,
+      "p90": 0.00025000289377220423,
+      "p99": 0.0010020775950877717,
+      "above_1e-3": 1,
+      "above_1e-2": 0,
+      "above_1e-1": 0
+    },
+    "one_m3_is_0.9317_nm3": {
+      "n": 29,
+      "median": 0.006084829184944527,
+      "p90": 0.04630422861362107,
+      "p99": 0.06850955571557146,
+      "above_1e-3": 23,
+      "above_1e-2": 12,
+      "above_1e-1": 0
+    },
+    "share_of_score_through_the_lines_median": 0.0885912819882577
+  },
+  "versions": {
+    "numpy": "2.5.3",
+    "lxml": "6.1.3"
+  }
+}

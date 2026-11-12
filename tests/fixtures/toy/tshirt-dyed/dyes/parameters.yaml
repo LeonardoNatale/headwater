@@ -1,0 +1,5 @@
+database:
+  kwh_per_kg:
+    value: 2
+    unit: kWh
+    comment: Electricity to make 1 kg of dye

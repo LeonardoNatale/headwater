@@ -1,0 +1,3 @@
+line,role,flow,amount,unit,supplier
+e01,reference,carbon:residue,1,kg,
+e02,emission,carbon:co2-non-fossil,0.4,kg,

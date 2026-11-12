@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validUnitConversions xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="3" minorRelease="0" majorRevision="0" minorRevision="1">
+  <unitConversion id="a3000000-0000-4000-8000-000000000001" factor="3.6">
+    <unitFromName xml:lang="en">kWh</unitFromName>
+    <unitToName xml:lang="en">MJ</unitToName>
+    <unitType xml:lang="en">energy</unitType>
+  </unitConversion>
+  <unitConversion id="a3000000-0000-4000-8000-000000000002" factor="0.001">
+    <unitFromName xml:lang="en">g</unitFromName>
+    <unitToName xml:lang="en">kg</unitToName>
+    <unitType xml:lang="en">mass</unitType>
+  </unitConversion>
+  <unitConversion id="a3000000-0000-4000-8000-000000000003" factor="1000">
+    <unitFromName xml:lang="en">metric ton</unitFromName>
+    <unitToName xml:lang="en">kg</unitToName>
+    <unitType xml:lang="en">mass</unitType>
+  </unitConversion>
+  <unitConversion id="a3000000-0000-4000-8000-000000000004" factor="0.001">
+    <unitFromName xml:lang="en">l</unitFromName>
+    <unitToName xml:lang="en">m3</unitToName>
+    <unitType xml:lang="en">volume</unitType>
+  </unitConversion>
+  <unitConversion id="a3000000-0000-4000-8000-000000000005" factor="0.8">
+    <unitFromName xml:lang="en">USD2005</unitFromName>
+    <unitToName xml:lang="en">EUR2005</unitToName>
+    <unitType xml:lang="en">currency</unitType>
+  </unitConversion>
+  <unitConversion id="a3000000-0000-4000-8000-000000000006" factor="0.5">
+    <unitFromName xml:lang="en">CHF2005</unitFromName>
+    <unitToName xml:lang="en">EUR2005</unitToName>
+    <unitType xml:lang="en">currency</unitType>
+  </unitConversion>
+</validUnitConversions>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ecoSpold xmlns="http://www.EcoInvent.org/EcoSpold02">
+  <childActivityDataset>
+    <activityDescription>
+      <activity id="a0000000-0000-4000-8000-000000000004" activityNameId="a4000000-0000-4000-8000-000000000004" specialActivityType="0" type="1">
+        <activityName xml:lang="en">treatment of waste widget, incineration</activityName>
+      </activity>
+      <geography geographyId="a5000000-0000-4000-8000-000000000001">
+        <shortname xml:lang="en">GLO</shortname>
+      </geography>
+      <timePeriod startDate="2020-01-01" endDate="2025-12-31" isDataValidForEntirePeriod="true"/>
+    </activityDescription>
+    <flowData>
+      <intermediateExchange id="c0000004-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000001" amount="-1.0" intermediateExchangeId="b0000000-0000-4000-8000-000000000004">
+        <name xml:lang="en">waste widget</name>
+        <unitName xml:lang="en">kg</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000002">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">Waste</classificationValue>
+        </classification>
+        <outputGroup>0</outputGroup>
+      </intermediateExchange>
+      <elementaryExchange id="c0000004-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000001" amount="1.1" elementaryExchangeId="e0000000-0000-4000-8000-000000000001">
+        <name xml:lang="en">Carbon dioxide, fossil</name>
+        <unitName xml:lang="en">kg</unitName>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+          <compartment xml:lang="en">air</compartment>
+          <subcompartment xml:lang="en">urban air close to ground</subcompartment>
+        </compartment>
+        <outputGroup>4</outputGroup>
+      </elementaryExchange>
+    </flowData>
+    <modellingAndValidation>
+      <representativeness systemModelId="06590a66-662a-4885-8494-ad0cf410f956">
+        <systemModelName xml:lang="en">Allocation at the point of substitution</systemModelName>
+      </representativeness>
+    </modellingAndValidation>
+    <administrativeInformation>
+      <fileAttributes majorRelease="3" minorRelease="10" majorRevision="1" minorRevision="0" defaultLanguage="en"/>
+    </administrativeInformation>
+  </childActivityDataset>
+</ecoSpold>

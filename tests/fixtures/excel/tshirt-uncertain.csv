@@ -1,0 +1,18 @@
+Database,toy-foreground
+,
+Project parameters
+name,amount,formula,comment
+fabric_kg,0.25,,Fabric in one T-shirt
+,
+Activity,T-shirt
+production amount,1
+reference product,T-shirt
+location,GLO
+unit,unit
+comment,One T-shirt
+Exchanges
+name,amount,unit,location,type,database,reference product,formula,categories,comment,uncertainty type,loc,scale,minimum,maximum
+T-shirt,1,unit,GLO,production,toy-foreground,T-shirt,,,,,,,,
+cotton fabric production,0.25,kilogram,GLO,technosphere,toy-background,cotton fabric,,,Fabric in the bill of materials,2,-1.3862943611198906,0.09531017980432493,,
+electricity production,0.5,kilowatt hour,GLO,technosphere,toy-background,electricity,,,,,,,,
+incineration of textile waste,-0.05,kilogram,GLO,technosphere,toy-background,textile waste,,,Scraps sent to incineration,4,,,-0.06,-0.04

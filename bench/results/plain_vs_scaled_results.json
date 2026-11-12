@@ -1,0 +1,959 @@
+{
+ "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+ "method": "EF-3.1 3.1",
+ "machine": "arm64, Darwin 25.6.0",
+ "python": "3.14.3",
+ "numpy": "2.5.3",
+ "scipy": "1.18.1",
+ "date": "2026-10-24",
+ "load_average_start": [
+  5.54,
+  5.6,
+  5.68
+ ],
+ "load_average_end": [
+  8.2,
+  7.53,
+  6.52
+ ],
+ "processes": 26533,
+ "non_zeros": 335769,
+ "plain_factorizations": {
+  "plain_lu_of_A": {
+   "seconds": 86.0,
+   "non_zeros": 61794546
+  },
+  "plain_lu_of_At": {
+   "seconds": 2.9,
+   "non_zeros": 7383033
+  }
+ },
+ "relative_threshold": 1e-06,
+ "indicators": {
+  "acidification": {
+   "products": 26533,
+   "exact_zeros": 2018,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00013399960173392936,
+    "above_1e-9": 18867,
+    "above_1e-6": 194,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 194,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00013399960173392892,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.36686629728123e-22,
+    "backward_error_rowwise_max": 6.700690749532459e-05,
+    "rows_above_1e-12": 9507
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 6.44944233678263e-07,
+    "above_1e-9": 1085,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 1.0625750105735668e-13,
+    "backward_error_normwise": 5.216661342280077e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1344
+   },
+   "scaled": {
+    "largest_relative": 9.551615613707167e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.2446744457043945e-27,
+    "backward_error_rowwise_max": 3.744073809467866e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "climate-change": {
+   "products": 26533,
+   "exact_zeros": 1779,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00027937585896421134,
+    "above_1e-9": 15938,
+    "above_1e-6": 127,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 124,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00027934507105211804,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 6.364331597805402e-23,
+    "backward_error_rowwise_max": 0.0001397151808663649,
+    "rows_above_1e-12": 9435
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 9.517172246804511e-07,
+    "above_1e-9": 377,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 1.958390373751545e-11,
+    "backward_error_normwise": 3.559780520700667e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1042
+   },
+   "scaled": {
+    "largest_relative": 3.0552470031151745e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 4.387258616296988e-28,
+    "backward_error_rowwise_max": 3.032996413344221e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "climate-change-biogenic": {
+   "products": 26533,
+   "exact_zeros": 2081,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0017646276167315132,
+    "above_1e-9": 19572,
+    "above_1e-6": 686,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 686,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00176462761673155,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 3.53293950021709e-22,
+    "backward_error_rowwise_max": 0.0008795634484100211,
+    "rows_above_1e-12": 9363
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.3379056966323662e-05,
+    "above_1e-9": 3757,
+    "above_1e-6": 7,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 7,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.337905696632381e-05,
+    "largest_absolute_at_exact_zeros": 1.2030808838392205e-13,
+    "backward_error_normwise": 6.780991213096567e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1623
+   },
+   "scaled": {
+    "largest_relative": 1.861890462805553e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 2.6550209107896074e-28,
+    "backward_error_rowwise_max": 4.142201442050236e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "climate-change-fossil": {
+   "products": 26533,
+   "exact_zeros": 2039,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00022936325817830532,
+    "above_1e-9": 16103,
+    "above_1e-6": 154,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 154,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00022939000598208318,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.195254307805527e-23,
+    "backward_error_rowwise_max": 0.00011469597470494185,
+    "rows_above_1e-12": 9597
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 6.580202649110929e-07,
+    "above_1e-9": 360,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 3.0954132254419755e-11,
+    "backward_error_normwise": 6.747312726119105e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1094
+   },
+   "scaled": {
+    "largest_relative": 3.0666180288893788e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 2.4419194934944396e-27,
+    "backward_error_rowwise_max": 3.5496797745886037e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "climate-change-land-use-and-land-use-change": {
+   "products": 26533,
+   "exact_zeros": 1910,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0014314246942308928,
+    "above_1e-9": 17941,
+    "above_1e-6": 660,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 644,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0013858058600288155,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 4.981634632800996e-23,
+    "backward_error_rowwise_max": 0.0007162254307055689,
+    "rows_above_1e-12": 9861
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.1904471366579458e-05,
+    "above_1e-9": 1231,
+    "above_1e-6": 1,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.1627226168858858e-05,
+    "largest_absolute_at_exact_zeros": 3.193893563414172e-14,
+    "backward_error_normwise": 1.2798158659801966e-27,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1275
+   },
+   "scaled": {
+    "largest_relative": 2.290020781923801e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.013011755703799e-27,
+    "backward_error_rowwise_max": 3.117680083775356e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "ecotoxicity-freshwater": {
+   "products": 26533,
+   "exact_zeros": 1889,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0003348793645558814,
+    "above_1e-9": 17329,
+    "above_1e-6": 232,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 232,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0003349885778446256,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 2.616993530729796e-22,
+    "backward_error_rowwise_max": 0.0001675268177488344,
+    "rows_above_1e-12": 9433
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 5.119455848208284e-07,
+    "above_1e-9": 860,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 8.034366485041222e-11,
+    "backward_error_normwise": 2.6138932803045153e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1205
+   },
+   "scaled": {
+    "largest_relative": 1.2864315745378686e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 6.33494992010524e-28,
+    "backward_error_rowwise_max": 4.208565073147168e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "ecotoxicity-freshwater-inorganics": {
+   "products": 26533,
+   "exact_zeros": 1891,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0001628322458115232,
+    "above_1e-9": 17814,
+    "above_1e-6": 301,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 301,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00016283074265244292,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 2.6023161056930546e-22,
+    "backward_error_rowwise_max": 8.133895219192512e-05,
+    "rows_above_1e-12": 9491
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 2.0536578536230603e-06,
+    "above_1e-9": 790,
+    "above_1e-6": 5,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 5,
+    "largest_difference_over_gross_of_those_above_1e-6": 2.0536590297672313e-06,
+    "largest_absolute_at_exact_zeros": 2.6396122205578133e-11,
+    "backward_error_normwise": 3.4258744957211036e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1290
+   },
+   "scaled": {
+    "largest_relative": 1.3262868194452422e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.4612832126864248e-27,
+    "backward_error_rowwise_max": 4.345250753732701e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "ecotoxicity-freshwater-organics": {
+   "products": 26533,
+   "exact_zeros": 2003,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00025108884918856463,
+    "above_1e-9": 16920,
+    "above_1e-6": 329,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 329,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0002510888491885647,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 2.754353324607577e-22,
+    "backward_error_rowwise_max": 0.0001257929858989463,
+    "rows_above_1e-12": 9758
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 4.862448071108923e-07,
+    "above_1e-9": 923,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 4.024001231233271e-11,
+    "backward_error_normwise": 1.452792890836353e-27,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1136
+   },
+   "scaled": {
+    "largest_relative": 6.905302980537882e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 7.263964454194728e-28,
+    "backward_error_rowwise_max": 3.6879281852169015e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "energy-resources-non-renewable": {
+   "products": 26533,
+   "exact_zeros": 2147,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00017750912798715853,
+    "above_1e-9": 14926,
+    "above_1e-6": 336,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 336,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00017750912798715843,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.687375090195364e-23,
+    "backward_error_rowwise_max": 8.86770663102674e-05,
+    "rows_above_1e-12": 9495
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 2.8678361361553536e-06,
+    "above_1e-9": 703,
+    "above_1e-6": 1,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1,
+    "largest_difference_over_gross_of_those_above_1e-6": 2.867836136155349e-06,
+    "largest_absolute_at_exact_zeros": 2.0438222057625218e-10,
+    "backward_error_normwise": 4.286041899659874e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1096
+   },
+   "scaled": {
+    "largest_relative": 2.72267042580368e-10,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.075289646256236e-28,
+    "backward_error_rowwise_max": 5.1248279218506784e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "eutrophication-freshwater": {
+   "products": 26533,
+   "exact_zeros": 1976,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00033253246010810826,
+    "above_1e-9": 19706,
+    "above_1e-6": 381,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 381,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0003325324601081104,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 9.563058557642622e-23,
+    "backward_error_rowwise_max": 0.0001720056491645194,
+    "rows_above_1e-12": 9833
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 8.331372746404003e-06,
+    "above_1e-9": 1184,
+    "above_1e-6": 7,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 7,
+    "largest_difference_over_gross_of_those_above_1e-6": 8.33144215875417e-06,
+    "largest_absolute_at_exact_zeros": 1.7359660197007487e-14,
+    "backward_error_normwise": 7.236965407182559e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1425
+   },
+   "scaled": {
+    "largest_relative": 1.2208671584903123e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.784497459740282e-28,
+    "backward_error_rowwise_max": 3.1637787612816234e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "eutrophication-marine": {
+   "products": 26533,
+   "exact_zeros": 1919,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0001907805728864421,
+    "above_1e-9": 13887,
+    "above_1e-6": 70,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 70,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00019078057288644218,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.1573600552768132e-22,
+    "backward_error_rowwise_max": 9.539725729013349e-05,
+    "rows_above_1e-12": 9382
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 5.537094558227818e-07,
+    "above_1e-9": 221,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 7.391560885215845e-14,
+    "backward_error_normwise": 6.271841990680329e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1062
+   },
+   "scaled": {
+    "largest_relative": 1.133954193208958e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.917180309780354e-28,
+    "backward_error_rowwise_max": 3.717002506110644e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "eutrophication-terrestrial": {
+   "products": 26533,
+   "exact_zeros": 2015,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00011585950932466476,
+    "above_1e-9": 17150,
+    "above_1e-6": 155,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 155,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00011585950932466445,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.038909423146636e-22,
+    "backward_error_rowwise_max": 5.7933978399569346e-05,
+    "rows_above_1e-12": 9587
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 7.999175135948512e-07,
+    "above_1e-9": 610,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 4.469471395785073e-13,
+    "backward_error_normwise": 9.926255328941894e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1300
+   },
+   "scaled": {
+    "largest_relative": 8.254010128474026e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.000126910396738e-27,
+    "backward_error_rowwise_max": 4.185312672591038e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "human-toxicity-carcinogenic": {
+   "products": 26533,
+   "exact_zeros": 1894,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0002037562156328578,
+    "above_1e-9": 17581,
+    "above_1e-6": 340,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 323,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00020374322639516522,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.579715487004079e-22,
+    "backward_error_rowwise_max": 0.00010188298702657859,
+    "rows_above_1e-12": 9661
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.9745826643550503e-06,
+    "above_1e-9": 1211,
+    "above_1e-6": 1,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.9744247673629382e-06,
+    "largest_absolute_at_exact_zeros": 2.240841935838141e-20,
+    "backward_error_normwise": 5.4052285557147775e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1368
+   },
+   "scaled": {
+    "largest_relative": 2.601118303598162e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.5257091607767976e-27,
+    "backward_error_rowwise_max": 3.968453832289775e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "human-toxicity-carcinogenic-inorganics": {
+   "products": 26533,
+   "exact_zeros": 1899,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0004154169906201219,
+    "above_1e-9": 20046,
+    "above_1e-6": 468,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 450,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00041538378831667064,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 3.322740989143786e-22,
+    "backward_error_rowwise_max": 0.00020779577081256825,
+    "rows_above_1e-12": 9690
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.8886914931084554e-05,
+    "above_1e-9": 1781,
+    "above_1e-6": 12,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 12,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.8878046543400083e-05,
+    "largest_absolute_at_exact_zeros": 5.654041380632011e-20,
+    "backward_error_normwise": 1.0718885347210788e-27,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1624
+   },
+   "scaled": {
+    "largest_relative": 1.4309324104182433e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 5.634242086785845e-28,
+    "backward_error_rowwise_max": 2.4659747470868194e-14,
+    "rows_above_1e-12": 0
+   }
+  },
+  "human-toxicity-carcinogenic-organics": {
+   "products": 26533,
+   "exact_zeros": 2099,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00042868931122724797,
+    "above_1e-9": 17932,
+    "above_1e-6": 388,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 388,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0004288731645687764,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 3.522472006604786e-22,
+    "backward_error_rowwise_max": 0.00021439183498523086,
+    "rows_above_1e-12": 9759
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.505995685724484e-06,
+    "above_1e-9": 959,
+    "above_1e-6": 1,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.5059979537509463e-06,
+    "largest_absolute_at_exact_zeros": 4.295734915679431e-20,
+    "backward_error_normwise": 9.580084552369945e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1310
+   },
+   "scaled": {
+    "largest_relative": 1.449611406262572e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.1947100358292665e-27,
+    "backward_error_rowwise_max": 4.102009416584451e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "human-toxicity-non-carcinogenic": {
+   "products": 26533,
+   "exact_zeros": 1887,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0002766486208145029,
+    "above_1e-9": 19976,
+    "above_1e-6": 472,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 470,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.000276604610554328,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 8.51302327986457e-22,
+    "backward_error_rowwise_max": 0.00013060087282324502,
+    "rows_above_1e-12": 9649
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.1477105882141119e-05,
+    "above_1e-9": 1187,
+    "above_1e-6": 6,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 6,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.1473531993098325e-05,
+    "largest_absolute_at_exact_zeros": 1.7240078651906916e-19,
+    "backward_error_normwise": 1.2914272105963947e-27,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1506
+   },
+   "scaled": {
+    "largest_relative": 3.785101438492565e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.0714785069042244e-27,
+    "backward_error_rowwise_max": 3.555812286933558e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "human-toxicity-non-carcinogenic-inorganics": {
+   "products": 26533,
+   "exact_zeros": 1893,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00038107019453447345,
+    "above_1e-9": 20356,
+    "above_1e-6": 523,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 492,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00038040476199174074,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 5.076344478246038e-22,
+    "backward_error_rowwise_max": 0.00019143003416805082,
+    "rows_above_1e-12": 9652
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 9.621149142588407e-07,
+    "above_1e-9": 1252,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 8.412416624879736e-19,
+    "backward_error_normwise": 3.728901110524853e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1494
+   },
+   "scaled": {
+    "largest_relative": 3.7564339655769036e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 5.116821165674474e-28,
+    "backward_error_rowwise_max": 3.903449337939783e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "human-toxicity-non-carcinogenic-organics": {
+   "products": 26533,
+   "exact_zeros": 2001,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00040432600584271546,
+    "above_1e-9": 21059,
+    "above_1e-6": 694,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 694,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0004044895514874734,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 2.2940755726437447e-21,
+    "backward_error_rowwise_max": 0.00020220821557779213,
+    "rows_above_1e-12": 9676
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 5.457726205423802e-06,
+    "above_1e-9": 1477,
+    "above_1e-6": 3,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 3,
+    "largest_difference_over_gross_of_those_above_1e-6": 5.457755992361706e-06,
+    "largest_absolute_at_exact_zeros": 6.498009193953964e-20,
+    "backward_error_normwise": 4.728021738003853e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1545
+   },
+   "scaled": {
+    "largest_relative": 4.3173449600885696e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.059398021224679e-27,
+    "backward_error_rowwise_max": 3.38459360140485e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "ionising-radiation-human-health": {
+   "products": 26533,
+   "exact_zeros": 2142,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0014298583655843848,
+    "above_1e-9": 16069,
+    "above_1e-6": 393,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 393,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.001429858365584298,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.1630018716608045e-23,
+    "backward_error_rowwise_max": 0.0007162650462774128,
+    "rows_above_1e-12": 10001
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 2.245361130810078e-05,
+    "above_1e-9": 1111,
+    "above_1e-6": 1,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1,
+    "largest_difference_over_gross_of_those_above_1e-6": 2.2454115484080576e-05,
+    "largest_absolute_at_exact_zeros": 4.898908266164866e-13,
+    "backward_error_normwise": 3.0982080134367665e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1444
+   },
+   "scaled": {
+    "largest_relative": 1.7876739594679973e-09,
+    "above_1e-9": 2,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.6576755976808573e-28,
+    "backward_error_rowwise_max": 3.949980571306035e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "land-use": {
+   "products": 26533,
+   "exact_zeros": 1645,
+   "plain_lu_of_A": {
+    "largest_relative": 1.4184507571002034,
+    "above_1e-9": 20811,
+    "above_1e-6": 1950,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1055,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0004611255309590934,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 7.329030790105945e-23,
+    "backward_error_rowwise_max": 0.1749517647205784,
+    "rows_above_1e-12": 9682
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.4184507571002034,
+    "above_1e-9": 4188,
+    "above_1e-6": 207,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 4,
+    "largest_difference_over_gross_of_those_above_1e-6": 8.486760539561638e-06,
+    "largest_absolute_at_exact_zeros": 2.7722508525335827e-09,
+    "backward_error_normwise": 2.3375073048787333e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1767
+   },
+   "scaled": {
+    "largest_relative": 1.4184507571002034,
+    "above_1e-9": 200,
+    "above_1e-6": 195,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.1496935886213272e-16,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 3.506260957318261e-28,
+    "backward_error_rowwise_max": 3.8372011904946535e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "material-resources-metals-minerals": {
+   "products": 26533,
+   "exact_zeros": 2155,
+   "plain_lu_of_A": {
+    "largest_relative": 0.019015233755011844,
+    "above_1e-9": 22728,
+    "above_1e-6": 2162,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 2162,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.019015228431635327,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.95776823569328e-21,
+    "backward_error_rowwise_max": 0.009598829921971539,
+    "rows_above_1e-12": 9894
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 9.70919347763711e-05,
+    "above_1e-9": 4863,
+    "above_1e-6": 15,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 15,
+    "largest_difference_over_gross_of_those_above_1e-6": 9.71013565914059e-05,
+    "largest_absolute_at_exact_zeros": 3.972753252884135e-15,
+    "backward_error_normwise": 5.4702654568208905e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1826
+   },
+   "scaled": {
+    "largest_relative": 2.9203834736924336e-10,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.044711087777864e-27,
+    "backward_error_rowwise_max": 3.725540299479418e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "ozone-depletion": {
+   "products": 26533,
+   "exact_zeros": 2154,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00021907473892882225,
+    "above_1e-9": 14058,
+    "above_1e-6": 277,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 277,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00021907473892877625,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.891117084017134e-22,
+    "backward_error_rowwise_max": 0.00010954612889879628,
+    "rows_above_1e-12": 9829
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 4.5534321821874337e-07,
+    "above_1e-9": 633,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 5.010408219104944e-19,
+    "backward_error_normwise": 5.624955294074031e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1090
+   },
+   "scaled": {
+    "largest_relative": 1.1038900144245769e-10,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 9.490498830711998e-28,
+    "backward_error_rowwise_max": 4.124956403933567e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "particulate-matter-formation": {
+   "products": 26533,
+   "exact_zeros": 2003,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0002038337895739716,
+    "above_1e-9": 17145,
+    "above_1e-6": 228,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 228,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00020383378957397142,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.132626223451178e-22,
+    "backward_error_rowwise_max": 0.00010192463719712938,
+    "rows_above_1e-12": 9676
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 8.100948455311263e-07,
+    "above_1e-9": 1119,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 5.324319869439309e-18,
+    "backward_error_normwise": 3.964580372600052e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1360
+   },
+   "scaled": {
+    "largest_relative": 1.3805832528802334e-11,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.6446813889449804e-27,
+    "backward_error_rowwise_max": 3.3297707007231456e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "photochemical-oxidant-formation-human-health": {
+   "products": 26533,
+   "exact_zeros": 2013,
+   "plain_lu_of_A": {
+    "largest_relative": 0.00013069846291622315,
+    "above_1e-9": 16399,
+    "above_1e-6": 167,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 167,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.00013071520546868815,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.2169051219371606e-22,
+    "backward_error_rowwise_max": 6.549514553703148e-05,
+    "rows_above_1e-12": 9850
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 6.121814828031832e-07,
+    "above_1e-9": 330,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 1.224000967587061e-13,
+    "backward_error_normwise": 4.341666091732337e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1135
+   },
+   "scaled": {
+    "largest_relative": 2.1353292452333955e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.4161423396420833e-27,
+    "backward_error_rowwise_max": 4.3980622620161335e-15,
+    "rows_above_1e-12": 0
+   }
+  },
+  "water-use": {
+   "products": 26533,
+   "exact_zeros": 2091,
+   "plain_lu_of_A": {
+    "largest_relative": 0.0009174826831571348,
+    "above_1e-9": 14987,
+    "above_1e-6": 231,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 231,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0009174826831571335,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.6593835295266053e-22,
+    "backward_error_rowwise_max": 0.00045908489142702834,
+    "rows_above_1e-12": 9412
+   },
+   "plain_lu_of_At": {
+    "largest_relative": 1.966368218945248e-06,
+    "above_1e-9": 414,
+    "above_1e-6": 1,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 1,
+    "largest_difference_over_gross_of_those_above_1e-6": 1.9663720855568282e-06,
+    "largest_absolute_at_exact_zeros": 2.6754712169581457e-12,
+    "backward_error_normwise": 6.112913313594195e-28,
+    "backward_error_rowwise_max": 1.0,
+    "rows_above_1e-12": 1107
+   },
+   "scaled": {
+    "largest_relative": 2.535312664287809e-12,
+    "above_1e-9": 0,
+    "above_1e-6": 0,
+    "above_1e-6_and_off_by_more_than_1e-6_of_gross": 0,
+    "largest_difference_over_gross_of_those_above_1e-6": 0.0,
+    "largest_absolute_at_exact_zeros": 0.0,
+    "backward_error_normwise": 1.5502043925612266e-27,
+    "backward_error_rowwise_max": 3.660834292580507e-15,
+    "rows_above_1e-12": 0
+   }
+  }
+ }
+}

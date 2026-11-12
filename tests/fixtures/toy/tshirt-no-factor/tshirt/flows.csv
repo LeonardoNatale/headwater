@@ -1,0 +1,3 @@
+id,name,kind,unit,compartment,cas
+tshirt:tshirt,T-shirt,product,unit,,
+tshirt:cod,"COD, Chemical Oxygen Demand",elementary,kg,water,

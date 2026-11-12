@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validElementaryExchanges xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="1" minorRelease="0" majorRevision="0" minorRevision="0">
+  <elementaryExchange id="e0000000-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000001" casNumber="124-38-9">
+    <name xml:lang="en">Carbon dioxide, fossil</name>
+    <unitName xml:lang="en">kg</unitName>
+    <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+      <compartment xml:lang="en">air</compartment>
+      <subcompartment xml:lang="en">unspecified</subcompartment>
+    </compartment>
+  </elementaryExchange>
+  <elementaryExchange id="e0000000-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000001" casNumber="74-82-8">
+    <name xml:lang="en">Methane, fossil</name>
+    <unitName xml:lang="en">kg</unitName>
+    <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+      <compartment xml:lang="en">air</compartment>
+      <subcompartment xml:lang="en">unspecified</subcompartment>
+    </compartment>
+  </elementaryExchange>
+</validElementaryExchanges>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validIntermediateExchanges xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="1" minorRelease="0" majorRevision="0" minorRevision="0">
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">cotton fabric</name>
+    <unitName xml:lang="en">kg</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000002">
+    <name xml:lang="en">electricity</name>
+    <unitName xml:lang="en">kWh</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">textile waste</name>
+    <unitName xml:lang="en">kg</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">Waste</classificationValue>
+        </classification>
+  </intermediateExchange>
+</validIntermediateExchanges>

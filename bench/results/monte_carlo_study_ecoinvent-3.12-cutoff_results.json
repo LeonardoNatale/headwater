@@ -1,0 +1,46 @@
+{
+  "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+  "method": "EF-3.1",
+  "study": "the 3.12 pilot, 40 processes, every line lognormal with GSD 1.1, one override",
+  "items": [
+    "study",
+    "study[mc-scenario]"
+  ],
+  "iterations": 200,
+  "seed": 0,
+  "seconds": 783.0,
+  "seconds_per_iteration": 3.9,
+  "background_alone_seconds_per_iteration": 3.705,
+  "background_lines": {
+    "lognormal": 610544,
+    "normal": 5949,
+    "triangular": 816,
+    "uniform": 1
+  },
+  "database_lines": {
+    "lognormal": 719
+  },
+  "parameters": 0,
+  "largest_condition": 429000.0,
+  "residual": 9.92e-13,
+  "pivoted": 0,
+  "opposite_signs": 438571,
+  "load_average_before": [
+    3.96,
+    5.55,
+    5.42
+  ],
+  "load_average_after": [
+    3.39,
+    3.46,
+    3.96
+  ],
+  "machine": "arm64 Darwin 25.6.0",
+  "threads": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2"
+  },
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "headwater": "0.1.0.dev0"
+}

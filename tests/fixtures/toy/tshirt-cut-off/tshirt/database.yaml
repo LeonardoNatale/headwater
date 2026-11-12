@@ -1,0 +1,4 @@
+name: tshirt
+background: toy-background@fixture
+methods: [toy-climate]
+cut_off: {criteria: [mass, energy], max_cumulative: 0.05}

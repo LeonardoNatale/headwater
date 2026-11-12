@@ -1,0 +1,13 @@
+Method,Category,Indicator,Indicator Unit
+EF v3.1,climate change,global warming potential (GWP100),kg CO2-Eq
+EF v3.1,climate change: biogenic,global warming potential (GWP100),kg CO2-Eq
+EF v3.1,climate change: fossil,global warming potential (GWP100),kg CO2-Eq
+EF v3.1,climate change: land use and land use change,global warming potential (GWP100),kg CO2-Eq
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic (incl. CO2),global warming potential (GWP100),kg CO2-Eq
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic emissions (incl. CO2),global warming potential (GWP100),kg CO2-Eq
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic removals (incl. CO2),global warming potential (GWP100),kg CO2-Eq
+IPCC 2021 (incl. biogenic CO2),climate change: total (incl. biogenic CO2),global warming potential (GWP100),kg CO2-Eq
+IPCC 2021,climate change: direct land use change,global warming potential (GWP100),kg CO2-Eq
+IPCC 2021,climate change: fossil,global warming potential (GWP100),kg CO2-Eq
+IPCC 2021,climate change: total (excl. biogenic CO2),global warming potential (GWP100),kg CO2-Eq
+IPCC 2021,climate change: total (excl. biogenic CO2),global warming potential (GWP20),kg CO2-Eq

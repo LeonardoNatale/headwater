@@ -1,0 +1,46 @@
+{
+  "extract_from_brightway_pickles": {
+    "s": 4.175,
+    "nodes": 27884,
+    "edges": 743398
+  },
+  "parquet_mb": 17.1,
+  "load_into_duckdb_with_pk_fk": {
+    "s": 2.067,
+    "file_mb": 68.7
+  },
+  "query_and_build_matrices": {
+    "s": 0.069,
+    "A": [
+      23522,
+      23522
+    ],
+    "A_nnz": 292955,
+    "B": [
+      4362,
+      23522
+    ]
+  },
+  "adjoint_solve_all_scores": {
+    "s": 2.14
+  },
+  "max_rel_diff_vs_bw2calc_10_products": 7.15071060173261e-08,
+  "negative_production_amounts": 4086,
+  "negative_technosphere_inputs": 46145,
+  "units_distinct": 21,
+  "update_one_edge": {
+    "s": 0.003
+  },
+  "rebuild_from_db_and_solve_after_edit": {
+    "s": 2.126
+  },
+  "fk_dangling_insert": "rejected: ConstraintException",
+  "second_process_while_writer_open": [
+    "rw IOException IO Error: Could not set lock on file \"<db path>",
+    "ro IOException IO Error: Could not set lock on file \"<db path>"
+  ],
+  "second_process_after_writer_closed": [
+    "rw opened",
+    "ro opened"
+  ]
+}

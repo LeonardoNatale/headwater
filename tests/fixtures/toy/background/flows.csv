@@ -1,0 +1,6 @@
+id,name,kind,unit,compartment,cas
+toy:cotton-fabric,cotton fabric,product,kg,,
+toy:electricity,electricity,product,kWh,,
+toy:textile-waste,textile waste,waste,kg,,
+toy:co2,"Carbon dioxide, fossil",elementary,kg,air,124-38-9
+toy:ch4,"Methane, fossil",elementary,kg,air,74-82-8

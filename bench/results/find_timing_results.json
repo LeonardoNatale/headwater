@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-24",
+  "machine": "arm64 Darwin 25.6.0",
+  "python": "3.14.3",
+  "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+  "load_average_before": [
+    4.47,
+    4.83,
+    5.22
+  ],
+  "cli": {
+    "best_s": 2.402,
+    "worst_s": 2.465
+  },
+  "start_up": {
+    "help_best_s": 2.541,
+    "help_worst_s": 2.572,
+    "import_s": {
+      "pandas": 0.87,
+      "pyarrow.dataset": 0.91,
+      "headwater.cli": 2.22
+    }
+  },
+  "table": {
+    "processes": 26533,
+    "first_ms": 47.868,
+    "best_of_5_ms": 44.21
+  },
+  "queries": [
+    {
+      "query": "an exact name with its place",
+      "found": 2,
+      "median_ms": 3.938,
+      "max_ms": 8.266
+    },
+    {
+      "query": "an exact name, every place",
+      "found": 2,
+      "median_ms": 10.931,
+      "max_ms": 13.713
+    },
+    {
+      "query": "words of a name, in any order",
+      "found": 2,
+      "median_ms": 8.376,
+      "max_ms": 11.45
+    },
+    {
+      "query": "a short word that many names start with",
+      "found": 20,
+      "median_ms": 8.482,
+      "max_ms": 9.078
+    },
+    {
+      "query": "a product, with its place",
+      "found": 20,
+      "median_ms": 1.953,
+      "max_ms": 2.465
+    },
+    {
+      "query": "one letter, which almost every name has, no limit",
+      "found": 25722,
+      "median_ms": 69.741,
+      "max_ms": 85.949
+    },
+    {
+      "query": "no match",
+      "found": 0,
+      "median_ms": 9.786,
+      "max_ms": 10.347
+    }
+  ],
+  "background": {
+    "load_s": 5.52,
+    "first_find_ms": 45.064,
+    "best_of_5_find_ms": 8.218
+  },
+  "load_average_after": [
+    4.11,
+    4.72,
+    5.17
+  ]
+}

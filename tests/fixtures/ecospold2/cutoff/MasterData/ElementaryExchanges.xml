@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validElementaryExchanges xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="3" minorRelease="0" majorRevision="0" minorRevision="1">
+  <elementaryExchange id="e0000000-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000001" formula="CO2" casNumber="000124-38-9">
+    <name xml:lang="en">Carbon dioxide, fossil</name>
+    <unitName xml:lang="en">kg</unitName>
+    <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+      <compartment xml:lang="en">air</compartment>
+      <subcompartment xml:lang="en">urban air close to ground</subcompartment>
+    </compartment>
+  </elementaryExchange>
+  <elementaryExchange id="e0000000-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000001" formula="Cd" casNumber="007440-43-9">
+    <name xml:lang="en">Cadmium</name>
+    <unitName xml:lang="en">kg</unitName>
+    <compartment subcompartmentId="a2000000-0000-4000-8000-000000000002">
+      <compartment xml:lang="en">soil</compartment>
+      <subcompartment xml:lang="en">agricultural</subcompartment>
+    </compartment>
+  </elementaryExchange>
+  <elementaryExchange id="e0000000-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000001" formula="CO2" casNumber="000124-38-9">
+    <name xml:lang="en">Carbon dioxide, in air</name>
+    <unitName xml:lang="en">kg</unitName>
+    <compartment subcompartmentId="a2000000-0000-4000-8000-000000000003">
+      <compartment xml:lang="en">natural resource</compartment>
+      <subcompartment xml:lang="en">in air</subcompartment>
+    </compartment>
+  </elementaryExchange>
+  <elementaryExchange id="e0000000-0000-4000-8000-000000000004" unitId="f0000000-0000-4000-8000-000000000001" formula="CH4" casNumber="000074-82-8">
+    <name xml:lang="en">Methane, fossil</name>
+    <unitName xml:lang="en">kg</unitName>
+    <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+      <compartment xml:lang="en">air</compartment>
+      <subcompartment xml:lang="en">urban air close to ground</subcompartment>
+    </compartment>
+  </elementaryExchange>
+</validElementaryExchanges>

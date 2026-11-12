@@ -1,0 +1,25 @@
+{
+  "scope": {
+    "machine": "arm64 Darwin 25.6.0",
+    "python": "3.14.3",
+    "scipy": "1.18.1",
+    "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+    "date": "2026-10-25",
+    "load_average": [
+      13.95,
+      11.02,
+      8.87
+    ]
+  },
+  "processes": 26533,
+  "groups": 9499,
+  "largest": [
+    16962,
+    13,
+    10,
+    8,
+    6
+  ],
+  "largest_share": 0.6393,
+  "processes_in_no_loop": 9484
+}

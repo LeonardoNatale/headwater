@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validIntermediateExchanges xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="3" minorRelease="0" majorRevision="0" minorRevision="1">
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">widget</name>
+    <unitName xml:lang="en">kg</unitName>
+    <classification classificationId="a1000000-0000-4000-8000-000000000001">
+      <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+      <classificationValue xml:lang="en">allocatable product</classificationValue>
+    </classification>
+    <classification classificationId="a1000000-0000-4000-8000-000000000009">
+      <classificationSystem xml:lang="en">CPC</classificationSystem>
+      <classificationValue xml:lang="en">0000: Toy products</classificationValue>
+    </classification>
+    <property propertyId="d0000000-0000-4000-8000-000000000001" amount="2.5"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000002" amount="1"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000003" amount="0.9"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000004" amount="0.4"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000005" amount="0"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000006" amount="0.11"/>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000002">
+    <name xml:lang="en">electricity</name>
+    <unitName xml:lang="en">kWh</unitName>
+    <classification classificationId="a1000000-0000-4000-8000-000000000001">
+      <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+      <classificationValue xml:lang="en">allocatable product</classificationValue>
+    </classification>
+    <property propertyId="d0000000-0000-4000-8000-000000000001" amount="0.1"/>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000003" casNumber="008006-14-2">
+    <name xml:lang="en">natural gas</name>
+    <unitName xml:lang="en">m3</unitName>
+    <classification classificationId="a1000000-0000-4000-8000-000000000001">
+      <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+      <classificationValue xml:lang="en">allocatable product</classificationValue>
+    </classification>
+    <property propertyId="d0000000-0000-4000-8000-000000000007" amount="36"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000008" amount="40"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000002" amount="0.8"/>
+    <property propertyId="d0000000-0000-4000-8000-000000000001" amount="0.3"/>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000004" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">waste widget</name>
+    <unitName xml:lang="en">kg</unitName>
+    <classification classificationId="a1000000-0000-4000-8000-000000000002">
+      <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+      <classificationValue xml:lang="en">Waste</classificationValue>
+    </classification>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000005" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">scrap metal</name>
+    <unitName xml:lang="en">kg</unitName>
+    <classification classificationId="a1000000-0000-4000-8000-000000000003">
+      <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+      <classificationValue xml:lang="en">Recyclable</classificationValue>
+    </classification>
+    <property propertyId="d0000000-0000-4000-8000-000000000001" amount="0"/>
+  </intermediateExchange>
+  <intermediateExchange id="b0000000-0000-4000-8000-000000000006" unitId="f0000000-0000-4000-8000-000000000004">
+    <name xml:lang="en">spare part</name>
+    <unitName xml:lang="en">unit</unitName>
+    <classification classificationId="a1000000-0000-4000-8000-000000000001">
+      <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+      <classificationValue xml:lang="en">allocatable product</classificationValue>
+    </classification>
+    <property propertyId="d0000000-0000-4000-8000-000000000002" amount="2"/>
+  </intermediateExchange>
+</validIntermediateExchanges>

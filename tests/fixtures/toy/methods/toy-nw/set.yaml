@@ -1,0 +1,8 @@
+id: toy-nw
+version: '1'
+method:
+  id: toy-impacts
+  version: '1'
+  hash: bdc4e5667236ebb5e84a94a1ce947966bf780a3126598adaf2ce4248d7cc6832
+unit: Pt
+source: Made up for the toy, so every number can be checked by hand

@@ -1,0 +1,27 @@
+Activity,Cases
+production amount,1
+reference product,cases
+location,GLO
+unit,unit
+comment,One activity with a line for each way a line can fail to map
+Exchanges
+name,amount,unit,location,type,database,reference product,formula,categories,comment,uncertainty type,scale,tag
+Cases,1,unit,GLO,production,toy-foreground,cases,,,,,,
+cotton fabric production,0.25,kilogram,GLO,technosphere,toy-background,cotton fabric,,,case: mapped,2,0.1,keep
+cotton fabric production ring spun,1,kilogram,GLO,technosphere,toy-background,cotton fabric,,,case: renamed supplier,,,
+electricity production,1,kilowatt hour,RER,technosphere,toy-background,electricity,,,case: wrong location,,,
+cotton fabric production,1,furlong,GLO,technosphere,toy-background,cotton fabric,,,case: unknown unit,,,
+cotton fabric production,1,kilowatt hour,GLO,technosphere,toy-background,cotton fabric,,,case: wrong quantity,,,
+electricity production,-1,kilowatt hour,GLO,technosphere,toy-background,electricity,,,case: negative to a product,,,
+incineration of textile waste,1,kilogram,GLO,technosphere,toy-background,textile waste,,,case: positive to a treatment,,,
+electricity production,1,kilowatt hour,GLO,bridge,toy-background,electricity,,,case: unknown type,,,
+electricity production,1,kilowatt hour,GLO,,toy-background,electricity,,,case: no type,,,
+Radon-222,1,kilogram,,biosphere,toy-biosphere,,,air,case: unknown biosphere flow,,,
+"Carbon dioxide, fossil",1,kilogram,,biosphere,toy-biosphere,,,,case: no categories,,,
+textile dye,1,kilogram,GLO,technosphere,Textile Chemicals,dye,,,case: other foreground database,,,
+finishing,1,kilogram,GLO,technosphere,toy-foreground,finishing,,,case: activity not in the workbook,,,
+electricity production,0.5,kilowatt hour,GLO,technosphere,toy-background,electricity,fabric_kg ^ 2,,case: caret in a formula,,,
+electricity production,0.5,kilowatt hour,GLO,technosphere,toy-background,electricity,sin(fabric_kg),,case: unknown function,,,
+electricity production,0.5,kilowatt hour,GLO,technosphere,toy-background,electricity,no_such_parameter * 2,,case: unknown parameter,,,
+electricity production,,kilowatt hour,GLO,technosphere,toy-background,electricity,,,case: empty amount,,,
+electricity production,a lot,kilowatt hour,GLO,technosphere,toy-background,electricity,,,case: text amount,,,

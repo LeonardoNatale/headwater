@@ -1,0 +1,15 @@
+# Made up for the toy, so every number can be checked by hand. Both toy gases are fossil, so
+# climate change, fossil equals the total, as a sub-indicator of EF 3.1 is part of its total.
+id: toy-impacts
+version: "1"
+flow_list: toy
+indicators:
+  - id: climate-change
+    name: Climate change
+    unit: kg CO2-eq
+  - id: climate-change-fossil
+    name: Climate change, fossil
+    unit: kg CO2-eq
+  - id: ozone-formation
+    name: Photochemical ozone formation
+    unit: kg NMVOC-eq

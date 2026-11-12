@@ -1,0 +1,161 @@
+{
+  "before": {
+    "without_pandas": {
+      "date": "2026-10-25",
+      "machine": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "python": "3.14.3",
+      "headwater": "0.1.0.dev0",
+      "pandas_installed": false,
+      "runs": 5,
+      "load_before": 5.37,
+      "load_after": 6.04,
+      "commands": {
+        "--help": {
+          "best_s": 1.626,
+          "median_s": 1.729
+        },
+        "find --help": {
+          "best_s": 1.585,
+          "median_s": 1.646
+        },
+        "find, folder": {
+          "best_s": 1.445,
+          "median_s": 1.508
+        },
+        "calc, folder": {
+          "best_s": 1.432,
+          "median_s": 1.488
+        },
+        "find, release": {
+          "best_s": 1.413,
+          "median_s": 1.507
+        }
+      },
+      "libraries_loaded": [
+        "pyarrow",
+        "pyarrow.dataset",
+        "pyarrow.parquet",
+        "duckdb",
+        "scipy",
+        "scipy.sparse.linalg",
+        "numpy",
+        "pydantic",
+        "lxml",
+        "openpyxl"
+      ]
+    },
+    "with_pandas": {
+      "date": "2026-10-25",
+      "machine": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "python": "3.14.3",
+      "headwater": "0.1.0.dev0",
+      "pandas_installed": true,
+      "runs": 5,
+      "load_before": 5.86,
+      "load_after": 14.04,
+      "commands": {
+        "--help": {
+          "best_s": 2.327,
+          "median_s": 2.355
+        },
+        "find --help": {
+          "best_s": 2.377,
+          "median_s": 2.385
+        },
+        "find, folder": {
+          "best_s": 3.485,
+          "median_s": 4.13
+        },
+        "calc, folder": {
+          "best_s": 2.651,
+          "median_s": 3.994
+        },
+        "find, release": {
+          "best_s": 2.584,
+          "median_s": 4.095
+        }
+      },
+      "libraries_loaded": [
+        "pandas",
+        "pyarrow",
+        "pyarrow.dataset",
+        "pyarrow.parquet",
+        "duckdb",
+        "scipy",
+        "scipy.sparse.linalg",
+        "numpy",
+        "pydantic",
+        "lxml",
+        "openpyxl"
+      ]
+    }
+  },
+  "after": {
+    "without_pandas": {
+      "date": "2026-10-25",
+      "machine": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "python": "3.14.3",
+      "headwater": "0.1.0.dev0",
+      "pandas_installed": false,
+      "runs": 5,
+      "load_before": 14.03,
+      "load_after": 13.19,
+      "commands": {
+        "--help": {
+          "best_s": 0.355,
+          "median_s": 0.378
+        },
+        "find --help": {
+          "best_s": 0.66,
+          "median_s": 0.765
+        },
+        "find, folder": {
+          "best_s": 0.808,
+          "median_s": 0.904
+        },
+        "calc, folder": {
+          "best_s": 1.255,
+          "median_s": 1.333
+        },
+        "find, release": {
+          "best_s": 0.644,
+          "median_s": 0.661
+        }
+      },
+      "libraries_loaded": []
+    },
+    "with_pandas": {
+      "date": "2026-10-25",
+      "machine": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "python": "3.14.3",
+      "headwater": "0.1.0.dev0",
+      "pandas_installed": true,
+      "runs": 5,
+      "load_before": 12.23,
+      "load_after": 12.72,
+      "commands": {
+        "--help": {
+          "best_s": 0.35,
+          "median_s": 0.357
+        },
+        "find --help": {
+          "best_s": 0.565,
+          "median_s": 0.629
+        },
+        "find, folder": {
+          "best_s": 0.693,
+          "median_s": 0.716
+        },
+        "calc, folder": {
+          "best_s": 2.212,
+          "median_s": 2.444
+        },
+        "find, release": {
+          "best_s": 0.722,
+          "median_s": 0.893
+        }
+      },
+      "libraries_loaded": []
+    }
+  }
+}

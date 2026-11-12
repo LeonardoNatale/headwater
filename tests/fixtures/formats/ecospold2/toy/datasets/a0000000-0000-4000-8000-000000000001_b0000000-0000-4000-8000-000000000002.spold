@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ecoSpold xmlns="http://www.EcoInvent.org/EcoSpold02">
+  <activityDataset>
+    <activityDescription>
+      <activity id="a0000000-0000-4000-8000-000000000001" activityNameId="a4000000-0000-4000-8000-000000000001" specialActivityType="0" type="1">
+        <activityName xml:lang="en">electricity production</activityName>
+      </activity>
+      <geography geographyId="a4000000-0000-4000-8000-000000000001">
+        <shortname xml:lang="en">GLO</shortname>
+      </geography>
+    </activityDescription>
+    <flowData>
+      <intermediateExchange id="c0000001-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000002" amount="1" intermediateExchangeId="b0000000-0000-4000-8000-000000000002">
+        <name xml:lang="en">electricity</name>
+        <unitName xml:lang="en">kWh</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+        <outputGroup>0</outputGroup>
+      </intermediateExchange>
+      <elementaryExchange id="c0000001-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000001" amount="0.5" elementaryExchangeId="e0000000-0000-4000-8000-000000000001">
+        <name xml:lang="en">Carbon dioxide, fossil</name>
+        <unitName xml:lang="en">kg</unitName>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+          <compartment xml:lang="en">air</compartment>
+          <subcompartment xml:lang="en">unspecified</subcompartment>
+        </compartment>
+        <outputGroup>4</outputGroup>
+      </elementaryExchange>
+      <elementaryExchange id="c0000001-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000001" amount="0.001" elementaryExchangeId="e0000000-0000-4000-8000-000000000002">
+        <name xml:lang="en">Methane, fossil</name>
+        <unitName xml:lang="en">kg</unitName>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+          <compartment xml:lang="en">air</compartment>
+          <subcompartment xml:lang="en">unspecified</subcompartment>
+        </compartment>
+        <outputGroup>4</outputGroup>
+      </elementaryExchange>
+    </flowData>
+    <modellingAndValidation>
+      <representativeness systemModelId="290c1f85-4cc4-4fa1-b0c8-2cb7f4276dce">
+        <systemModelName xml:lang="en">Allocation, cut-off by classification</systemModelName>
+      </representativeness>
+    </modellingAndValidation>
+    <administrativeInformation>
+      <fileAttributes majorRelease="1" minorRelease="0" majorRevision="0" minorRevision="0" defaultLanguage="en"/>
+    </administrativeInformation>
+  </activityDataset>
+</ecoSpold>

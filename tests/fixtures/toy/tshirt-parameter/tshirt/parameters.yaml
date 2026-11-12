@@ -1,0 +1,5 @@
+database:
+  fabric_kg:
+    value: 0.25
+    unit: kg
+    comment: Fabric in one T-shirt, from the bill of materials

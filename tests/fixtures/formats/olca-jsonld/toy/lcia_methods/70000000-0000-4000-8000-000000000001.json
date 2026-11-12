@@ -1,0 +1,13 @@
+{
+  "@type": "ImpactMethod",
+  "@id": "70000000-0000-4000-8000-000000000001",
+  "name": "toy climate v1",
+  "impactCategories": [
+    {
+      "@type": "ImpactCategory",
+      "@id": "70000000-0000-4000-8000-000000000002",
+      "name": "Climate change",
+      "refUnit": "kg CO2-eq"
+    }
+  ]
+}

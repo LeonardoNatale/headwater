@@ -1,0 +1,21 @@
+Method,Category,Indicator,Name,Compartment,Subcompartment,CF
+EF v3.1,climate change,global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+EF v3.1,climate change,global warming potential (GWP100),"Carbon dioxide, from soil or biomass stock",air,urban air close to ground,1
+EF v3.1,climate change,global warming potential (GWP100),"Methane, non-fossil",air,urban air close to ground,27
+EF v3.1,climate change: biogenic,global warming potential (GWP100),"Methane, non-fossil",air,urban air close to ground,27
+EF v3.1,climate change: fossil,global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+EF v3.1,climate change: land use and land use change,global warming potential (GWP100),"Carbon dioxide, from soil or biomass stock",air,urban air close to ground,1
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic (incl. CO2),global warming potential (GWP100),"Carbon dioxide, in air",natural resource,in air,-1
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic (incl. CO2),global warming potential (GWP100),"Carbon dioxide, non-fossil",air,urban air close to ground,1
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic (incl. CO2),global warming potential (GWP100),"Methane, non-fossil",air,urban air close to ground,27
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic emissions (incl. CO2),global warming potential (GWP100),"Carbon dioxide, non-fossil",air,urban air close to ground,1
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic emissions (incl. CO2),global warming potential (GWP100),"Methane, non-fossil",air,urban air close to ground,27
+IPCC 2021 (incl. biogenic CO2),climate change: biogenic removals (incl. CO2),global warming potential (GWP100),"Carbon dioxide, in air",natural resource,in air,-1
+IPCC 2021 (incl. biogenic CO2),climate change: total (incl. biogenic CO2),global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+IPCC 2021 (incl. biogenic CO2),climate change: total (incl. biogenic CO2),global warming potential (GWP100),"Carbon dioxide, in air",natural resource,in air,-1
+IPCC 2021 (incl. biogenic CO2),climate change: total (incl. biogenic CO2),global warming potential (GWP100),"Carbon dioxide, non-fossil",air,urban air close to ground,1
+IPCC 2021,climate change: direct land use change,global warming potential (GWP100),"Carbon dioxide, from soil or biomass stock",air,urban air close to ground,1
+IPCC 2021,climate change: direct land use change,global warming potential (GWP100),"Carbon dioxide, to soil or biomass stock",soil,agricultural,-1
+IPCC 2021,climate change: fossil,global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+IPCC 2021,climate change: total (excl. biogenic CO2),global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+IPCC 2021,climate change: total (excl. biogenic CO2),global warming potential (GWP20),"Carbon dioxide, fossil",air,urban air close to ground,1

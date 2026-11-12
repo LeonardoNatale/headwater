@@ -1,0 +1,95 @@
+{
+  "label": "before",
+  "date": "2026-11-01",
+  "machine": "Apple M2 Pro, 10 cores, Darwin 25.6.0",
+  "python": "3.14.3",
+  "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+  "load_average_before": [
+    2.01,
+    2.27,
+    2.25
+  ],
+  "load_s": 5.41,
+  "rows": {
+    "processes": 26533,
+    "flows": 14249,
+    "exchanges": 892943,
+    "exchanges_row_groups": 7
+  },
+  "single": {
+    "calls": 50,
+    "first_ms": 53.286,
+    "median_ms": 44.645,
+    "max_ms": 54.333,
+    "sum_ms": 2191.449,
+    "in_tables_median_ms": 43.904,
+    "tables": {
+      "exchanges": {
+        "opens_per_call": 1.0,
+        "open_median_ms": 0.29,
+        "scan_median_ms": 37.335,
+        "rows_median": 8.0
+      },
+      "flows": {
+        "opens_per_call": 1.0,
+        "open_median_ms": 0.219,
+        "scan_median_ms": 1.616,
+        "rows_median": 6.5
+      },
+      "processes": {
+        "opens_per_call": 1.0,
+        "open_median_ms": 0.119,
+        "scan_median_ms": 4.269,
+        "rows_median": 1.0
+      }
+    }
+  },
+  "batch": {
+    "calls": 5,
+    "first_ms": 245.671,
+    "median_ms": 236.182,
+    "max_ms": 245.671,
+    "sum_ms": 1186.953,
+    "in_tables_median_ms": 199.419,
+    "tables": {
+      "exchanges": {
+        "opens_per_call": 1,
+        "open_median_ms": 0.378,
+        "scan_median_ms": 191.81,
+        "rows_median": 1424
+      },
+      "flows": {
+        "opens_per_call": 1,
+        "open_median_ms": 0.279,
+        "scan_median_ms": 1.879,
+        "rows_median": 615
+      },
+      "processes": {
+        "opens_per_call": 1,
+        "open_median_ms": 0.133,
+        "scan_median_ms": 4.524,
+        "rows_median": 50
+      }
+    },
+    "ids_per_call": 50,
+    "per_id_median_ms": 4.724
+  },
+  "repeat": {
+    "calls": 50,
+    "first_ms": 0.002,
+    "median_ms": 0.001,
+    "max_ms": 0.005,
+    "sum_ms": 0.06,
+    "in_tables_median_ms": 0.0,
+    "tables": {}
+  },
+  "flow_mapping": {
+    "entries": 14249,
+    "dict_bytes": 415152
+  },
+  "load_average_after": [
+    2.66,
+    2.4,
+    2.29
+  ]
+}

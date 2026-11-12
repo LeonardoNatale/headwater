@@ -1,0 +1,20 @@
+{
+  "@type": "UnitGroup",
+  "@id": "d0000000-0000-4000-8000-000000000002",
+  "name": "Units of energy",
+  "units": [
+    {
+      "@type": "Unit",
+      "@id": "50000000-0000-4000-8000-000000000002",
+      "name": "kWh",
+      "conversionFactor": 1.0,
+      "isRefUnit": true
+    },
+    {
+      "@type": "Unit",
+      "@id": "50000000-0000-4000-8000-000000000003",
+      "name": "MJ",
+      "conversionFactor": 0.2777777777777778
+    }
+  ]
+}

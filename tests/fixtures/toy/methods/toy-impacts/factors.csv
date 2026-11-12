@@ -1,0 +1,6 @@
+indicator,flow,location,factor
+climate-change,toy:ch4,,29.8
+climate-change,toy:co2,,1
+climate-change-fossil,toy:ch4,,29.8
+climate-change-fossil,toy:co2,,1
+ozone-formation,toy:ch4,,1

@@ -1,0 +1,4 @@
+description: A heavier T-shirt, 0.30 kg of fabric.
+changes:
+  - parameter: fabric_kg
+    value: 0.30

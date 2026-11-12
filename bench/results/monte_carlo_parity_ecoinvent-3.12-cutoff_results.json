@@ -1,0 +1,65 @@
+{
+  "products": 10,
+  "indicators": 25,
+  "iterations": {
+    "headwater": 200,
+    "brightway": 200
+  },
+  "checks": 750,
+  "rule": "|difference| <= 3 bootstrap standard errors, up to 1% failing",
+  "failed": 4,
+  "allowed": 7,
+  "passed": true,
+  "largest_abs_z": {
+    "mean": 2.64,
+    "p2.5": 3.12,
+    "p50": 2.98,
+    "p97.5": 3.23
+  },
+  "abs_z_above_2": {
+    "mean": 3,
+    "p2.5": 3,
+    "p50": 12,
+    "p97.5": 6
+  },
+  "failures": [
+    {
+      "product": "ecoinvent:3.12:cutoff:1ad47cac-a134-58c9-acb0-c10aef777b3a_d69294d7-8d64-4915-a896-9996a014c410",
+      "indicator": "ecotoxicity-freshwater-organics",
+      "statistic": "p2.5",
+      "z": -3.12,
+      "median_z": 1.21
+    },
+    {
+      "product": "ecoinvent:3.12:cutoff:1ad47cac-a134-58c9-acb0-c10aef777b3a_d69294d7-8d64-4915-a896-9996a014c410",
+      "indicator": "eutrophication-marine",
+      "statistic": "p97.5",
+      "z": 3.11,
+      "median_z": 0.43
+    },
+    {
+      "product": "ecoinvent:3.12:cutoff:55fb6113-0d1e-585c-9936-9d320ae55de4_0818abb1-d7ce-4ac6-b6e1-2e7b51a1ea9e",
+      "indicator": "human-toxicity-carcinogenic-organics",
+      "statistic": "p97.5",
+      "z": 3.23,
+      "median_z": 2.62
+    },
+    {
+      "product": "ecoinvent:3.12:cutoff:15b8ff9e-dc11-5d28-a477-81f8bbdf5be2_27da8130-82ba-485c-a800-b89efdcb0491",
+      "indicator": "ecotoxicity-freshwater-inorganics",
+      "statistic": "p2.5",
+      "z": -3.02,
+      "median_z": -1.94
+    }
+  ],
+  "deterministic_scores_largest_relative_gap": 6.699781715760063e-07,
+  "brightway_factors_with_a_distribution": 0,
+  "machine": "arm64 Darwin 25.6.0",
+  "threads": {
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+  },
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "headwater": "0.1.0.dev0"
+}

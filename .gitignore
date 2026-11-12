@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+*.duckdb
+*.duckdb.wal
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+dist/
+.DS_Store
+.claude/worktrees/

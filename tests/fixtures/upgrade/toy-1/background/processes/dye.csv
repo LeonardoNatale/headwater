@@ -1,0 +1,3 @@
+line,role,flow,amount,unit,supplier
+e01,reference,toy:dye,1,kg,
+e02,emission,toy:co2,4.0,kg,

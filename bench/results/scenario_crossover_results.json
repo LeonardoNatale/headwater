@@ -1,0 +1,547 @@
+{
+  "scope": {
+    "machine": "arm64 Darwin 25.6.0",
+    "cpus": 10,
+    "python": "3.14.3",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pyarrow": "26.0.0",
+    "headwater": "0.1.0.dev0",
+    "blas": "accelerate",
+    "threads_env": {
+      "VECLIB_MAXIMUM_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    },
+    "date": "2026-10-12",
+    "crossover_in_code": 300,
+    "load_average_at_start": [
+      4.05,
+      5.07,
+      5.05
+    ],
+    "quiet": false,
+    "release": "ecoinvent-3.10-cutoff@07ebaa9e28bc",
+    "pivoted": false,
+    "load_average_at_end": [
+      4.64,
+      4.96,
+      5.01
+    ]
+  },
+  "stored": {
+    "processes": 23522,
+    "non_zeros": 291074,
+    "factorize_s": 3.012,
+    "scores_ms": 8.51,
+    "supply_ms": 3.21
+  },
+  "repeat": 3,
+  "sets": 2,
+  "scale": 1.1,
+  "finished": true,
+  "rows": [
+    {
+      "k": 1,
+      "update_worked": true,
+      "update_faster": true,
+      "update_s": 0.0503,
+      "refactorize_s": 2.8045,
+      "sets": [
+        {
+          "seed": 1,
+          "refactorize_s": 2.8064,
+          "refactorize_parts_s": {
+            "make": 2.7938,
+            "scores": 0.0091,
+            "supply": 0.0035
+          },
+          "update_s": 0.0503,
+          "update_parts_s": {
+            "make": 0.0397,
+            "scores": 0.0045,
+            "supply": 0.0061
+          },
+          "update_faster": true
+        },
+        {
+          "seed": 1001,
+          "refactorize_s": 2.8027,
+          "refactorize_parts_s": {
+            "make": 2.7894,
+            "scores": 0.0099,
+            "supply": 0.0035
+          },
+          "update_s": 0.0495,
+          "update_parts_s": {
+            "make": 0.039,
+            "scores": 0.0048,
+            "supply": 0.0057
+          },
+          "update_faster": true
+        }
+      ],
+      "load_before": 3.97,
+      "load_after": 4.82
+    },
+    {
+      "k": 10,
+      "update_worked": true,
+      "update_faster": true,
+      "update_s": 0.1016,
+      "refactorize_s": 2.8201,
+      "sets": [
+        {
+          "seed": 10,
+          "refactorize_s": 2.8035,
+          "refactorize_parts_s": {
+            "make": 2.7906,
+            "scores": 0.0093,
+            "supply": 0.0035
+          },
+          "update_s": 0.1016,
+          "update_parts_s": {
+            "make": 0.0852,
+            "scores": 0.0105,
+            "supply": 0.006
+          },
+          "update_faster": true
+        },
+        {
+          "seed": 1010,
+          "refactorize_s": 2.8366,
+          "refactorize_parts_s": {
+            "make": 2.8245,
+            "scores": 0.0086,
+            "supply": 0.0035
+          },
+          "update_s": 0.0881,
+          "update_parts_s": {
+            "make": 0.0771,
+            "scores": 0.0048,
+            "supply": 0.0062
+          },
+          "update_faster": true
+        }
+      ],
+      "load_before": 4.82,
+      "load_after": 4.51
+    },
+    {
+      "k": 30,
+      "update_worked": true,
+      "update_faster": true,
+      "update_s": 0.1904,
+      "refactorize_s": 2.7943,
+      "sets": [
+        {
+          "seed": 30,
+          "refactorize_s": 2.8049,
+          "refactorize_parts_s": {
+            "make": 2.7921,
+            "scores": 0.0092,
+            "supply": 0.0036
+          },
+          "update_s": 0.1904,
+          "update_parts_s": {
+            "make": 0.1736,
+            "scores": 0.0108,
+            "supply": 0.0061
+          },
+          "update_faster": true
+        },
+        {
+          "seed": 1030,
+          "refactorize_s": 2.7838,
+          "refactorize_parts_s": {
+            "make": 2.7719,
+            "scores": 0.0086,
+            "supply": 0.0033
+          },
+          "update_s": 0.1854,
+          "update_parts_s": {
+            "make": 0.1697,
+            "scores": 0.0101,
+            "supply": 0.0057
+          },
+          "update_faster": true
+        }
+      ],
+      "load_before": 4.51,
+      "load_after": 4.5
+    },
+    {
+      "k": 100,
+      "update_worked": true,
+      "update_faster": true,
+      "update_s": 0.5023,
+      "refactorize_s": 2.8139,
+      "sets": [
+        {
+          "seed": 100,
+          "refactorize_s": 2.8128,
+          "refactorize_parts_s": {
+            "make": 2.8008,
+            "scores": 0.0087,
+            "supply": 0.0033
+          },
+          "update_s": 0.5023,
+          "update_parts_s": {
+            "make": 0.4832,
+            "scores": 0.0124,
+            "supply": 0.0068
+          },
+          "update_faster": true
+        },
+        {
+          "seed": 1100,
+          "refactorize_s": 2.8149,
+          "refactorize_parts_s": {
+            "make": 2.8009,
+            "scores": 0.0099,
+            "supply": 0.0042
+          },
+          "update_s": 0.4955,
+          "update_parts_s": {
+            "make": 0.4763,
+            "scores": 0.0126,
+            "supply": 0.0066
+          },
+          "update_faster": true
+        }
+      ],
+      "load_before": 4.5,
+      "load_after": 5.31
+    },
+    {
+      "k": 120,
+      "update_worked": true,
+      "update_faster": true,
+      "update_s": 0.6045,
+      "refactorize_s": 2.7992,
+      "sets": [
+        {
+          "seed": 120,
+          "refactorize_s": 2.8085,
+          "refactorize_parts_s": {
+            "make": 2.7957,
+            "scores": 0.0092,
+            "supply": 0.0037
+          },
+          "update_s": 0.6045,
+          "update_parts_s": {
+            "make": 0.5862,
+            "scores": 0.0121,
+            "supply": 0.0063
+          },
+          "update_faster": true
+        },
+        {
+          "seed": 1120,
+          "refactorize_s": 2.7899,
+          "refactorize_parts_s": {
+            "make": 2.7768,
+            "scores": 0.0095,
+            "supply": 0.0037
+          },
+          "update_s": 0.5932,
+          "update_parts_s": {
+            "make": 0.5727,
+            "scores": 0.0133,
+            "supply": 0.0072
+          },
+          "update_faster": true
+        }
+      ],
+      "load_before": 5.31,
+      "load_after": 5.22
+    },
+    {
+      "k": 150,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": 0.7346,
+      "refactorize_s": 2.8063,
+      "sets": [
+        {
+          "seed": 150,
+          "refactorize_s": 2.8133,
+          "refactorize_parts_s": {
+            "make": 2.8007,
+            "scores": 0.0091,
+            "supply": 0.0035
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 0.669,
+          "update_faster": false
+        },
+        {
+          "seed": 1150,
+          "refactorize_s": 2.7993,
+          "refactorize_parts_s": {
+            "make": 2.7863,
+            "scores": 0.0094,
+            "supply": 0.0036
+          },
+          "update_s": 0.7346,
+          "update_parts_s": {
+            "make": 0.7133,
+            "scores": 0.014,
+            "supply": 0.0073
+          },
+          "update_faster": true
+        }
+      ],
+      "load_before": 5.22,
+      "load_after": 5.58
+    },
+    {
+      "k": 175,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.8085,
+      "sets": [
+        {
+          "seed": 175,
+          "refactorize_s": 2.803,
+          "refactorize_parts_s": {
+            "make": 2.79,
+            "scores": 0.0094,
+            "supply": 0.0036
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 0.7901,
+          "update_faster": false
+        },
+        {
+          "seed": 1175,
+          "refactorize_s": 2.814,
+          "refactorize_parts_s": {
+            "make": 2.8019,
+            "scores": 0.0087,
+            "supply": 0.0033
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 0.778,
+          "update_faster": false
+        }
+      ],
+      "load_before": 5.58,
+      "load_after": 4.77
+    },
+    {
+      "k": 200,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.8595,
+      "sets": [
+        {
+          "seed": 200,
+          "refactorize_s": 2.8243,
+          "refactorize_parts_s": {
+            "make": 2.8114,
+            "scores": 0.0092,
+            "supply": 0.0037
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 0.9145,
+          "update_faster": false
+        },
+        {
+          "seed": 1200,
+          "refactorize_s": 2.8947,
+          "refactorize_parts_s": {
+            "make": 2.8827,
+            "scores": 0.0087,
+            "supply": 0.0033
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 1.0073,
+          "update_faster": false
+        }
+      ],
+      "load_before": 4.77,
+      "load_after": 4.62
+    },
+    {
+      "k": 300,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.8599,
+      "sets": [
+        {
+          "seed": 300,
+          "refactorize_s": 2.8693,
+          "refactorize_parts_s": {
+            "make": 2.8565,
+            "scores": 0.0092,
+            "supply": 0.0037
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 1.4059,
+          "update_faster": false
+        },
+        {
+          "seed": 1300,
+          "refactorize_s": 2.8506,
+          "refactorize_parts_s": {
+            "make": 2.8384,
+            "scores": 0.0088,
+            "supply": 0.0034
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 1.3556,
+          "update_faster": false
+        }
+      ],
+      "load_before": 4.62,
+      "load_after": 5.37
+    },
+    {
+      "k": 400,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.8076,
+      "sets": [
+        {
+          "seed": 400,
+          "refactorize_s": 2.7988,
+          "refactorize_parts_s": {
+            "make": 2.7861,
+            "scores": 0.0092,
+            "supply": 0.0035
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 1.8026,
+          "update_faster": false
+        },
+        {
+          "seed": 1400,
+          "refactorize_s": 2.8165,
+          "refactorize_parts_s": {
+            "make": 2.804,
+            "scores": 0.0092,
+            "supply": 0.0034
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 2.0097,
+          "update_faster": false
+        }
+      ],
+      "load_before": 5.37,
+      "load_after": 5.11
+    },
+    {
+      "k": 500,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.8749,
+      "sets": [
+        {
+          "seed": 500,
+          "refactorize_s": 2.7986,
+          "refactorize_parts_s": {
+            "make": 2.7857,
+            "scores": 0.0092,
+            "supply": 0.0037
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 2.2823,
+          "update_faster": false
+        },
+        {
+          "seed": 1500,
+          "refactorize_s": 2.9512,
+          "refactorize_parts_s": {
+            "make": 2.9382,
+            "scores": 0.0094,
+            "supply": 0.0036
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 2.3094,
+          "update_faster": false
+        }
+      ],
+      "load_before": 5.11,
+      "load_after": 4.61
+    },
+    {
+      "k": 700,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.8407,
+      "sets": [
+        {
+          "seed": 700,
+          "refactorize_s": 2.8975,
+          "refactorize_parts_s": {
+            "make": 2.8848,
+            "scores": 0.0093,
+            "supply": 0.0034
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 3.504,
+          "update_faster": false
+        },
+        {
+          "seed": 1700,
+          "refactorize_s": 2.7838,
+          "refactorize_parts_s": {
+            "make": 2.7713,
+            "scores": 0.0092,
+            "supply": 0.0034
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 3.3829,
+          "update_faster": false
+        }
+      ],
+      "load_before": 4.61,
+      "load_after": 4.72
+    },
+    {
+      "k": 1000,
+      "update_worked": false,
+      "update_faster": false,
+      "update_s": null,
+      "refactorize_s": 2.7873,
+      "sets": [
+        {
+          "seed": 1000,
+          "refactorize_s": 2.7639,
+          "refactorize_parts_s": {
+            "make": 2.7517,
+            "scores": 0.0089,
+            "supply": 0.0033
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 4.8208,
+          "update_faster": false
+        },
+        {
+          "seed": 2000,
+          "refactorize_s": 2.8108,
+          "refactorize_parts_s": {
+            "make": 2.7982,
+            "scores": 0.0091,
+            "supply": 0.0035
+          },
+          "update_refused": "SingularMatrixError",
+          "refused_after_s": 5.0805,
+          "update_faster": false
+        }
+      ],
+      "load_before": 4.72,
+      "load_after": 4.64
+    }
+  ],
+  "usable_up_to": 120,
+  "first_refused": 150,
+  "time_crossover": null
+}

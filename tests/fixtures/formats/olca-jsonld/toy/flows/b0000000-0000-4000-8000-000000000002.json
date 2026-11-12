@@ -1,0 +1,19 @@
+{
+  "@type": "Flow",
+  "@id": "b0000000-0000-4000-8000-000000000002",
+  "name": "cotton fabric",
+  "category": "Textiles",
+  "flowType": "PRODUCT_FLOW",
+  "flowProperties": [
+    {
+      "@type": "FlowPropertyFactor",
+      "isRefFlowProperty": true,
+      "conversionFactor": 1.0,
+      "flowProperty": {
+        "@type": "FlowProperty",
+        "@id": "c0000000-0000-4000-8000-000000000001",
+        "name": "Mass"
+      }
+    }
+  ]
+}

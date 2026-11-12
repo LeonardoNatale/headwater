@@ -1,0 +1,12 @@
+Method,Category,Indicator,Name,Compartment,Subcompartment,CF
+EF v3.1,climate change,global warming potential (GWP100),"Carbon dioxide, fossil",air,,1
+EF v3.1,climate change,global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+EF v3.1,climate change,global warming potential (GWP100),"Carbon dioxide, in air",natural resource,in air,0
+EF v3.1,climate change,global warming potential (GWP100),Dinitrogen monoxide,air,urban air close to ground,273
+EF v3.1,climate change,global warming potential (GWP100),"Methane, fossil",air,urban air close to ground,29.8
+EF v3.1,climate change: fossil,global warming potential (GWP100),"Carbon dioxide, fossil",air,urban air close to ground,1
+EF v3.1,climate change: fossil,global warming potential (GWP100),"Methane, fossil",air,non-urban air or from high stacks,29.8
+EF v3.1,climate change: fossil,global warming potential (GWP100),"Methane, fossil",air,urban air close to ground,29.8
+EF v3.1,ecotoxicity: freshwater,comparative toxic unit for ecosystems (CTUe),Zinc,soil,agricultural,12.5
+EF v3.1 no LT,climate change no LT,global warming potential (GWP100) no LT,"Carbon dioxide, fossil",air,urban air close to ground,1
+IPCC 2021,climate change,global warming potential (GWP100),"Methane, fossil",air,urban air close to ground,30.5

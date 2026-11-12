@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ecoSpold xmlns="http://www.EcoInvent.org/EcoSpold02">
+  <childActivityDataset>
+    <activityDescription>
+      <activity id="a0000000-0000-4000-8000-000000000001" activityNameId="a4000000-0000-4000-8000-000000000001" specialActivityType="0" type="1">
+        <activityName xml:lang="en">widget production</activityName>
+      </activity>
+      <geography geographyId="a5000000-0000-4000-8000-000000000001">
+        <shortname xml:lang="en">GLO</shortname>
+      </geography>
+      <timePeriod startDate="2020-01-01" endDate="2025-12-31" isDataValidForEntirePeriod="true"/>
+    </activityDescription>
+    <flowData>
+      <intermediateExchange id="c0000001-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000001" amount="1.0" intermediateExchangeId="b0000000-0000-4000-8000-000000000001">
+        <name xml:lang="en">widget</name>
+        <unitName xml:lang="en">kg</unitName>
+        <comment xml:lang="en">One kg of widgets.</comment>
+        <property propertyId="d0000000-0000-4000-8000-000000000001" amount="2.5" unitId="f0000000-0000-4000-8000-000000000005">
+          <name xml:lang="en">price</name>
+          <unitName xml:lang="en">EUR2005</unitName>
+        </property>
+        <property propertyId="d0000000-0000-4000-8000-000000000004" amount="0.4" unitId="f0000000-0000-4000-8000-000000000006">
+          <name xml:lang="en">carbon content, fossil</name>
+          <unitName xml:lang="en">dimensionless</unitName>
+        </property>
+        <property propertyId="d0000000-0000-4000-8000-000000000005" amount="0.0" unitId="f0000000-0000-4000-8000-000000000006">
+          <name xml:lang="en">carbon content, non-fossil</name>
+          <unitName xml:lang="en">dimensionless</unitName>
+        </property>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+        <outputGroup>0</outputGroup>
+      </intermediateExchange>
+      <intermediateExchange id="c0000001-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000002" amount="2.0" intermediateExchangeId="b0000000-0000-4000-8000-000000000002" activityLinkId="a0000000-0000-4000-8000-000000000002">
+        <name xml:lang="en">electricity</name>
+        <unitName xml:lang="en">kWh</unitName>
+        <uncertainty>
+          <lognormal meanValue="2.01" mu="0.693147180559945" variance="0.0004" varianceWithPedigreeUncertainty="0.0121"/>
+          <pedigreeMatrix reliability="2" completeness="3" temporalCorrelation="1" geographicalCorrelation="2" furtherTechnologyCorrelation="4"/>
+        </uncertainty>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+        <inputGroup>5</inputGroup>
+      </intermediateExchange>
+      <intermediateExchange id="c0000001-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000003" amount="0.1" intermediateExchangeId="b0000000-0000-4000-8000-000000000003" activityLinkId="a0000000-0000-4000-8000-000000000006">
+        <name xml:lang="en">natural gas</name>
+        <unitName xml:lang="en">m3</unitName>
+        <property propertyId="d0000000-0000-4000-8000-000000000007" amount="36" unitId="f0000000-0000-4000-8000-000000000007">
+          <name xml:lang="en">heating value, net</name>
+          <unitName xml:lang="en">MJ</unitName>
+        </property>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+        <inputGroup>5</inputGroup>
+      </intermediateExchange>
+      <intermediateExchange id="c0000001-0000-4000-8000-000000000004" unitId="f0000000-0000-4000-8000-000000000001" amount="-0.05" intermediateExchangeId="b0000000-0000-4000-8000-000000000004" activityLinkId="a0000000-0000-4000-8000-000000000004">
+        <name xml:lang="en">waste widget</name>
+        <unitName xml:lang="en">kg</unitName>
+        <uncertainty>
+          <normal meanValue="-0.05" variance="0.0001" varianceWithPedigreeUncertainty="0.0004"/>
+          <pedigreeMatrix reliability="1" completeness="1" temporalCorrelation="1" geographicalCorrelation="1" furtherTechnologyCorrelation="1"/>
+        </uncertainty>
+        <classification classificationId="a1000000-0000-4000-8000-000000000002">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">Waste</classificationValue>
+        </classification>
+        <inputGroup>5</inputGroup>
+      </intermediateExchange>
+      <intermediateExchange id="c0000001-0000-4000-8000-000000000005" unitId="f0000000-0000-4000-8000-000000000001" amount="-0.02" intermediateExchangeId="b0000000-0000-4000-8000-000000000005" activityLinkId="a0000000-0000-4000-8000-000000000014">
+        <name xml:lang="en">scrap metal</name>
+        <unitName xml:lang="en">kg</unitName>
+        <uncertainty>
+          <uniform minValue="-0.03" maxValue="-0.01"/>
+          <pedigreeMatrix reliability="3" completeness="3" temporalCorrelation="3" geographicalCorrelation="3" furtherTechnologyCorrelation="3"/>
+        </uncertainty>
+        <classification classificationId="a1000000-0000-4000-8000-000000000003">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">Recyclable</classificationValue>
+        </classification>
+        <inputGroup>5</inputGroup>
+      </intermediateExchange>
+      <elementaryExchange id="c0000001-0000-4000-8000-000000000006" unitId="f0000000-0000-4000-8000-000000000001" amount="0.5" elementaryExchangeId="e0000000-0000-4000-8000-000000000001">
+        <name xml:lang="en">Carbon dioxide, fossil</name>
+        <unitName xml:lang="en">kg</unitName>
+        <uncertainty>
+          <lognormal meanValue="0.51" mu="-0.693147180559945" variance="0.01" varianceWithPedigreeUncertainty="0.04"/>
+          <pedigreeMatrix reliability="2" completeness="2" temporalCorrelation="2" geographicalCorrelation="2" furtherTechnologyCorrelation="2"/>
+        </uncertainty>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+          <compartment xml:lang="en">air</compartment>
+          <subcompartment xml:lang="en">urban air close to ground</subcompartment>
+        </compartment>
+        <outputGroup>4</outputGroup>
+      </elementaryExchange>
+      <elementaryExchange id="c0000001-0000-4000-8000-000000000007" unitId="f0000000-0000-4000-8000-000000000001" amount="-0.000001" elementaryExchangeId="e0000000-0000-4000-8000-000000000002">
+        <name xml:lang="en">Cadmium</name>
+        <unitName xml:lang="en">kg</unitName>
+        <comment xml:lang="en">Taken up by the crop, so the soil receives less than it is given.</comment>
+        <uncertainty>
+          <triangular minValue="-0.000002" mostLikelyValue="-0.000001" maxValue="-0.0000005"/>
+        </uncertainty>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000002">
+          <compartment xml:lang="en">soil</compartment>
+          <subcompartment xml:lang="en">agricultural</subcompartment>
+        </compartment>
+        <outputGroup>4</outputGroup>
+      </elementaryExchange>
+      <elementaryExchange id="c0000001-0000-4000-8000-000000000008" unitId="f0000000-0000-4000-8000-000000000001" amount="0.3" elementaryExchangeId="e0000000-0000-4000-8000-000000000003">
+        <name xml:lang="en">Carbon dioxide, in air</name>
+        <unitName xml:lang="en">kg</unitName>
+        <uncertainty>
+          <normal meanValue="0.3" variance="0.0" varianceWithPedigreeUncertainty="0.0"/>
+          <pedigreeMatrix reliability="1" completeness="2" temporalCorrelation="1" geographicalCorrelation="2" furtherTechnologyCorrelation="1"/>
+        </uncertainty>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000003">
+          <compartment xml:lang="en">natural resource</compartment>
+          <subcompartment xml:lang="en">in air</subcompartment>
+        </compartment>
+        <inputGroup>4</inputGroup>
+      </elementaryExchange>
+    </flowData>
+    <modellingAndValidation>
+      <representativeness systemModelId="06590a66-662a-4885-8494-ad0cf410f956">
+        <systemModelName xml:lang="en">Allocation at the point of substitution</systemModelName>
+      </representativeness>
+    </modellingAndValidation>
+    <administrativeInformation>
+      <fileAttributes majorRelease="3" minorRelease="10" majorRevision="1" minorRevision="0" defaultLanguage="en"/>
+    </administrativeInformation>
+  </childActivityDataset>
+</ecoSpold>

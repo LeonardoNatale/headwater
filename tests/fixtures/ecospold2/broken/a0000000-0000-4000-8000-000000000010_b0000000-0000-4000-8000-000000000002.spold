@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ecoSpold xmlns="http://www.EcoInvent.org/EcoSpold02">
+  <childActivityDataset>
+    <activityDescription>
+      <activity id="a0000000-0000-4000-8000-000000000010" activityNameId="a4000000-0000-4000-8000-000000000003" specialActivityType="0" type="1">
+        <activityName xml:lang="en">electricity production, natural gas, from a missing supplier</activityName>
+      </activity>
+      <geography geographyId="a5000000-0000-4000-8000-000000000001">
+        <shortname xml:lang="en">DE</shortname>
+      </geography>
+      <timePeriod startDate="2020-01-01" endDate="2025-12-31" isDataValidForEntirePeriod="true"/>
+    </activityDescription>
+    <flowData>
+      <intermediateExchange id="c0000010-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000002" amount="1.0" intermediateExchangeId="b0000000-0000-4000-8000-000000000002">
+        <name xml:lang="en">electricity</name>
+        <unitName xml:lang="en">kWh</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+        <outputGroup>0</outputGroup>
+      </intermediateExchange>
+      <intermediateExchange id="c0000010-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000003" amount="0.25" intermediateExchangeId="b0000000-0000-4000-8000-000000000003" activityLinkId="a0000000-0000-4000-8000-000000000099">
+        <name xml:lang="en">natural gas</name>
+        <unitName xml:lang="en">m3</unitName>
+        <classification classificationId="a1000000-0000-4000-8000-000000000001">
+          <classificationSystem xml:lang="en">By-product classification</classificationSystem>
+          <classificationValue xml:lang="en">allocatable product</classificationValue>
+        </classification>
+        <inputGroup>5</inputGroup>
+      </intermediateExchange>
+      <elementaryExchange id="c0000010-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000001" amount="0.45" elementaryExchangeId="e0000000-0000-4000-8000-000000000001">
+        <name xml:lang="en">Carbon dioxide, fossil</name>
+        <unitName xml:lang="en">kg</unitName>
+        <compartment subcompartmentId="a2000000-0000-4000-8000-000000000001">
+          <compartment xml:lang="en">air</compartment>
+          <subcompartment xml:lang="en">urban air close to ground</subcompartment>
+        </compartment>
+        <outputGroup>4</outputGroup>
+      </elementaryExchange>
+    </flowData>
+    <modellingAndValidation>
+      <representativeness systemModelId="290c1f85-4cc4-4fa1-b0c8-2cb7f4276dce">
+        <systemModelName xml:lang="en">Allocation, cut-off by classification</systemModelName>
+      </representativeness>
+    </modellingAndValidation>
+    <administrativeInformation>
+      <fileAttributes majorRelease="3" minorRelease="10" majorRevision="1" minorRevision="0" defaultLanguage="en"/>
+    </administrativeInformation>
+  </childActivityDataset>
+</ecoSpold>

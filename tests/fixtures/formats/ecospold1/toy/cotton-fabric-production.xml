@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecoSpold xmlns="http://www.EcoInvent.org/EcoSpold01">
+  <dataset number="2">
+    <metaInformation>
+      <processInformation>
+        <referenceFunction datasetRelatesToProduct="true" name="cotton fabric production" localName="cotton fabric production" infrastructureProcess="false" amount="1" unit="kg" category="textiles" subCategory="fabrics" localCategory="textiles" localSubCategory="fabrics"/>
+        <geography location="GLO"/>
+        <timePeriod dataValidForEntirePeriod="true">
+          <startYear>2020</startYear>
+          <endYear>2025</endYear>
+        </timePeriod>
+        <dataSetInformation type="1" impactAssessmentResult="false" timestamp="2026-10-25T00:00:00" version="1.0" internalVersion="1.0" energyValues="0"/>
+      </processInformation>
+    </metaInformation>
+    <flowData>
+      <exchange number="1" name="cotton fabric" location="GLO" unit="kg" meanValue="1">
+        <outputGroup>0</outputGroup>
+      </exchange>
+      <exchange number="2" name="electricity" location="GLO" unit="kWh" meanValue="3">
+        <inputGroup>5</inputGroup>
+      </exchange>
+      <exchange number="3" name="Carbon dioxide, fossil" category="air" subCategory="unspecified" unit="kg" meanValue="2.0" CASNumber="000124-38-9">
+        <outputGroup>4</outputGroup>
+      </exchange>
+      <exchange number="4" name="Methane, fossil" category="air" subCategory="unspecified" unit="kg" meanValue="0.004" CASNumber="000074-82-8">
+        <outputGroup>4</outputGroup>
+      </exchange>
+    </flowData>
+  </dataset>
+</ecoSpold>

@@ -1,0 +1,7 @@
+id: toy-climate
+version: "1"
+flow_list: toy-1
+indicators:
+  - id: climate-change
+    name: Climate change
+    unit: kg CO2-eq

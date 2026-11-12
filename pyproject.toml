@@ -1,0 +1,116 @@
+[project]
+name = "headwater"
+version = "0.1.0"
+description = "A Python library for life cycle assessment (LCA)."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Leonardo Natale" }]
+keywords = [
+    "life cycle assessment",
+    "lca",
+    "carbon footprint",
+    "ecoinvent",
+    "environmental footprint",
+    "sustainability",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+requires-python = ">=3.13"
+# Lower bounds are the oldest versions the tests pass with on Python 3.13 (the `lowest` CI job).
+dependencies = [
+    "numpy>=2.1",
+    "scipy>=1.17",
+    "pydantic>=2.8",
+    "pyyaml>=6.0.2",
+    "duckdb>=1.5.6",
+    "pyarrow>=26.0.0",
+    "lxml>=6.1.3",
+    "typer>=0.27.2",
+    "openpyxl>=3.1.5",
+    "fsspec[http]>=2026.9.0",
+]
+
+[project.urls]
+Repository = "https://github.com/LeonardoNatale/headwater"
+Documentation = "https://github.com/LeonardoNatale/headwater/tree/main/docs"
+Issues = "https://github.com/LeonardoNatale/headwater/issues"
+
+[project.scripts]
+headwater = "headwater.cli:main"
+
+[project.optional-dependencies]
+gcs = [
+    "gcsfs>=2026.10.1",
+]
+s3 = [
+    "s3fs>=2026.9.0",
+]
+pandas = [
+    "pandas>=2.2.3",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "jsonschema>=4.26",
+    "pandas>=2.2",
+    "pandas-stubs",
+    "pyarrow-stubs>=20.0.0.20260819",
+    "pyright[nodejs]",
+    "pytest",
+    "ruff",
+    "scipy-stubs",
+    "types-lxml>=2026.2.16",
+    "types-openpyxl>=3.1.5.20260827",
+]
+# Run the teaching notebooks in notebooks/. pandas is only there to show tables.
+notebooks = [
+    "ipykernel",
+    "nbmake",
+    "pandas",
+]
+# Brightway, for notebooks 04 and 05 only, at the versions of bench/README.md. peewee is pinned
+# because bw2data 4.5.4 does not limit it, and the newest peewee breaks its import.
+brightway = [
+    "bw2data==4.5.4",
+    "bw2calc==2.3",
+    "bw2io==0.9.14",
+    "peewee==3.19.0",
+]
+
+[tool.ruff]
+line-length = 100
+# bench/ holds research scripts kept as they were run, not library code.
+extend-exclude = ["bench"]
+
+[tool.ruff.format]
+# The Python blocks in docs/ are illustrative, not code to format.
+exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyright]
+include = ["src", "tests"]
+strict = ["src"]
+pythonVersion = "3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Test files in different folders may share a name (tests/calc/test_x.py, tests/model/test_x.py).
+addopts = ["--import-mode=importlib"]
+# A UserWarning raised in headwater's own code, or by a library it calls, fails the test.
+filterwarnings = ["error::UserWarning:headwater"]

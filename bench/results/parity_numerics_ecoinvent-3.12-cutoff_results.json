@@ -1,0 +1,186 @@
+{
+  "scope": {
+    "machine": "arm64 Darwin 25.6.0",
+    "python": "3.14.3",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pyarrow": "26.0.0",
+    "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+    "date": "2026-10-25",
+    "load_average_at_start": [
+      13.67,
+      10.78,
+      8.73
+    ],
+    "load_average_at_end": [
+      5.44,
+      8.21,
+      8.25
+    ]
+  },
+  "load_s": 6.75,
+  "matrix": {
+    "processes": 26533,
+    "non_zeros": 335769,
+    "method_flows": 13
+  },
+  "headwater": {
+    "path": [
+      "lu"
+    ],
+    "residual": 3.774520000677837e-15,
+    "condition": 29.95808320847184,
+    "pivoted": false
+  },
+  "factorize_s": 3.6,
+  "solver_settings": [
+    {
+      "ordering": "COLAMD",
+      "diag_pivot_thresh": 1.0,
+      "scaled": true,
+      "factorize_s": 28.23,
+      "lu_non_zeros": 31615342,
+      "rows_swapped": true,
+      "solve_ms": 46.084,
+      "raw": {
+        "max": 1.0,
+        "p99": 5.86725770011947e-09,
+        "above_1e-14": 6308,
+        "above_1e-12": 4098
+      },
+      "zeros_exact_and_refined": {
+        "max": 1.4993515830732934e-14,
+        "p99": 2.22737390790778e-16,
+        "above_1e-14": 1,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "COLAMD",
+      "diag_pivot_thresh": 0.0,
+      "scaled": true,
+      "factorize_s": 58.29,
+      "lu_non_zeros": 46653779,
+      "rows_swapped": false,
+      "solve_ms": 68.125,
+      "raw": {
+        "max": 8.148006000370008e-15,
+        "p99": 4.198350602717653e-15,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      },
+      "zeros_exact_and_refined": {
+        "max": 4.457925933753164e-16,
+        "p99": 1.6302865509609978e-16,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "MMD_AT_PLUS_A",
+      "diag_pivot_thresh": 1.0,
+      "scaled": true,
+      "factorize_s": 4.96,
+      "lu_non_zeros": 6975786,
+      "rows_swapped": true,
+      "solve_ms": 9.643,
+      "raw": {
+        "max": 1.0,
+        "p99": 3.567807627787812e-10,
+        "above_1e-14": 2141,
+        "above_1e-12": 1134
+      },
+      "zeros_exact_and_refined": {
+        "max": 8.749340420189844e-16,
+        "p99": 2.2054459498758226e-16,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "MMD_AT_PLUS_A",
+      "diag_pivot_thresh": 0.0,
+      "scaled": true,
+      "factorize_s": 3.83,
+      "lu_non_zeros": 3995133,
+      "rows_swapped": false,
+      "solve_ms": 5.067,
+      "raw": {
+        "max": 3.774520000677837e-15,
+        "p99": 1.1893750278165499e-15,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      },
+      "zeros_exact_and_refined": {
+        "max": 2.699355868318154e-16,
+        "p99": 1.3822150277135549e-16,
+        "above_1e-14": 0,
+        "above_1e-12": 0
+      }
+    },
+    {
+      "ordering": "COLAMD",
+      "diag_pivot_thresh": 1.0,
+      "scaled": false,
+      "note": "SciPy defaults, as bw2calc's factorized solver",
+      "factorize_s": 74.56,
+      "lu_non_zeros": 61794546,
+      "raw": {
+        "max": 0.00016126529251251162,
+        "p99": 7.426256964992333e-08,
+        "above_1e-14": 10845,
+        "above_1e-12": 9512
+      }
+    }
+  ],
+  "condition": {
+    "componentwise": 29.95808320847184,
+    "componentwise_ms": 20.52,
+    "loop_gain_check_min_burden": 1.0,
+    "normwise_scaled": 339960888431013.25,
+    "normwise_unscaled": 1.0279432693047841e+24
+  },
+  "forward_solves": {
+    "products": 26533,
+    "seconds": 86.4,
+    "largest_error": 4.977981367293541e-15,
+    "p99_of_largest": 3.667472141105105e-15,
+    "solves_above_1e-14": 0,
+    "solves_above_1e-12": 0
+  },
+  "transposed_solve": {
+    "max": 3.774520000677837e-15,
+    "p99": 1.1893750278165499e-15,
+    "above_1e-14": 0,
+    "above_1e-12": 0
+  },
+  "zeros": {
+    "structural_zeros": 2041,
+    "of_which_recycled_content": 97,
+    "exactly_zero_in_x": 2041,
+    "structural_zeros_ms": 4.128,
+    "negative_direct_emissions": 8,
+    "net_below_1e-3_of_gross": 0,
+    "net_below_1e-6_of_gross": 0,
+    "smallest_net_share": 0.47311154906500075
+  },
+  "float32_lines": {
+    "max_relative": 1.3310590588527527e-07,
+    "above_1e-9": 22414,
+    "above_1e-7": 41,
+    "above_1e-6": 0
+  },
+  "copies_ms": {
+    "as_matrix_copy": 0.715,
+    "as_matrix_shared": 0.425,
+    "abs_A": 0.113,
+    "residual_check_computing_abs": 1.129,
+    "residual_check_stored_abs": 0.76,
+    "stacked_matrix_one_study_process": 2.82,
+    "explain_3_levels": 1.099,
+    "levers": 26.216,
+    "solve": 5.107,
+    "checked_scores_with_exact_zeros": 10.372,
+    "memory_A_mb": 5.6
+  }
+}

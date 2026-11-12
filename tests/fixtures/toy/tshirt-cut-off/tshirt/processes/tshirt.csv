@@ -1,0 +1,5 @@
+line,role,flow,amount,unit,supplier
+e01,reference,tshirt:tshirt,1,unit,
+e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production
+e03,input,toy:electricity,0.5,kWh,toy:electricity-production
+e04,input,tshirt:packaging-tape,0.01,kg,

@@ -1,0 +1,81 @@
+{
+  "prepare": {
+    "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+    "indicators_release": "ecoinvent-3.12-cutoff.EF-3.1@21c61d3ac200",
+    "method": "EF-3.1",
+    "products": 10,
+    "indicators": [
+      "climate-change",
+      "land-use"
+    ],
+    "load_and_solve_s": 5.4,
+    "where_s": {
+      "median": 0.0084,
+      "max": 0.0239
+    },
+    "load_average": [
+      6.48876953125,
+      5.74072265625,
+      5.47509765625
+    ],
+    "versions": {
+      "python": "3.14.3",
+      "headwater": "0.1.0.dev0",
+      "numpy": "2.5.3",
+      "scipy": "1.18.1",
+      "machine": "arm64 Darwin 25.6.0"
+    }
+  },
+  "compare": {
+    "bw2calc": {
+      "comparisons": 20,
+      "same_top_set": 20,
+      "same_set_after_boundary_ties": 20,
+      "values_compared": 200,
+      "values_within_tolerance": 200,
+      "negative_values_compared": 3,
+      "same_order": 20,
+      "near_tie_swaps": 0,
+      "order_differences_not_near_ties": 0,
+      "largest_relative_difference": 4.3804098712044724e-07,
+      "largest_relative_difference_of_score": 8.058508798331162e-07,
+      "by_indicator": {
+        "climate-change": {
+          "products": 10,
+          "passed": 10
+        },
+        "land-use": {
+          "products": 10,
+          "passed": 10
+        }
+      }
+    },
+    "accurate": {
+      "comparisons": 20,
+      "same_top_set": 20,
+      "same_set_after_boundary_ties": 20,
+      "values_compared": 200,
+      "values_within_tolerance": 200,
+      "negative_values_compared": 3,
+      "same_order": 20,
+      "near_tie_swaps": 0,
+      "order_differences_not_near_ties": 0,
+      "largest_relative_difference": 4.3910456073441444e-07,
+      "largest_relative_difference_of_score": 4.383167150741553e-08,
+      "by_indicator": {
+        "climate-change": {
+          "products": 10,
+          "passed": 10
+        },
+        "land-use": {
+          "products": 10,
+          "passed": 10
+        }
+      }
+    },
+    "residuals": {
+      "bw2calc_largest": 0.0018105206624082742,
+      "accurate_largest": 7.448819405285994e-12
+    }
+  }
+}

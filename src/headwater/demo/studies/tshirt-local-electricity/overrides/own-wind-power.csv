@@ -1,0 +1,2 @@
+process,line,role,flow,amount,unit,supplier,comment
+toy:electricity-production,e02,emission,toy:co2,0.3,kg,,Wind power: 0.3 kg CO2 per kWh instead of 0.5

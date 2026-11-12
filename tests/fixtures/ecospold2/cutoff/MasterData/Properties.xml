@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<validProperties xmlns="http://www.EcoInvent.org/EcoSpold02" majorRelease="3" minorRelease="0" majorRevision="0" minorRevision="1">
+  <property id="d0000000-0000-4000-8000-000000000001" unitId="f0000000-0000-4000-8000-000000000005">
+    <name xml:lang="en">price</name>
+    <unitName xml:lang="en">EUR2005</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000002" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">wet mass</name>
+    <unitName xml:lang="en">kg</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000003" unitId="f0000000-0000-4000-8000-000000000001">
+    <name xml:lang="en">dry mass</name>
+    <unitName xml:lang="en">kg</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000004" unitId="f0000000-0000-4000-8000-000000000006">
+    <name xml:lang="en">carbon content, fossil</name>
+    <unitName xml:lang="en">dimensionless</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000005" unitId="f0000000-0000-4000-8000-000000000006">
+    <name xml:lang="en">carbon content, non-fossil</name>
+    <unitName xml:lang="en">dimensionless</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000006" unitId="f0000000-0000-4000-8000-000000000006">
+    <name xml:lang="en">water content</name>
+    <unitName xml:lang="en">dimensionless</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000007" unitId="f0000000-0000-4000-8000-000000000007">
+    <name xml:lang="en">heating value, net</name>
+    <unitName xml:lang="en">MJ</unitName>
+  </property>
+  <property id="d0000000-0000-4000-8000-000000000008" unitId="f0000000-0000-4000-8000-000000000007">
+    <name xml:lang="en">heating value, gross</name>
+    <unitName xml:lang="en">MJ</unitName>
+  </property>
+</validProperties>

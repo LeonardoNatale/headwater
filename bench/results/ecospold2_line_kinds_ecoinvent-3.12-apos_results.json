@@ -1,0 +1,130 @@
+{
+  "folder": "3.12-apos",
+  "system_model": "apos",
+  "files": 27197,
+  "product_lines": 947565,
+  "rejected_lines": 1267,
+  "kinds": [
+    {
+      "side": "input",
+      "class": "Recyclable",
+      "sign": "negative",
+      "lines": 13909,
+      "role": "recyclable, amount negated",
+      "with_supplier": 13909,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "Recyclable, negative": 13909
+      }
+    },
+    {
+      "side": "input",
+      "class": "Recyclable",
+      "sign": "positive",
+      "lines": 3696,
+      "role": "input",
+      "with_supplier": 3696,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "Recyclable, positive": 3696
+      }
+    },
+    {
+      "side": "input",
+      "class": "Waste",
+      "sign": "negative",
+      "lines": 178279,
+      "role": "waste_to_treatment, amount negated",
+      "with_supplier": 178279,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "Waste, negative": 178279
+      }
+    },
+    {
+      "side": "input",
+      "class": "allocatable product",
+      "sign": "negative",
+      "lines": 818,
+      "role": null,
+      "with_supplier": 818,
+      "supplier_is_itself": 0,
+      "supplier_reference": {
+        "allocatable product, negative": 818
+      }
+    },
+    {
+      "side": "input",
+      "class": "allocatable product",
+      "sign": "positive",
+      "lines": 723666,
+      "role": "input",
+      "with_supplier": 723666,
+      "supplier_is_itself": 855,
+      "supplier_reference": {
+        "allocatable product, positive": 723666
+      }
+    },
+    {
+      "side": "reference",
+      "class": "Recyclable",
+      "sign": "negative",
+      "lines": 349,
+      "role": null,
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    },
+    {
+      "side": "reference",
+      "class": "Recyclable",
+      "sign": "positive",
+      "lines": 839,
+      "role": "reference",
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    },
+    {
+      "side": "reference",
+      "class": "Waste",
+      "sign": "negative",
+      "lines": 4530,
+      "role": "reference, amount negated",
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    },
+    {
+      "side": "reference",
+      "class": "allocatable product",
+      "sign": "negative",
+      "lines": 100,
+      "role": null,
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    },
+    {
+      "side": "reference",
+      "class": "allocatable product",
+      "sign": "positive",
+      "lines": 21379,
+      "role": "reference",
+      "with_supplier": 0,
+      "supplier_is_itself": 0,
+      "supplier_reference": {}
+    }
+  ],
+  "elementary": {
+    "output 4, input None": 719193,
+    "output None, input 4": 67810
+  },
+  "seconds": 34.9,
+  "machine": "arm64 Darwin 25.6.0",
+  "load_average_at_start": [
+    9.04,
+    5.61,
+    4.5
+  ]
+}

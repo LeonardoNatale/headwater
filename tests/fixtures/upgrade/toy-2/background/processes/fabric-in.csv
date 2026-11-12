@@ -1,0 +1,4 @@
+line,role,flow,amount,unit,supplier
+a1,reference,toy:cotton-fabric,1,kg,
+a2,input,toy:electricity,3,kWh,toy:2:market-elec
+a3,emission,toy:co2,1.5,kg,

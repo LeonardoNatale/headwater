@@ -1,0 +1,3 @@
+line,role,flow,amount,unit,supplier
+e01,reference,toy:glue,1,kg,
+e02,emission,toy:co2,2.0,kg,

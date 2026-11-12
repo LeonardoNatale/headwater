@@ -1,0 +1,45 @@
+{
+  "release": "ecoinvent-3.12-cutoff@b9428cdd8045",
+  "method": "EF-3.1",
+  "products": 10,
+  "indicators": 25,
+  "iterations": 200,
+  "seed": 0,
+  "seconds": 748.9,
+  "seconds_per_iteration": 3.744,
+  "uncertain_lines": {
+    "lognormal": 610544,
+    "normal": 5949,
+    "triangular": 816,
+    "uniform": 1
+  },
+  "opposite_signs": 438571,
+  "pivoted": 0,
+  "residual": 9.915622173506099e-13,
+  "conditions": {
+    "median": 31.672380941004104,
+    "max": 428931.03275883815,
+    "above_1e3": 9,
+    "above_1e5": 1,
+    "above_1e7": 0,
+    "limit": 10000000000.0
+  },
+  "load_average_before": [
+    2.34,
+    2.4,
+    2.55
+  ],
+  "load_average_after": [
+    2.19,
+    2.38,
+    2.44
+  ],
+  "machine": "arm64 Darwin 25.6.0",
+  "threads": {
+    "OMP_NUM_THREADS": "2",
+    "OPENBLAS_NUM_THREADS": "2"
+  },
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "headwater": "0.1.0.dev0"
+}
