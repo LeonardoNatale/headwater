@@ -80,7 +80,7 @@ def build_overrides(
                     "override-database-process",
                     item,
                     f"{process_id} is a process of the database. Change its own lines in "
-                    "processes/. An override changes a process of the background.",
+                    "exchanges.csv. An override changes a process of the background.",
                     location=row.location,
                 )
             )

@@ -20,6 +20,6 @@ headwater contributions studies/tshirt-dyed --indicator climate-change
 | `studies/tshirt-footprint` | A study: 1 T-shirt of `tshirt-dyed`, 1.242646, and its scenario `cleaner-dye`, the dye at 3.5 kg CO2, 1.237646. It holds no processes. |
 | `releases/toy-background@6864b7dbb65d` | The toy background and the toy climate method as a frozen release. Every database pins it with `background: toy-background@6864b7dbb65d`. |
 
-In git, a change shows as a diff of scores. Example: commit the folder in a git repository, lower the dye's CO2 from 4 to 3.5 kg per kg on line e03 of `studies/dyes/processes/reactive-dye.csv`, and run `headwater diff HEAD studies/tshirt-footprint`. The T-shirt goes from 1.24265 to 1.23765 kg CO2-eq, and line e03 is named as the cause. On a pull request in the headwater repository, the CI comment lists the database `dyes` (5.0596 → 4.5596), then `tshirt-dyed`, which uses it, then the study.
+In git, a change shows as a diff of scores. Example: commit the folder in a git repository, lower the dye's CO2 from 4 to 3.5 kg per kg on line e03 of the dye in `studies/dyes/exchanges.csv`, and run `headwater diff HEAD studies/tshirt-footprint`. The T-shirt goes from 1.24265 to 1.23765 kg CO2-eq, and line e03 is named as the cause. On a pull request in the headwater repository, the CI comment lists the database `dyes` (5.0596 → 4.5596), then `tshirt-dyed`, which uses it, then the study.
 
 In the repository, `tests/ci/build_demo_release.py` writes the release from the toy fixtures, and a test fails when its hash or the pin of a database differs.

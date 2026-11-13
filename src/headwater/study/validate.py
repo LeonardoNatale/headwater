@@ -33,6 +33,7 @@ from headwater.model import (
 )
 from headwater.study._files import PLACEHOLDER, problems_from_validation
 from headwater.study._no_factor import FILE as NO_FACTOR_FILE
+from headwater.study._tables import EXCHANGES
 from headwater.study.folders import DatabaseFolder, ProcessFolder, build_catalog, in_used, owner_of
 
 
@@ -87,7 +88,7 @@ def validate_database(
 
     The databases the database uses are checked as part of it: their flows, lines, parameters,
     overrides and flows with no factor, each problem at its place in their folder
-    (`../dyes/processes/reactive-dye.csv`). Their scenarios are not, since they do not run. A
+    (`../dyes/exchanges.csv`). Their scenarios are not, since they do not run. A
     line may buy only from its own database, a database its `uses` names, or the background,
     whose ids start with one of `prefixes` (`toy` for `toy:fabric-production`): by default, the
     prefixes of `background`'s processes.
@@ -260,12 +261,11 @@ def _check_used(
 
 
 def _file_of(item: str, database: str) -> str | None:
-    """The process file a problem's item names: `processes/reactive-dye.csv` for
-    `dyes:reactive-dye line e02`."""
+    """The table a problem's item names: exchanges.csv for `dyes:reactive-dye line e02`."""
     if not item.startswith(f"{database}:"):
         return None
-    stem = item.removeprefix(f"{database}:").split(" ")[0]
-    return None if ":" in stem else f"processes/{stem}.csv"
+    code = item.removeprefix(f"{database}:").split(" ")[0]
+    return None if ":" in code else EXCHANGES
 
 
 def _check_flows(folder: ProcessFolder, catalog: Catalog) -> list[Problem]:
@@ -315,7 +315,7 @@ def _check_exchange(
 
 
 def _check_flow_name(item: str, flow: Flow, written: str | None) -> list[Problem]:
-    """A flow's name written next to its id, in a process file or in no_factor.csv."""
+    """A flow's name written next to its id, in exchanges.csv or in no_factor.csv."""
     if written is None or written == flow.name:
         return []
     return [

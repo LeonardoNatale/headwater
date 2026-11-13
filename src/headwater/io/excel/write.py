@@ -1,5 +1,6 @@
-"""Write a conversion as a study folder: `database.yaml`, a YAML and a CSV for each process,
-`flows.csv`, and `parameters.yaml` when the workbook had parameters.
+"""Write a conversion as a database folder: `database.yaml`, `processes.csv` and `exchanges.csv`,
+`flows.csv`, and `parameters.yaml` when the workbook had parameters. The comment of an activity and
+where it was read from go into the `comment` cell of its row of processes.csv.
 
 The files are written into a hidden folder beside the target, then moved into place, so a failed
 write leaves no half-written study. The same workbook always gives the same files: nothing in
@@ -20,6 +21,7 @@ not hashed: see `database_yaml`.
 
 import json
 import shutil
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -30,7 +32,8 @@ from headwater.model import InvalidDataError, Problem
 from headwater.release.cache import temporary_folder
 from headwater.release.read import file_sha256
 from headwater.study._files import read_yaml
-from headwater.study._write import flows_csv, parameters_yaml, process_csv, process_yaml
+from headwater.study._tables import EXCHANGES, OLD_FOLDER, PROCESSES
+from headwater.study._write import comment_cell, flows_csv, parameters_yaml, tables
 
 MANIFEST = ".headwater-import.json"
 FORMAT = "headwater-excel-import/1"
@@ -150,19 +153,12 @@ def write_database(conversion: Conversion, folder: Path | str, *, workbook: str 
     merged = previous.merged(conversion.database, workbook)
     target = Path(folder)
     temp = temporary_folder(target.parent, target.name)
-    (temp / "processes").mkdir()
     try:
         (temp / DATABASE).write_bytes(merged.text.encode("utf-8"))
-        stems = {p.id: p.id.split(":", 1)[1] for p in conversion.processes}
-        for process in conversion.processes:
-            stem = stems[process.id]
-            comment = conversion.comments.get(process.id, ())
-            (temp / "processes" / f"{stem}.yaml").write_text(
-                process_yaml(process, comment), encoding="utf-8"
-            )
-            (temp / "processes" / f"{stem}.csv").write_text(
-                process_csv(process.exchanges), encoding="utf-8"
-            )
+        comments = {i: comment_cell(lines) for i, lines in conversion.comments.items()}
+        processes, exchanges = tables(conversion.processes, comments)
+        (temp / PROCESSES).write_bytes(processes.encode("utf-8"))
+        (temp / EXCHANGES).write_bytes(exchanges.encode("utf-8"))
         (temp / "flows.csv").write_text(flows_csv(conversion.flows), encoding="utf-8")
         if conversion.parameters:
             (temp / "parameters.yaml").write_text(
@@ -219,6 +215,31 @@ def _replace(target: Path, temp: Path, previous: frozenset[str], files: list[str
         (target / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.move(temp / name, target / name)
     shutil.rmtree(temp)
-    processes = target / "processes"
-    if processes.is_dir() and not any(processes.iterdir()):
-        processes.rmdir()
+    old = target / OLD_FOLDER  # an import of the layout before D48, replaced by this one
+    if old.is_dir() and not any(old.iterdir()):
+        old.rmdir()
+
+
+def convert_record(root: Path, copy: Path, old: Sequence[str], new: Sequence[str]) -> None:
+    """Rewrite the record of an import in `copy`, a converted copy of `root`, for the tables that
+    replace the files of `processes/` (D48). The tables get their hashes when every file of
+    `processes/` is the import's, unedited, so a new import replaces them. Otherwise they get an
+    empty one, so a new import refuses, as it would have refused for the edited file. A record
+    that does not read is left as it is."""
+    path = copy / MANIFEST
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+        files = {str(k): str(v) for k, v in record["files"].items()}
+    except (OSError, ValueError, KeyError, AttributeError):
+        return
+    if record.get("format") != FORMAT:
+        return
+    listed = {name for name in files if name.startswith(f"{OLD_FOLDER}/")}
+    unedited = listed == set(old) and all(
+        file_sha256(root / name) == files[name] for name in listed
+    )
+    kept = {name: digest for name, digest in files.items() if name not in listed}
+    for name in new:
+        kept[name] = file_sha256(copy / name) if unedited else ""
+    record["files"] = dict(sorted(kept.items()))
+    path.write_text(json.dumps(record, indent=1) + "\n", encoding="utf-8")

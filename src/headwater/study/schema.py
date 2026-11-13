@@ -8,6 +8,7 @@ headwater. `validate` stays the check: a schema only suggests. Example: in the t
 the processes of the databases next to the study, and a process of a release still validates.
 """
 
+import csv
 import json
 from collections.abc import Sequence
 from pathlib import Path
@@ -18,6 +19,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from headwater.model import Database, Study
 from headwater.model.study import PROCESS_ID
+from headwater.study._tables import PROCESSES
+from headwater.study._write import csv_rows
 
 FOLDER = ".schemas"
 PIN = r"^[^@\s]+@[^@\s]+$"
@@ -30,7 +33,7 @@ class _LineChange(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     process: str = Field(description="The id of the process whose line changes.")
-    line: str = Field(description="The line id in the process file, such as e03.")
+    line: str = Field(description="The line id in exchanges.csv, such as e03.")
     amount: float | str | None = Field(
         default=None, description="The new amount: a number, or a formula of parameters."
     )
@@ -92,7 +95,7 @@ def scenario_schema(process_ids: Sequence[str]) -> dict[str, Any]:
 
 def process_ids_in(folder: Path) -> list[str]:
     """The ids of the processes of every database folder in `folder`, by the name its
-    database.yaml gives and the names of its process files: `tshirt:tshirt`. A database.yaml that
+    database.yaml gives and the ids of its processes.csv: `tshirt:tshirt`. A database.yaml that
     does not read gives none."""
     found: list[str] = []
     for entry in sorted(folder.iterdir()):
@@ -106,10 +109,19 @@ def process_ids_in(folder: Path) -> list[str]:
         name = cast(dict[str, Any], data).get("name") if isinstance(data, dict) else None
         if not isinstance(name, str):
             continue
-        processes = entry / "processes"
-        if processes.is_dir():
-            found += [f"{name}:{p.stem}" for p in sorted(processes.glob("*.csv"))]
+        table = entry / PROCESSES
+        if table.is_file():
+            found += [f"{name}:{code}" for code in sorted(_codes(table))]
     return found
+
+
+def _codes(table: Path) -> list[str]:
+    """The ids of a processes.csv, or none when it does not read."""
+    try:
+        rows = csv_rows(table.read_bytes().decode("utf-8"))
+    except (OSError, UnicodeDecodeError, csv.Error):
+        return []
+    return [code for _, row in rows if (code := row.get("id", ""))]
 
 
 def write_schemas(folder: Path | str) -> tuple[Path, ...]:

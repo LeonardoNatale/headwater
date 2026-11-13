@@ -10,6 +10,7 @@ import typer
 
 from headwater.cli._common import count, fail, open_release
 from headwater.cli.brightway import import_brightway_command
+from headwater.cli.convert import convert_command
 from headwater.cli.uses import uses_command
 from headwater.model import HeadwaterError
 
@@ -18,7 +19,8 @@ if TYPE_CHECKING:
     from headwater.release import Release
 
 database_app = typer.Typer(
-    help="Import databases from Excel or Brightway, and list what reaches a database.",
+    help="Import databases from Excel or Brightway, list what reaches a database, and convert "
+    "the layout before 0.2.0.",
     no_args_is_help=True,
 )
 
@@ -152,3 +154,4 @@ def _validation(done: ExcelImport) -> None:
 
 database_app.command("import-brightway")(import_brightway_command)
 database_app.command("uses")(uses_command)
+database_app.command("convert")(convert_command)

@@ -46,6 +46,7 @@ from headwater.query.result import (
 )
 from headwater.study import StudyFolder, in_used, read_study, study_in_memory
 from headwater.study._files import problems_from_validation
+from headwater.study._tables import EXCHANGES, PROCESSES
 from headwater.study._write import number, yaml_value
 from headwater.study.validate import flows_without_factor
 
@@ -229,7 +230,7 @@ class Study:
         """Check the study against `background` as `calc` does, without calculating: its own
         rules (its products, its methods, the cut-off limit of the databases it reaches, its
         no_factor rows) and every database its products reach, with its scenarios. A problem in
-        a database is at its place there, as `../tshirt/processes/tshirt.csv`."""
+        a database is at its place there, as `../tshirt/exchanges.csv`."""
         problems = list(self._study_problems(background).problems)
         needed: set[str] = set()
         method = background.method
@@ -463,8 +464,8 @@ def open(path: Path | str) -> "Database | Study":
 
 def _old_format(folder: Path) -> bool:
     """True for a study folder of the format before D46: study.yaml with no products, and
-    processes."""
-    if not (folder / "processes").is_dir():
+    processes, as processes/ or as the two tables."""
+    if not any((folder / name).exists() for name in ("processes", PROCESSES, EXCHANGES)):
         return False
     try:
         data = yaml.safe_load((folder / STUDY_YAML).read_text(encoding="utf-8"))

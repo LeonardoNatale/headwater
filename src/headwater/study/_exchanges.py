@@ -1,4 +1,5 @@
-"""Reading one line of a process file: a process, or an override of a background process."""
+"""Reading one line of a process: a row of exchanges.csv, or of an override of a background
+process."""
 
 import re
 from dataclasses import dataclass

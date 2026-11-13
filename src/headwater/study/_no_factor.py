@@ -26,7 +26,7 @@ COLUMNS = ("flow", "method", "reason", "who", "when")
 OPTIONAL = ("flow_name",)
 
 _WHAT = {
-    "flow": "the flow's id, as a process file gives it",
+    "flow": "the flow's id, as exchanges.csv gives it",
     "method": "the method's id, for example EF-3.1",
     "reason": "why the flow counts 0",
     **WHO_AND_WHEN,
@@ -45,7 +45,7 @@ class NoFactor(BaseModel):
 
     flow_id: str = Field(min_length=1)
     flow_name: str | None = None
-    """The flow's name written next to its id, which validation checks, as in a process file."""
+    """The flow's name written next to its id, which validation checks, as in exchanges.csv."""
     method: str = Field(min_length=1)
     """The method's id."""
     reason: str = Field(min_length=1)
