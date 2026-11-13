@@ -1,0 +1,5 @@
+process,line,role,flow,amount,unit,supplier
+tshirt,e01,reference,tshirt:tshirt,1,unit,
+tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production
+tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production
+tshirt,e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste

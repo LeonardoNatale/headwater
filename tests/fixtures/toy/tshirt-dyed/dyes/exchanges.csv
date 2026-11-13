@@ -1,0 +1,4 @@
+process,line,role,flow,amount,unit,supplier
+reactive-dye,e01,reference,dyes:reactive-dye,1,kg,
+reactive-dye,e02,input,toy:electricity,kwh_per_kg,kWh,toy:electricity-production
+reactive-dye,e03,emission,toy:co2,4,kg,

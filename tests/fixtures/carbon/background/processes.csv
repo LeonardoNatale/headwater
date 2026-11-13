@@ -1,0 +1,3 @@
+id,name,location,kind
+fabric-production,cotton fabric production,GLO,ordinary_transforming_activity
+residue-treatment,"treatment of fabric residue, incineration",GLO,ordinary_transforming_activity

@@ -1,0 +1,8 @@
+id,name,location,kind
+dye-r,reactive dye production,GLO,ordinary_transforming_activity
+elec,electricity production,GLO,ordinary_transforming_activity
+fabric-b,cotton fabric production,RoW,ordinary_transforming_activity
+fabric-in,cotton fabric production,IN,ordinary_transforming_activity
+market-elec,market for electricity,GLO,market_activity
+tape-rer,tape production,RER,ordinary_transforming_activity
+wind,"electricity production, wind",GLO,ordinary_transforming_activity

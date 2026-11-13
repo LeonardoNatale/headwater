@@ -1,3 +1,0 @@
-line,role,flow,amount,unit,supplier
-e01,reference,toy:textile-waste,1,kg,
-e02,emission,toy:co2,1.2,kg,

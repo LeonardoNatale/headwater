@@ -1,0 +1,7 @@
+id,name,location,kind
+dye,dye production,GLO,ordinary_transforming_activity
+elec,electricity production,GLO,ordinary_transforming_activity
+fabric-a,cotton fabric production,RoW,ordinary_transforming_activity
+glue,glue production,GLO,ordinary_transforming_activity
+market-elec,market for electricity,GLO,market_activity
+tape,tape production,GLO,ordinary_transforming_activity

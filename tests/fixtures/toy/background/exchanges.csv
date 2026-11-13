@@ -1,0 +1,10 @@
+process,line,role,flow,amount,unit,supplier
+electricity-production,e01,reference,toy:electricity,1,kWh,
+electricity-production,e02,emission,toy:co2,0.5,kg,
+electricity-production,e03,emission,toy:ch4,0.001,kg,
+fabric-production,e01,reference,toy:cotton-fabric,1,kg,
+fabric-production,e02,input,toy:electricity,3,kWh,toy:electricity-production
+fabric-production,e03,emission,toy:co2,2.0,kg,
+fabric-production,e04,emission,toy:ch4,0.004,kg,
+incineration-textile-waste,e01,reference,toy:textile-waste,1,kg,
+incineration-textile-waste,e02,emission,toy:co2,1.2,kg,

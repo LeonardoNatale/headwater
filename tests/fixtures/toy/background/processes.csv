@@ -1,0 +1,4 @@
+id,name,location,kind
+electricity-production,electricity production,GLO,ordinary_transforming_activity
+fabric-production,cotton fabric production,GLO,ordinary_transforming_activity
+incineration-textile-waste,incineration of textile waste,GLO,ordinary_transforming_activity
