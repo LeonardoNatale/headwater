@@ -775,6 +775,23 @@ Script: [bench/brightway_import_parity.py](../../bench/brightway_import_parity.p
 
 The differences from Brightway are the size of its float32 storage (D21).
 
+## Database layout
+
+Script: `database_layout.py`. Raw output: [bench/results/database_layout_results.json](../../bench/results/database_layout_results.json).
+
+**Scope:** one Apple Silicon Mac (Apple M2 Pro, 10 cores), macOS 25.6, 13 November 2026. Python 3.14.3, NumPy 2.5.3, SciPy 1.18.1, PyArrow 26.0.0, Pydantic 2.14.0, DuckDB 1.5.6, the same in both environments. **Not a quiet run:** the load average (1 minute) was 2.78 when the run started and 2.82 when it ended, from other work on the machine. Two synthetic databases on the toy release of `headwater demo`, no licensed data: 160 and 2,000 processes of six lines each, every supplier linked. headwater 0.1.0 is the wheel from PyPI, reading `processes/`, one YAML and one CSV per process; 0.2.0 is this branch, reading `processes.csv` and `exchanges.csv` (D48). Both read the same records (the hash of their records is equal). Each run is a fresh `hw.open` of the folder, then `validate` against the background, loaded once before; the first run, then the median of the next six.
+
+| What | 160 processes, 0.1.0 | 0.2.0 | 2,000 processes, 0.1.0 | 0.2.0 |
+|---|---|---|---|---|
+| Files in the folder | 322 | 4 | 4,002 | 4 |
+| `hw.open`, first run | 58.2 ms | 14.5 ms | 699 ms | 157 ms |
+| `hw.open`, median | 51.3 ms | 11.5 ms | 671 ms | 138 ms |
+| `validate`, median | 2.3 ms | 2.2 ms | 27.5 ms | 27.0 ms |
+
+- Opening a database is 4.5 times faster at 160 processes and 4.9 times faster at 2,000: two files are read instead of two per process. What is left is reading each line into a record, which both versions do.
+- `validate` reads no file, so it does not change.
+- A first run with 0.1.0 in an environment with newer dependencies (Pydantic 2.14.3, PyArrow 26.0.1, NumPy 2.5.4, DuckDB 2.0.0) made `validate` look 10% slower in 0.2.0. With the same dependencies the two are equal, so the script now refuses two environments whose dependencies differ.
+
 ## Command start-up
 
 Script: `cli_startup.py`. Raw output: [bench/results/cli_startup_results.json](../../bench/results/cli_startup_results.json).

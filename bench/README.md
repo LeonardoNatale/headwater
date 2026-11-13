@@ -71,6 +71,7 @@ The runs of steps 3, 4, 11 and 14 on 3.10 recorded in [docs/appendix/benchmarks.
 | 26 | `processes_read.py <release> <method folder> <name>` | `bg.processes` on a release with ids it has not read: one call per id, one call with 50 ids, and a repeat, each split by table (opening and scanning), with the load average before and after. Counts and times only, to `results/processes_read_<name>_results.json`. `processes_read.py layout <release>` writes how the exchanges table is laid out (row groups, order, decoded size) |
 | 27 | `bw_toy_project.py tests/fixtures/brightway` | Writes the toy Brightway project the import tests read, with bw2data 4.5.4 (the four pins above), and checks its scores in Brightway: 1.25205, 1.242646 and 5.0596 |
 | 28 | `brightway_import_parity.py --project <name> --database <name> ...` | `import_brightway` on a real project: lines linked, and every score of the study against Brightway's and against an earlier study of the same data. The arguments are in its docstring |
+| 29 | `database_layout.py <python of a 0.1.0 environment>` | headwater's own `hw.open` and `validate` of synthetic databases of 160 and 2,000 processes, in the layout of 0.1.0 (`processes/`) with that Python and in the two tables of 0.2.0 with this one, the same dependencies in both. Counts and times only, with the load average, to `results/database_layout_results.json`. Needs no licensed data |
 
 Steps 3 and 4 need `if __name__ == "__main__":` (already in place) because bw2io's importer uses multiprocessing.
 
