@@ -4,7 +4,7 @@ A Python library for life cycle assessment (LCA).
 
 Background databases like ecoinvent are imported once per version into immutable Parquet files, with every product's impact scores already solved. Studies are plain text files in git. Calculations run inside your Python process with DuckDB and SciPy. There is no server and no database to install.
 
-**Status: alpha.** File formats and the Python API may change before 1.0. headwater imports ecoinvent 3.12, cut-off and APOS, and other sources (ecoSpold1, SimaPro CSV, openLCA JSON-LD) into frozen releases, and pulls them from a folder or a bucket URL. Databases, written as YAML and CSV or converted from a Brightway Excel workbook or a database of a Brightway project, and the studies that ask a question of them, calculate, explain, give single scores and Monte Carlo ranges, upgrade to a new release and show their changes as a diff on pull requests. Not there yet: publishing a database as a release, and EF 3.1 single scores with JRC's factors ([roadmap](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md)).
+**Status: alpha.** File formats and the Python API may change before 1.0. headwater imports ecoinvent 3.12, cut-off and APOS, and other sources (ecoSpold1, SimaPro CSV, openLCA JSON-LD) into frozen releases, and pulls them from a folder or a bucket URL. Databases, two CSV tables (`processes.csv` and `exchanges.csv`) beside a `database.yaml`, written by hand or converted from a Brightway Excel workbook or a database of a Brightway project, and the studies that ask a question of them, calculate, explain, give single scores and Monte Carlo ranges, upgrade to a new release and show their changes as a diff on pull requests. Not there yet: publishing a database as a release, and EF 3.1 single scores with JRC's factors ([roadmap](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md)).
 
 ## Install
 
@@ -37,6 +37,8 @@ background = hw.load("toy-background@6864b7dbb65d")
 [result] = hw.open("studies/tshirt-footprint").calc(background)
 print(f"{result.score:.6f}")  # 1.242646
 ```
+
+A database made with headwater 0.1.0 holds `processes/`: convert it once with `headwater database convert <folder>` ([workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#converting-the-layout-before-020)).
 
 Next: `headwater --help`, the folder's README.md, and [Setup](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#setup) to import ecoinvent.
 

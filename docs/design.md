@@ -434,7 +434,7 @@ A package that holds both, such as JSON-LD, is read twice by the same format: `r
 
 A Brightway Excel inventory is a foreground source: it is not imported into a release, it becomes a database folder, written to be edited, that links to a release which already exists (`headwater database import-excel`). Its reader, `io/excel/workbook.py`, only reads. It uses the shared stages where they fit: suppliers are matched by exact name, reference product and location through `Suppliers.of_release`, the index that SimaPro and ecoSpold1 link by name with, and the mapping file is read like the other decision files, by the one CSV reader and one `when` parser, with `who` and `when` on each row. Three things differ from a release import. A line that does not link is written with no supplier and an `UNMAPPED` comment, not left as an issue, because the database is validated and edited, not frozen. Flows of nature are matched by name and category, and units from Brightway's names, by the Excel import's own stages. And importing again replaces the process files but merges database.yaml: the import sets `name`, `background` and `uses`, and any other field only while the person has not changed it ([Importing again](workflows.md#importing-from-excel)).
 
-**Ids.** An activity's id comes from the activity alone, `<database>:<name>-<location>`, so it is the same whatever else the workbook holds and however often it is imported. `T-shirt` in GLO is `tshirt:t-shirt-glo`. The location is added unless the name already ends with it: `Autoclave no EVA input GLO` is `autoclave-no-eva-input-glo` in GLO and `autoclave-no-eva-input-glo-vn` in VN. The id is also the name of the process's files, so the part after `<database>:` is at most 100 characters, about the length of an ecoinvent id, which already names a file of `overrides/`. A longer name is cut after a whole word, and 6 characters of the sha256 of its whole name follow, so two names cut alike stay apart: `transport-freight-lorry-with-refrigeration-machine-16-32-metric-ton-euro6-r134a-004a2a-rer`. The location is never cut. Activities whose names and locations give one id take it from their reference products instead, every one of them, by the same rule. Example: three steps all named `assembly` in GLO, which make `upper`, `sole` and `shoe`, are `upper-glo`, `sole-glo` and `shoe-glo`, whatever their order, and the report says so for each. An activity whose own name gives its id keeps it, so a step that would take that id is numbered instead. Only an id still taken by an earlier activity, such as two `assembly` that both make `upper`, gets a number after the 100 characters, `-2`, in the order of the workbook: a workbook line to that name is ambiguous anyway. A Brightway project's activities come in the order of their codes, and its lines link by key, so there the `-2` twin is not ambiguous. Adding a second activity of a name moves the first one's id to its product's, once, and so does a re-import of a workbook made before this rule (D40). A line that does not link gets its flow by the same rule, `<database>:unmapped-<name>-<location>`, numbered too when two such lines differ only in product, unit or compartment.
+**Ids.** An activity's id comes from the activity alone, `<database>:<name>-<location>`, so it is the same whatever else the workbook holds and however often it is imported. `T-shirt` in GLO is `tshirt:t-shirt-glo`. The location is added unless the name already ends with it: `Autoclave no EVA input GLO` is `autoclave-no-eva-input-glo` in GLO and `autoclave-no-eva-input-glo-vn` in VN. The part after `<database>:` is the `id` of the process's row of processes.csv, and is at most 100 characters, about the length of an ecoinvent id, which already names a file of `overrides/`. A longer name is cut after a whole word, and 6 characters of the sha256 of its whole name follow, so two names cut alike stay apart: `transport-freight-lorry-with-refrigeration-machine-16-32-metric-ton-euro6-r134a-004a2a-rer`. The location is never cut. Activities whose names and locations give one id take it from their reference products instead, every one of them, by the same rule. Example: three steps all named `assembly` in GLO, which make `upper`, `sole` and `shoe`, are `upper-glo`, `sole-glo` and `shoe-glo`, whatever their order, and the report says so for each. An activity whose own name gives its id keeps it, so a step that would take that id is numbered instead. Only an id still taken by an earlier activity, such as two `assembly` that both make `upper`, gets a number after the 100 characters, `-2`, in the order of the workbook: a workbook line to that name is ambiguous anyway. A Brightway project's activities come in the order of their codes, and its lines link by key, so there the `-2` twin is not ambiguous. Adding a second activity of a name moves the first one's id to its product's, once, and so does a re-import of a workbook made before this rule (D40). A line that does not link gets its flow by the same rule, `<database>:unmapped-<name>-<location>`, numbered too when two such lines differ only in product, unit or compartment.
 
 ### Brightway project import
 
@@ -663,8 +663,8 @@ One release is pulled per call. `hw.load(url)` pulls the URL and loads the relea
 ```
 tshirt/
   database.yaml
-  processes/tshirt.yaml    name, location, time and kind of the process
-  processes/tshirt.csv     its exchanges
+  processes.csv            one row per process: id, name, location, kind, time, comment
+  exchanges.csv            one row per line of a process
   flows.csv                optional: flows the database defines itself
   flow_properties.csv      optional: properties of those flows
   units.csv                optional: units the built-in table does not have
@@ -674,7 +674,7 @@ tshirt/
   no_factor.csv            optional: flows the method has no factor for, acknowledged
 ```
 
-A process is a pair of files with the same name: a `.csv` for its exchanges and a `.yaml` for the rest. A `.csv` without its `.yaml` is an error, and so is a `.yaml` without its `.csv`. The process id is the database name and the file name: `tshirt:tshirt`.
+The processes are two tables (D48): `processes.csv`, one row per process, and `exchanges.csv`, one row per line, each row starting with the id of its process. The process id is the database name and the `id` of its row: `tshirt:tshirt`. A person, a spreadsheet or Claude reads and edits the whole database at once, and an edit is one changed row.
 
 A file or folder in the database folder that has the name of a known one but the wrong kind (`overrides` as a file), or a name close to a known one (`override/`, `cutoffs.csv`, `parameters.yml`), is an error, so a misspelt file is never ignored. Hidden files and notes (`.md`, `.txt`) are left alone.
 
@@ -696,31 +696,39 @@ methods: [toy-climate]
 
 Any other field is an error, a field of a study among them (`goal`, `functional_unit`, `reference_flow`). A folder that still holds a `study.yaml` of the format before D46, and no `database.yaml`, is refused with a message that says so.
 
-`processes/tshirt.yaml`. `kind` is one of the activity types listed under [A release](#a-release), and `location` is an ecoinvent geography short code. Quote a code that YAML reads as yes or no, such as `'NO'` for Norway. `time_start` and `time_end` are optional ISO dates, for example `2024-01-01`. The name in results comes from this file, not from the file name.
-
-```yaml
-name: T-shirt
-location: GLO
-kind: ordinary_transforming_activity
-```
-
-`processes/tshirt.csv`, one process per pair of files, one exchange per line, sorted by line id:
+`processes.csv` has the columns `id,name,location,kind`, and optionally `time_start`, `time_end` and `comment`:
 
 ```
-line,role,flow,amount,unit,supplier
-e01,reference,tshirt:tshirt,1,unit,
-e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production
-e03,input,toy:electricity,0.5,kWh,toy:electricity-production
-e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste
+id,name,location,kind
+tshirt,T-shirt,GLO,ordinary_transforming_activity
+```
+
+- `id` is the part of the process id after `<database>:`. It is letters, digits, dots, underscores and hyphens, and is listed once.
+- `kind` is one of the activity types listed under [A release](#a-release), and `location` is an ecoinvent geography short code: `NO` is Norway. The name in results comes from this row.
+- `time_start` and `time_end` are ISO dates, for example `2024-01-01`, or blank.
+- `comment` is text for people. It is not part of the process's record, so changing it changes no hash. The Excel and Brightway imports write there the activity's comment and where it was read from: `One T-shirt Read from inventory!A7 of inventory 1.xlsx.`.
+
+`exchanges.csv` has the column `process`, the `id` of the process in processes.csv, then the columns of a line:
+
+```
+process,line,role,flow,amount,unit,supplier
+tshirt,e01,reference,tshirt:tshirt,1,unit,
+tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production
+tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production
+tshirt,e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste
 ```
 
 Optional columns: `flow_name`, a flow's name written next to its id (validation checks the two still match), `comment`, and `distribution`, `scale`, `minimum` and `maximum`, the spread of the amount ([Uncertainty](#uncertainty)). An `amount` is a number or a formula: see [Parameters and formulas](#parameters-and-formulas).
+
+The order of the rows: processes.csv is sorted by id, and exchanges.csv grouped by process in that order, each process's lines in order, `e01` first. headwater writes them that way. It reads any order, so a table sorted another way in a spreadsheet still reads, and lists the processes by id. A row of exchanges.csv whose process is not in processes.csv, a process listed twice, a line id used twice in one process, and a process with no reference line are errors that name their rows.
+
+A folder that still holds `processes/`, one YAML and one CSV per process, the layout before headwater 0.2.0, is refused by every command, with the command that converts it once: `headwater database convert <folder>` ([workflows.md](workflows.md#converting-the-layout-before-020)).
 
 `flows.csv` has the columns `id,name,kind,unit`, and optionally `compartment` and `cas`. `flow_properties.csv` has `flow,property,value,unit`. `units.csv` has `unit,quantity,factor_to_reference`. A flow listed in the database's `flows.csv` can be used by its processes, and a flow of the background, or of a database it uses, can be used without being listed again.
 
 With the toy background in [calculation.md](calculation.md), this database scores 1.25205 kg CO₂-eq (1.19205 without line e04).
 
-The toy background is a folder of the same shape without `database.yaml`. The caller gives it the namespace `toy`, so its processes get ids such as `toy:fabric-production`.
+The toy background is a folder of the same shape without `database.yaml`: the same two tables, and `flows.csv`. The caller gives it the namespace `toy`, so its processes get ids such as `toy:fabric-production`.
 
 #### Databases it uses
 
@@ -729,23 +737,23 @@ Example: the T-shirt buys 0.01 kg of reactive dye, and the dye is a process of t
 ```
 tshirt-dyed/
   dyes/                       name: dyes
-    processes/reactive-dye.csv
+    exchanges.csv             reactive-dye,e01,reference,dyes:reactive-dye,1,kg,
   tshirt/                     name: tshirt, uses: [dyes]
-    processes/tshirt.csv      e04,input,dyes:reactive-dye,0.01,kg,dyes:reactive-dye
+    exchanges.csv             tshirt,e04,input,dyes:reactive-dye,0.01,kg,dyes:reactive-dye
 ```
 
 This is the toy case `tests/fixtures/toy/tshirt-dyed`. Each toy case is a parent folder of its own, so the T-shirt of every case is the database `tshirt` in a folder `tshirt`.
 
 The dye takes 2 kWh of electricity and emits 4 kg of CO₂ per kg, so it scores 2 × 0.5298 + 4 = 5.0596 per kg on the toy background, and the T-shirt 1.19205 + 0.01 × 5.0596 = 1.242646.
 
-- An entry of `uses` is the name of a database folder next to this one, in the same parent folder. The database in it must have the name of its folder, so its process ids are `dyes:<file name>`, and is refused otherwise, naming both. There is no version: git versions both databases, and a change to `dyes` is a change of every database that uses it. A pinned form such as `textile-chemicals@v3` is refused. Frozen databases that other repositories pin come later (M4).
+- An entry of `uses` is the name of a database folder next to this one, in the same parent folder. The database in it must have the name of its folder, so its process ids are `dyes:<id>`, and is refused otherwise, naming both. There is no version: git versions both databases, and a change to `dyes` is a change of every database that uses it. A pinned form such as `textile-chemicals@v3` is refused. Frozen databases that other repositories pin come later (M4).
 - A line may buy from a process of its own database, of a database its `uses` names, or of the background. A supplier from any other database is refused, naming the line, even one that comes along through another database.
 - What a used database uses comes along. If `dyes` uses `chemicals`, the T-shirt's calculation has the processes of both, without the T-shirt listing `chemicals`. Each database is read once.
 - A cycle, two or more databases that use each other (`dyes → chemicals → dyes`), is refused, naming every database in it. So is a database that uses itself.
 - Every database of the chain pins the same background, written the same way, or it is refused, naming each pin. The method or methods the background is loaded with apply to every process of the chain: the `methods` of a used database count only when it is calculated itself.
 - What travels with a used database: its processes, its overrides (its own copies of background processes, for its own lines, named `dyes:copy:<background id>`), its parameters (for its own formulas only), its cut-offs, listed apart on the result, and the rows of its `no_factor.csv`, for the flows of its own processes.
 - A database holds no scenarios: a scenario is a study's, and changes a line of a used database as well as one of the database itself. An override cannot change a line of a used database: change the used database's own files.
-- `validate` checks the used databases as part of the database: each problem is at its place in their folder, such as `../dyes/processes/reactive-dye.csv`. `contributions`, `where`, `sensitivity` and the results diff name a used database's process by its full id, `dyes:reactive-dye`, and its line as `dyes:reactive-dye line e03`, so a reader sees which database it belongs to.
+- `validate` checks the used databases as part of the database: each problem is at its place in their folder, such as `../dyes/exchanges.csv`. `contributions`, `where`, `sensitivity` and the results diff name a used database's process by its full id, `dyes:reactive-dye`, and its line as `dyes:reactive-dye line e03`, so a reader sees which database it belongs to.
 
 #### Parameters and formulas
 
@@ -779,16 +787,16 @@ A **formula** is Python-like arithmetic on parameter names. It reads like the fo
 
 Anything else is refused with a message that names it: text in quotes, attribute access (`a.b`), indexing, lists, lambdas, and unknown functions (with a suggestion). Formulas are read and computed by headwater's own evaluator, never by Python's. Every number is a float, so `10 ** 10 ** 10` is an error at once. A formula that divides by zero, gives a number too large for a float, or does not give a finite real number is an error that names the formula.
 
-In a process CSV, a cell that is a number is a number, and any other text is a formula. Example: with `fabric_kg` above, line e02 of the T-shirt can say `fabric_kg` as its amount. The record keeps both: `amount` is what the formula gives with the values in `parameters.yaml` (0.25), and `formula` is its text (`fabric_kg`). Everything that reads amounts sees a number. A name that is not a parameter is an error with a suggestion. A decimal comma (`0,25`) is read as a mistake in a number, not as a formula. A process folder without a database, such as a background, has no parameters, so its amounts are numbers.
+In exchanges.csv, a cell that is a number is a number, and any other text is a formula. Example: with `fabric_kg` above, line e02 of the T-shirt can say `fabric_kg` as its amount. The record keeps both: `amount` is what the formula gives with the values in `parameters.yaml` (0.25), and `formula` is its text (`fabric_kg`). Everything that reads amounts sees a number. A name that is not a parameter is an error with a suggestion. A decimal comma (`0,25`) is read as a mistake in a number, not as a formula. A process folder without a database, such as a background, has no parameters, so its amounts are numbers.
 
 #### Uncertainty
 
-Example: the T-shirt's 0.25 kg of fabric varies by about 10% from one batch to the next. Its line says so in four more columns of the process file:
+Example: the T-shirt's 0.25 kg of fabric varies by about 10% from one batch to the next. Its line says so in four more columns of exchanges.csv:
 
 ```
-line,role,flow,amount,unit,supplier,distribution,scale,minimum,maximum
-e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,lognormal,0.0953102,,
-e03,input,toy:electricity,0.5,kWh,toy:electricity-production,,,,
+process,line,role,flow,amount,unit,supplier,distribution,scale,minimum,maximum
+tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,lognormal,0.0953102,,
+tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,,,,
 ```
 
 `hw.monte_carlo` draws the line in each iteration ([calculation.md](calculation.md#uncertainty)); `calc` uses the amount. The amount is always the centre of its distribution, so the centre is never written:
@@ -817,7 +825,7 @@ process,line,role,flow,amount,unit,supplier,comment
 toy:electricity-production,e02,emission,toy:co2,0.3,kg,,Wind contract: 0.3 kg CO2 per kWh
 ```
 
-- Each row is the whole new line, as written in a process file, distribution columns included ([Uncertainty](#uncertainty)). A blank supplier means no supplier.
+- Each row is the whole new line, as written in exchanges.csv, distribution columns included ([Uncertainty](#uncertainty)). A blank supplier means no supplier.
 - A row may change the amount (a number or a formula), the unit and the supplier of a line. The `role` and `flow` must be those of the background line. They are written so a reviewer sees what the line is, and an override that changes them is an error.
 - A row changes a line that exists. It cannot add or remove a line, or change the reference line. To remove an input, set its amount to 0.
 - A line is overridden once, in one row of one file.
@@ -833,7 +841,7 @@ process,line,flow,criterion,share,reason,who,when
 tshirt:tshirt,e04,tshirt:packaging-tape,mass,0.0385,No tape in the background: 0.01 kg of 0.26 kg of mass input,leo,2026-10-11
 ```
 
-- The line is an `input` or `waste_to_treatment` line of a process of the database, and its supplier is blank in the process file. The `flow` is that line's flow.
+- The line is an `input` or `waste_to_treatment` line of a process of the database, and its supplier is blank in exchanges.csv. The `flow` is that line's flow.
 - `criterion` is one of the criteria of `cut_off` in `database.yaml`. A `cut_offs.csv` with rows needs that `cut_off`, and is refused without it. A `cut_off` with no rows is a warning: it says nothing.
 - `share` is between 0 and 1, the author's estimate of the share of that criterion. `reason`, `who` and `when` are required. `when` is an ISO date or time. A time with a zone is stored in UTC without one.
 - The cumulative share is not written: headwater works it out by criterion, in the order of the lines, and checks it against `max_cumulative`. The row above needs a `max_cumulative` of at least 0.0385 in `database.yaml`.
@@ -850,7 +858,7 @@ flow,flow_name,method,reason,who,when
 tshirt:cod,"COD, Chemical Oxygen Demand",toy-climate,not characterised in toy-climate,Sam,2026-10-12
 ```
 
-- `flow` is the flow's id, as a process file gives it, and `flow_name`, which is optional, is its name: validation checks the two still match, as for a process file. `method` is the method's id.
+- `flow` is the flow's id, as exchanges.csv gives it, and `flow_name`, which is optional, is its name: validation checks the two still match, as for a line. `method` is the method's id.
 - `reason`, `who` and `when` are required, as in `cut_offs.csv`: `when` is an ISO date or time, and a time with a zone is stored in UTC without one.
 - With the row, the flow counts 0, as in Brightway, and `result.not_characterised` lists it as the database's own, with the reason.
 - A row holds for one method, and a flow is written once per method. When the database moves to a new method, each flow the new method does not cover needs a row for that method. A database that uses several methods together needs a row, naming one of them, only for a flow that has no factor in any of them ([Several methods together](#several-methods-together)).
@@ -875,7 +883,8 @@ database.save()
 
 - **The calls change the database's own files**: what is in git is what the database is ([D4](decisions.md)).
 - **Nothing is written until `save()`.** `save` writes the changed files into a copy of the folder, reads the copy as `hw.open` does, and checks it against the background as `validate` does, with the databases it uses. It also checks the databases next to it that use it, since a change to `dyes` is a change of `tshirt-dyed`. Only then are the files moved into place. An edit that makes any of them invalid raises `InvalidDataError` naming the problem, and writes nothing. A file that changed on disk after the editor read it is refused too, so a hand edit is never overwritten. A call that names something that is not there, such as a line or a background process, raises `ValueError` at once.
-- **The files look hand-written.** A new file is written as the toy fixtures are: the columns it needs, and a number as short as it reads back (`1`, not `1.0`). The Excel import writes its files the same way. In a file that exists, only the changed rows are written again, and every other row keeps its text, quotes and line endings. A YAML entry is replaced on its own lines, so comments stay. A file nothing changed is not written, and setting a value to the one it has is no change, so a database saved with no change is the same byte for byte.
+- **The files look hand-written.** A new file is written as the toy fixtures are: the columns it needs, and a number as short as it reads back (`1`, not `1.0`). The Excel import writes its files the same way. In a file that exists, only the changed rows are written again, and every other row keeps its text, quotes and line endings: setting the amount of a line rewrites its one row of exchanges.csv. A new process goes before the first row with a greater id in both tables, and a new line after its process's last row. A YAML entry is replaced on its own lines, so comments stay. A file nothing changed is not written, and setting a value to the one it has is no change, so a database saved with no change is the same byte for byte.
+- **Two costs of shared tables.** The first time a row fills an optional column, such as `comment` or `distribution`, the column is added to the header, so every row of that table gets one more comma, once. A hand edit of a table after the editor read it makes `save` refuse, even for a row the editor did not change: open the database again and make the edit again.
 - **A copy of a background process is a local override** ([Overrides](#overrides)): `database.override("toy:electricity-production").set_exchange("e02", amount=0.3)` writes a row of `overrides/`. The row is the whole line, so its role, flow, unit and supplier come from the background's line. A new row goes to `overrides/<process id with hyphens for colons>.csv`, or the file `file=` names, and a row that exists stays in its file.
 - **A new database needs only its folder and its background.** `Database.new(path, bg)` writes `database.yaml` with the folder's name and the release `bg` was read from, and no methods unless `methods` names them. `pin` names the release for a background read from a folder, which has no hash: `pin="toy-background@fixture"`. `name`, `methods`, `uses` and `description` may be given, and `editor.set(...)` changes them later. A field that is not set, or a list that is empty, is not written, so the file says only what is.
 - **Nothing cascades.** Removing a line that a cut-off names, or a process that another line buys from, is refused, naming the rows. A flow is not removed with its process.
@@ -911,7 +920,7 @@ cut_off: {criteria: [mass, energy], max_cumulative: 0.03}
 - `cut_off` is the criteria, and the largest share that may be left out in all. A database a product reaches whose `cut_off` allows more is refused, naming it: the toy database of the cut-off case allows 0.05, so a study that allows 0.03 refuses it.
 - `background:` pins the release when every product is a process of it, and is refused when a product is in a database.
 - Optional: `audience`, `public_comparison`, `data_quality`, `pcr`, `assumptions` and `limitations`, text no calculation reads.
-- A study holds no processes: `processes/` or any other file of a database in a study folder is an error, and so is a folder that holds both database.yaml and study.yaml.
+- A study holds no processes: `processes.csv`, `exchanges.csv` or any other file of a database in a study folder is an error, and so is a folder that holds both database.yaml and study.yaml.
 
 A study's own `no_factor.csv` has the columns of a database's ([Flows with no factor](#flows-with-no-factor)). A row names one of the study's methods and a flow of a database the study reaches, and acknowledges it for this study only. A row no database needs is a warning.
 

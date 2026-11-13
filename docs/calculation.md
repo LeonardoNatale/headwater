@@ -423,7 +423,7 @@ database.calc(bg, "tshirt:tshirt").score  # 1.19205, for a database whose pin na
 |---|---|
 | a release folder, which holds `release.json` | `~/.headwater/releases/toy-background@3f9a1c2d4e5f` |
 | a release in the local cache, as `name@hash` with at least 12 characters of the hash | `toy-background@3f9a1c2d4e5f` |
-| a folder of process files | `tests/fixtures/toy/background` |
+| a folder of processes, `processes.csv` and `exchanges.csv` | `tests/fixtures/toy/background` |
 
 For a release, DuckDB reads the Parquet files and builds A and B, with no Python object per exchange. `method` is the id of a method the release holds, or a method folder (a `Path` is always a folder), and may be left out when the release holds one method. Opening a release checks `release.json` and the sha256 of every file, and `build` already refused unknown ids, suppliers and units. `load` then refuses, naming the line, what `build` does not check: a role that does not fit its flow (an emission on a product), a supplier that makes another flow, a unit that does not convert. Lines resolved as `cut_off` or `data_gap` have no supplier and buy nothing, so they are skipped. An indicators release has no processes to calculate on: `load` names its source release instead.
 
@@ -733,11 +733,11 @@ database.calc(bg, "tshirt:tshirt").score  # 1.09205, the local override
 |---|---|---|
 | `bd.Database("tshirt")` | `hw.Database.new(path, bg)`, or `hw.open(path).edit(bg)` | `database.yaml` |
 | changing the database's metadata | `editor.set(description=..., uses=["dyes"])` | `database.yaml`, the field's line |
-| `db.new_activity(code, name=..., location=..., unit=...)` | `editor.new_process(code, name=..., location=..., unit=..., product=...)` | `processes/<code>.yaml` and `.csv` with its reference line e01, a row of `flows.csv` |
+| `db.new_activity(code, name=..., location=..., unit=...)` | `editor.new_process(code, name=..., location=..., unit=..., product=...)` | a row of `processes.csv` and one of `exchanges.csv`, its reference line e01, each at its sorted place, and a row of `flows.csv` |
 | `db.get(code)` | `editor.process("tshirt")` or `editor.process("tshirt:tshirt")` | |
-| `act["name"] = ...; act.save()` | `process.set(name=..., location=...)` | `processes/<code>.yaml` |
-| `act.delete()` | `editor.remove_process("tshirt")` | both process files |
-| `act.new_exchange(input=..., amount=..., type=...).save()` | `process.new_exchange(role, flow, amount, unit, supplier=...)`, which returns the line id, `e04` | a row of the process CSV |
+| `act["name"] = ...; act.save()` | `process.set(name=..., location=...)` | its row of `processes.csv` |
+| `act.delete()` | `editor.remove_process("tshirt")` | its rows of both tables |
+| `act.new_exchange(input=..., amount=..., type=...).save()` | `process.new_exchange(role, flow, amount, unit, supplier=...)`, which returns the line id, `e04` | a row of `exchanges.csv`, after the process's last line |
 | `exc["amount"] = 0.3; exc.save()` | `process.set_exchange("e02", amount=0.3)`; `""` empties a cell | that row |
 | `exc.delete()` | `process.remove_exchange("e02")` | that row |
 | `act.copy()`, then changing its exchanges and relinking | `editor.override(process_id).set_exchange("e02", amount=0.3)`, `.reset_exchange("e02")` | a row of `overrides/`, no relinking |
@@ -745,9 +745,9 @@ database.calc(bg, "tshirt:tshirt").score  # 1.09205, the local override
 | none: Brightway drops an exchange with no supplier | `editor.cut_off(process_id, line, criterion=..., share=..., reason=..., who=..., when=...)`, `editor.remove_cut_off(...)` | `cut_offs.csv` |
 | none | `editor.new_flow(code, name=..., kind=..., unit=...)` | `flows.csv` |
 
-- An exchange is named by its line id in the process file, `e02`, and the file keeps its `line` column.
-- `role` is always given, never read from the sign of the amount ([Roles and signs](design.md#roles-and-signs)). An amount is a number or a formula of the database's parameters, as in a process file.
-- `process.exchanges` gives each exchange as written in the file, column by column, with its line id in `line`. `editor.changed` gives the files `save` would write.
+- An exchange is named by its line id, `e02`, the `line` column of exchanges.csv.
+- `role` is always given, never read from the sign of the amount ([Roles and signs](design.md#roles-and-signs)). An amount is a number or a formula of the database's parameters, as in exchanges.csv.
+- `process.exchanges` gives each exchange as written in exchanges.csv, column by column, without its `process` column, with its line id in `line`. `editor.changed` gives the files `save` would write.
 - A local override cannot add or remove lines, or change the reference line, where Brightway's copy can: a copy is the original with some lines changed ([design.md](design.md#overrides)).
 - `Database.new(path, bg, *, name=None, pin=None, methods=(), uses=(), description=None)` needs only the folder and the background. `name` is the folder's name by default, and `methods` lists the methods the database is scored with by default, none when left out. One purchase is three calls and `save()`:
 
