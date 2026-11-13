@@ -12,6 +12,7 @@ from typer.testing import CliRunner
 from headwater.model import Pin
 from headwater.release import Release, ReleaseInfo, build
 from headwater.study import read_method, read_process_folder
+from tests.conftest import add_process
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 
@@ -136,6 +137,16 @@ def edit(path: Path, old: str, new: str) -> None:
     text = path.read_text()
     assert old in text, f"{old!r} not found in {path}"
     path.write_text(text.replace(old, new, 1))
+
+
+def copy_process(database: Path, code: str, to: str) -> None:
+    """A second process with the details and the lines of the process `code`, under the id `to`:
+    it makes the same flow."""
+    rows = (database / "processes.csv").read_text().splitlines()
+    [details] = [row.split(",", 1)[1] for row in rows if row.startswith(f"{code},")]
+    table = (database / "exchanges.csv").read_text().splitlines()
+    lines = [row.split(",", 1)[1] for row in table if row.startswith(f"{code},")]
+    add_process(database, to, "\n".join(lines), details=details)
 
 
 def _git(path: Path, *args: str) -> str:

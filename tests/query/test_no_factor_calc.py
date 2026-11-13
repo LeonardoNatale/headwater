@@ -12,7 +12,7 @@ import pytest
 
 import headwater as hw
 from headwater.model import Flow, FlowKind, InvalidDataError
-from tests.conftest import toy_database
+from tests.conftest import add_lines, toy_database
 
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
 
@@ -104,8 +104,7 @@ def test_a_flow_the_study_and_the_background_emit_is_listed_once_as_the_studys_o
 ) -> None:
     with (toy / "background" / "flows.csv").open("a") as f:
         f.write('tshirt:cod,"COD, Chemical Oxygen Demand",elementary,kg,water,\n')
-    with (toy / "background" / "processes" / "electricity-production.csv").open("a") as f:
-        f.write("e09,emission,tshirt:cod,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e09,emission,tshirt:cod,0.0001,kg,")
     background = load_toy(toy)
 
     result = open_study(STUDY, background, root=toy).calc(background, "tshirt:tshirt")
@@ -122,8 +121,7 @@ def test_a_background_flow_is_listed_as_not_the_studys_own(
 ) -> None:
     with (toy / "background" / "flows.csv").open("a") as f:
         f.write("toy:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (toy / "background" / "processes" / "electricity-production.csv").open("a") as f:
-        f.write("e09,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e09,emission,toy:n2o,0.0001,kg,")
     background = load_toy(toy)
 
     result = open_study(STUDY, background, root=toy).calc(background, "tshirt:tshirt")
@@ -143,8 +141,7 @@ def test_a_study_flow_that_only_the_release_defines_is_refused_then_listed(
     # The study's line names a flow of the background release, not of its own flows.csv: the
     # shape of an ecoinvent flow in a real study.
     background = hw.load(make_release(records.with_flows(N2O)).path, method="toy-climate")
-    with (toy_database(toy, STUDY) / "processes" / "tshirt.csv").open("a") as f:
-        f.write("e05,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy_database(toy, STUDY), "tshirt", "e05,emission,toy:n2o,0.0001,kg,")
     study = open_study(STUDY, background, root=toy)
 
     report = study.validate(background)

@@ -1,0 +1,9 @@
+name: tshirt-and-dye
+goal: Two T-shirts and the dye a dyer buys for a batch, a test of products with amounts
+functional_unit: 2 T-shirts and 0.5 kg of reactive dye
+products:
+  - {process: tshirt:tshirt, amount: 2}
+  - {process: dyes:reactive-dye, amount: 0.5}
+boundary: cradle-to-gate
+methods: [toy-climate]
+cut_off: {criteria: [mass, energy], max_cumulative: 0.03}

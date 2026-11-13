@@ -38,15 +38,20 @@ def _cell(text: str) -> str | int | float | None:
     return text
 
 
-def process_files(folder: Path) -> dict[str, list[str]]:
-    """The lines of each process file, without the comment that says where it was read."""
+def tables(folder: Path) -> dict[str, list[str]]:
+    """The lines of processes.csv and exchanges.csv, without the end of a process's comment that
+    says where it was read: `One T-shirt Read from inventory!A7 of tshirt.xlsx.` gives
+    `One T-shirt`."""
     return {
-        p.name: [line for line in p.read_text().splitlines() if not line.startswith("# Read from")]
-        for p in sorted((folder / "processes").iterdir())
+        "processes.csv": [
+            line.split(" Read from ", 1)[0]
+            for line in (folder / "processes.csv").read_text().splitlines()
+        ],
+        "exchanges.csv": (folder / "exchanges.csv").read_text().splitlines(),
     }
 
 
-def test_a_workbook_and_a_project_of_the_same_tshirt_give_the_same_process_files(
+def test_a_workbook_and_a_project_of_the_same_tshirt_give_the_same_tables(
     project: Project, studies: Path, tmp_path: Path, toy_release: Release
 ) -> None:
     """The project's T-shirt with plain amounts, its fabric lognormal (GSD 1.1) and its waste
@@ -75,12 +80,16 @@ def test_a_workbook_and_a_project_of_the_same_tshirt_give_the_same_process_files
         workbook("tshirt-uncertain", tmp_path), toy_release, tmp_path / "tshirt", name="tshirt"
     )
     assert from_project.clean and from_workbook.clean
-    found = process_files(from_workbook.folder)
-    assert found == process_files(from_project.folder)
-    assert found["t-shirt-glo.csv"][2:] == [
-        "e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,cotton fabric,"
+    found = tables(from_workbook.folder)
+    assert found == tables(from_project.folder)
+    assert found["processes.csv"][1:] == [
+        "t-shirt-glo,T-shirt,GLO,ordinary_transforming_activity,One T-shirt"
+    ]
+    assert found["exchanges.csv"][2:] == [
+        "t-shirt-glo,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,cotton fabric,"
         "Fabric in the bill of materials,lognormal,0.09531017980432493,,",
-        "e03,input,toy:electricity,0.5,kWh,toy:electricity-production,electricity,,,,,",
-        "e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste,"
-        "textile waste,Scraps sent to incineration,uniform,,0.04,0.06",
+        "t-shirt-glo,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,electricity,,,,,",
+        "t-shirt-glo,e04,waste_to_treatment,toy:textile-waste,0.05,kg,"
+        "toy:incineration-textile-waste,textile waste,Scraps sent to incineration,"
+        "uniform,,0.04,0.06",
     ]

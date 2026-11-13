@@ -13,6 +13,7 @@ import pytest
 import headwater as hw
 from headwater.diff import Source, diff_databases, render_json, render_text
 from headwater.study import DatabaseFolder, read_database
+from tests.conftest import add_lines, add_process
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9
@@ -30,19 +31,18 @@ def study(root: Path) -> DatabaseFolder:
 
 
 def csv(root: Path) -> Path:
-    return root / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    return root / "tshirt" / "tshirt" / "exchanges.csv"
 
 
-def solar(root: Path) -> None:
-    """The T-shirt's electricity bought from a solar panel of its own, in France."""
-    processes = root / "tshirt" / "tshirt" / "processes"
-    (processes / "solar.yaml").write_text(
-        "name: solar electricity\nlocation: FR\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "solar.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,toy:electricity,1,kWh,\n"
-        "e02,emission,toy:co2,0.05,kg,\n"
+def solar(root: Path, rest: str = "") -> None:
+    """The T-shirt's electricity bought from a solar panel of its own, in France. `rest` ends
+    each of its lines, for the columns that exchanges.csv has beyond the supplier: `","` for an
+    empty comment."""
+    add_process(
+        root / "tshirt" / "tshirt",
+        "solar",
+        f"e01,reference,toy:electricity,1,kWh,{rest}\ne02,emission,toy:co2,0.05,kg,{rest}",
+        details="solar electricity,FR,ordinary_transforming_activity",
     )
     edit(csv(root), "0.5,kWh,toy:electricity-production", "0.5,kWh,tshirt:solar")
 
@@ -125,14 +125,13 @@ def test_each_line_is_listed_once_with_its_effect_on_every_indicator(
     assert rows[0].split()[-2:] == ["+0.18543", "+0.05298"]
 
 
-def test_scores_keep_the_methods_order_and_lines_the_order_of_the_files(
+def test_scores_keep_the_methods_order_and_lines_the_order_of_the_table(
     toy: Path, impacts: hw.Background
 ) -> None:
     old = study(toy)
     # 1 g of methane: +0.0298 kg CO2-eq, more than the 0.0005 kWh of electricity
     edit(csv(toy), "toy:electricity,0.5", "toy:electricity,0.5005")
-    with csv(toy).open("a") as handle:
-        handle.write("e04,emission,toy:ch4,0.001,kg,\n")
+    add_lines(toy / "tshirt" / "tshirt", "tshirt", "e04,emission,toy:ch4,0.001,kg,")
 
     text, _ = text_and_json(old, study(toy), impacts)
 
@@ -150,11 +149,13 @@ def test_the_lines_with_the_largest_share_of_a_change_get_the_columns(
     toy: Path, impacts: hw.Background
 ) -> None:
     old = study(toy)
-    with csv(toy).open("a") as handle:
-        # six emissions of CO2, from 1 g to 6 g, and one of methane that alone moves ozone
-        for i in range(1, 7):
-            handle.write(f"e{10 + i},emission,toy:co2,{i / 1000},kg,\n")
-        handle.write("e20,emission,toy:ch4,0.000001,kg,\n")
+    # six emissions of CO2, from 1 g to 6 g, and one of methane that alone moves ozone
+    add_lines(
+        toy / "tshirt" / "tshirt",
+        "tshirt",
+        *(f"e{10 + i},emission,toy:co2,{i / 1000},kg," for i in range(1, 7)),
+        "e20,emission,toy:ch4,0.000001,kg,",
+    )
 
     text, _ = text_and_json(old, study(toy), impacts)
 
@@ -167,21 +168,19 @@ def test_the_lines_with_the_largest_share_of_a_change_get_the_columns(
 def test_each_product_has_its_own_table_with_the_columns_of_the_lines_that_moved_it(
     toy: Path, impacts: hw.Background
 ) -> None:
-    processes = toy / "tshirt" / "tshirt" / "processes"
-    (processes / "fabric.yaml").write_text(
-        "name: own fabric\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "fabric.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
+    folder = toy / "tshirt" / "tshirt"
+    add_process(
+        folder,
+        "fabric",
         "e01,reference,tshirt:fabric,1,kg,\n"
-        "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
+        "e02,input,toy:electricity,3,kWh,toy:electricity-production",
+        details="own fabric,GLO,ordinary_transforming_activity",
     )
-    with (toy / "tshirt" / "tshirt" / "flows.csv").open("a") as handle:
+    with (folder / "flows.csv").open("a") as handle:
         handle.write("tshirt:fabric,own fabric,product,kg,,\n")
-    with csv(toy).open("a") as handle:
-        handle.write("e04,input,tshirt:fabric,0.1,kg,tshirt:fabric\n")
+    add_lines(folder, "tshirt", "e04,input,tshirt:fabric,0.1,kg,tshirt:fabric")
     old = study(toy)
-    edit(processes / "fabric.csv", "toy:electricity,3,", "toy:electricity,4,")
+    edit(csv(toy), "toy:electricity,3,", "toy:electricity,4,")
     edit(csv(toy), "toy:electricity,0.5", "toy:electricity,0.6")
 
     diff = diff_databases(old, study(toy), impacts, products="all")
@@ -252,7 +251,7 @@ def test_a_supplier_swap_with_a_new_comment_is_one_cause_and_one_comment(
     rows = csv(toy).read_text().splitlines()
     csv(toy).write_text("\n".join([rows[0] + ",comment", *(r + ",-" for r in rows[1:])]) + "\n")
     old = study(toy)
-    solar(toy)
+    solar(toy, rest=",")
     edit(csv(toy), "tshirt:solar,-", "tshirt:solar,Our own panels")
 
     text, _ = text_and_json(old, study(toy), background)

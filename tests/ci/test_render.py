@@ -11,11 +11,13 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any
 
+from tests.conftest import add_lines, add_process
+
 Git = Callable[..., str]
 Commit = Callable[[str], str]
 Report = dict[str, Any]
 
-FABRIC = "studies/tshirt/tshirt/processes/tshirt.csv"
+FABRIC = "studies/tshirt/tshirt/exchanges.csv"
 RUN = "https://example.test/run/1"
 BASE, HEAD = "a" * 40, "b" * 40
 
@@ -160,14 +162,11 @@ def test_a_supplier_swap_names_both_suppliers_and_the_json_keeps_the_ids(
     commit: Commit,
 ) -> None:
     git("switch", "--quiet", "--create", "solar")
-    processes = repo / "studies/tshirt/tshirt/processes"
-    (processes / "solar.yaml").write_text(
-        "name: solar electricity\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "solar.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,toy:electricity,1,kWh,\n"
-        "e02,emission,toy:co2,0.05,kg,\n"
+    add_process(
+        repo / "studies/tshirt/tshirt",
+        "solar",
+        "e01,reference,toy:electricity,1,kWh,\ne02,emission,toy:co2,0.05,kg,",
+        details="solar electricity,GLO,ordinary_transforming_activity",
     )
     edit(repo / FABRIC, "0.5,kWh,toy:electricity-production", "0.5,kWh,tshirt:solar")
     commit("solar panels")
@@ -466,7 +465,7 @@ def test_the_lines_with_the_largest_share_of_a_change_get_the_columns(
 
     assert "| % | e03 | e04 | e05 | e06 | e07 | 2 others |" in body
     assert "| +21.001 | +21.0% | +3 | +4 | +5 | +6 | +0.001 | +3 |" in body
-    # every line is listed, in the order of the files
+    # every line is listed, in the order of the table
     listed = [line.split(" | ")[0] for line in body.splitlines() if line.startswith("| e0")]
     assert listed == [f"| e0{i}" for i in range(1, 8)]
 
@@ -703,20 +702,18 @@ def test_a_real_diff_of_two_products_has_one_block_each(render: ModuleType, tmp_
 
     root = tmp_path / "tshirt"
     shutil.copytree(TOY / "tshirt" / "tshirt", root)
-    (root / "processes" / "fabric.yaml").write_text(
-        "name: own fabric\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (root / "processes" / "fabric.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
+    add_process(
+        root,
+        "fabric",
         "e01,reference,tshirt:fabric,1,kg,\n"
-        "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
+        "e02,input,toy:electricity,3,kWh,toy:electricity-production",
+        details="own fabric,GLO,ordinary_transforming_activity",
     )
     with (root / "flows.csv").open("a") as handle:
         handle.write("tshirt:fabric,own fabric,product,kg,,\n")
-    with (root / "processes" / "tshirt.csv").open("a") as handle:
-        handle.write("e04,input,tshirt:fabric,0.1,kg,tshirt:fabric\n")
+    add_lines(root, "tshirt", "e04,input,tshirt:fabric,0.1,kg,tshirt:fabric")
     old = read_database(root)
-    edit(root / "processes" / "fabric.csv", "toy:electricity,3,", "toy:electricity,4,")
+    edit(root / "exchanges.csv", "toy:electricity,3,", "toy:electricity,4,")
     background = hw.load(
         TOY / "background", method=TOY / "methods" / "toy-climate", namespace="toy"
     )

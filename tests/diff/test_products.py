@@ -13,6 +13,7 @@ import pytest
 import headwater as hw
 from headwater.diff import DiffError, Source, diff_databases, render_json, render_text
 from headwater.study import DatabaseFolder, read_database
+from tests.conftest import add_process
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9
@@ -33,16 +34,17 @@ def folder(root: Path) -> Path:
     return root / "tshirt" / "tshirt"
 
 
+def exchanges(root: Path) -> Path:
+    return folder(root) / "exchanges.csv"
+
+
 def add_product(root: Path, name: str, kwh: float) -> None:
     """A product the database makes from `kwh` of grid electricity, which nothing in it buys."""
-    processes = folder(root) / "processes"
-    (processes / f"{name}.yaml").write_text(
-        f"name: {name}\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / f"{name}.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
+    add_process(
+        folder(root),
+        name,
         f"e01,reference,tshirt:{name},1,kg,\n"
-        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production\n"
+        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production",
     )
     with (folder(root) / "flows.csv").open("a") as handle:
         handle.write(f"tshirt:{name},{name},product,kg,,\n")
@@ -53,7 +55,7 @@ def add_twin(root: Path) -> None:
     add_product(root, "bag-b", 3)
     flows = folder(root) / "flows.csv"
     flows.write_text(flows.read_text().replace("tshirt:bag-b,bag-b,product,kg,,\n", ""))
-    edit(folder(root) / "processes" / "bag-b.csv", "tshirt:bag-b", "tshirt:bag")
+    edit(exchanges(root), "tshirt:bag-b", "tshirt:bag")
 
 
 @pytest.fixture
@@ -87,7 +89,7 @@ def test_a_change_to_one_product_shows_its_block_and_the_others_as_no_change(
     made: Path, background: hw.Background
 ) -> None:
     old = study(made)
-    edit(folder(made) / "processes" / "bag.csv", "toy:electricity,2,", "toy:electricity,3,")
+    edit(exchanges(made), "toy:electricity,2,", "toy:electricity,3,")
 
     text, _ = text_and_json(old, study(made), background, products="all")
 
@@ -107,7 +109,7 @@ def test_the_json_lists_every_product_in_the_order_of_the_processes(
     made: Path, background: hw.Background
 ) -> None:
     old = study(made)
-    edit(folder(made) / "processes" / "bag.csv", "toy:electricity,2,", "toy:electricity,3,")
+    edit(exchanges(made), "toy:electricity,2,", "toy:electricity,3,")
 
     _, data = text_and_json(old, study(made), background, products="all")
 
@@ -127,7 +129,7 @@ def test_a_change_to_one_product_leaves_the_others_as_one_line(
     made: Path, background: hw.Background
 ) -> None:
     old = study(made)
-    edit(folder(made) / "processes" / "tshirt.csv", "toy:electricity,0.5", "toy:electricity,0.6")
+    edit(exchanges(made), "toy:electricity,0.5", "toy:electricity,0.6")
 
     text, _ = text_and_json(old, study(made), background, products="all")
 
@@ -151,8 +153,8 @@ def test_a_change_that_moves_no_product_counts_them_all(made: Path, impacts: hw.
 
 def test_products_come_in_the_order_of_the_database(made: Path, background: hw.Background) -> None:
     old = study(made)
-    edit(folder(made) / "processes" / "tote.csv", "toy:electricity,1,", "toy:electricity,2,")
-    edit(folder(made) / "processes" / "bag.csv", "toy:electricity,2,", "toy:electricity,3,")
+    edit(exchanges(made), "tote,e02,input,toy:electricity,1,", "tote,e02,input,toy:electricity,2,")
+    edit(exchanges(made), "bag,e02,input,toy:electricity,2,", "bag,e02,input,toy:electricity,3,")
 
     text, _ = text_and_json(old, study(made), background, products="all")
 
@@ -167,7 +169,7 @@ def test_a_line_that_moves_no_product_is_still_listed(
     made: Path, background: hw.Background
 ) -> None:
     old = study(made)
-    edit(folder(made) / "processes" / "bag.csv", "toy:electricity,2,", "toy:electricity,3,")
+    edit(exchanges(made), "toy:electricity,2,", "toy:electricity,3,")
     diff = diff_databases(old, study(made), background, products="all")
     # the same lines and effects of 0, as when a line buys from a supplier that scores 0
     still = replace(diff, rows=tuple(replace(r, new=r.old) for r in diff.rows))
@@ -206,10 +208,11 @@ def test_a_product_the_new_study_adds_is_listed_as_new(
 def test_a_product_the_new_study_removes_is_listed_as_removed(
     toy: Path, background: hw.Background
 ) -> None:
+    tables = {name: (folder(toy) / name).read_text() for name in ("processes.csv", "exchanges.csv")}
     add_product(toy, "bag", 2)
     old = study(toy)
-    (folder(toy) / "processes" / "bag.yaml").unlink()
-    (folder(toy) / "processes" / "bag.csv").unlink()
+    for name, text in tables.items():  # the tables without the bag's rows
+        (folder(toy) / name).write_text(text)
 
     text, data = text_and_json(old, study(toy), background, products="all")
 
@@ -229,7 +232,7 @@ def test_two_processes_that_make_one_flow_are_two_products(
     """Every process is a product (D46), so two that make the same flow are scored apart."""
     add_twin(made)
     old = study(made)
-    edit(folder(made) / "processes" / "bag-b.csv", "toy:electricity,3,", "toy:electricity,4,")
+    edit(exchanges(made), "toy:electricity,3,", "toy:electricity,4,")
 
     text, data = text_and_json(old, study(made), background, products="all")
 
@@ -248,7 +251,7 @@ def test_asking_for_a_flow_names_the_process_that_makes_it(
     made: Path, background: hw.Background
 ) -> None:
     add_product(made, "bag-sewing", 2)
-    edit(folder(made) / "processes" / "bag-sewing.csv", "tshirt:bag-sewing", "tshirt:sewn-bag")
+    edit(exchanges(made), "tshirt:bag-sewing", "tshirt:sewn-bag")
     old = study(made)
 
     with pytest.raises(DiffError, match="tshirt:sewn-bag is the flow of the process "):
@@ -260,8 +263,8 @@ def test_asking_for_a_flow_names_the_process_that_makes_it(
 
 def test_products_given_limit_what_is_scored(made: Path, background: hw.Background) -> None:
     old = study(made)
-    edit(folder(made) / "processes" / "bag.csv", "toy:electricity,2,", "toy:electricity,3,")
-    edit(folder(made) / "processes" / "tote.csv", "toy:electricity,1,", "toy:electricity,2,")
+    edit(exchanges(made), "toy:electricity,2,", "toy:electricity,3,")
+    edit(exchanges(made), "toy:electricity,1,", "toy:electricity,2,")
 
     text, data = text_and_json(old, study(made), background, products=["tshirt:tote"])
 
@@ -289,7 +292,7 @@ def test_a_one_product_database_reads_as_before_whatever_the_products_asked_for(
     toy: Path, impacts: hw.Background
 ) -> None:
     old = study(toy)
-    edit(toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv", "0.25,kg", "0.3,kg")
+    edit(exchanges(toy), "0.25,kg", "0.3,kg")
 
     before, _ = text_and_json(old, study(toy), impacts)
     every, _ = text_and_json(old, study(toy), impacts, products="all")

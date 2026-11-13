@@ -105,12 +105,12 @@ def test_calc_with_iterations_names_the_database_lines_and_parameters_drawn(
     (folder / "parameters.yaml").write_text(
         "database:\n  fabric_kg: {value: 0.25, distribution: lognormal, scale: 0.1}\n"
     )
-    csv = folder / "processes" / "tshirt.csv"
+    csv = folder / "exchanges.csv"
     rows = csv.read_text().splitlines()
     csv.write_text(
         "\n".join(
             [rows[0] + ",distribution,scale,minimum,maximum"]
-            + [r + (",normal,0.05,," if r.startswith("e03") else ",,,,") for r in rows[1:]]
+            + [r + (",normal,0.05,," if r.startswith("tshirt,e03,") else ",,,,") for r in rows[1:]]
         )
         + "\n"
     )

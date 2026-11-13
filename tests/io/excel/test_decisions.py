@@ -256,10 +256,11 @@ def _chemicals(folder: Path, release: Release, write_study) -> None:
     )
     text = (folder / "database.yaml").read_text().replace("toy-climate", "mini-climate")
     (folder / "database.yaml").write_text(text)
-    for stem, name in (("reactive-dye", "reactive dye"), ("disperse-dye", "disperse dye")):
-        (folder / "processes" / f"{stem}.yaml").write_text(
-            f"name: {name}\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-        )
+    (folder / "processes.csv").write_text(
+        "id,name,location,kind\n"
+        "disperse-dye,disperse dye,GLO,ordinary_transforming_activity\n"
+        "reactive-dye,reactive dye,GLO,ordinary_transforming_activity\n"
+    )
 
 
 def test_a_database_sent_to_a_study_folder_links_to_its_processes(
@@ -313,9 +314,10 @@ def test_a_line_that_two_processes_of_the_study_fit_is_not_guessed(
     workbooks: Workbooks, mini_release: Release, out: Path, tmp_path: Path, write_study
 ) -> None:
     _chemicals(out.parent / "textile-chemicals", mini_release, write_study)
-    (out.parent / "textile-chemicals/processes/disperse-dye.yaml").write_text(
-        "name: reactive dye\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
+    table = out.parent / "textile-chemicals" / "processes.csv"
+    text = table.read_text()
+    assert "disperse-dye,disperse dye," in text
+    table.write_text(text.replace("disperse-dye,disperse dye,", "disperse-dye,reactive dye,"))
     dye = line("reactive dye", 0.1, "kilogram", "GLO", database="Textile Chemicals", product="dye")
     done = run(
         workbooks,

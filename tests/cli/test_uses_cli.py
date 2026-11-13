@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
-DYE_CSV = "tshirt-dyed/dyes/processes/reactive-dye.csv"
+DYE_CSV = "tshirt-dyed/dyes/exchanges.csv"
 
 
 def edit(path: Path, old: str, new: str) -> None:

@@ -15,6 +15,7 @@ import pytest
 import headwater as hw
 from headwater.calc import CalculationError
 from headwater.release import Release
+from tests.conftest import TABLE_HEADER, add_process, write_tables
 
 Invoke = Callable[..., tuple[int, str]]
 Git = Callable[..., str]
@@ -22,7 +23,7 @@ Commit = Callable[[str], str]
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9
-CSV = "tshirt/tshirt/processes/tshirt.csv"
+CSV = "tshirt/tshirt/exchanges.csv"
 
 
 def edit(path: Path, old: str, new: str) -> None:
@@ -140,7 +141,7 @@ def test_no_change_exits_0_and_says_so(repo: Path, toy_args: list[str], invoke: 
 def test_differences_that_leave_the_score_alone_are_still_listed(
     repo: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    edit(repo / "tshirt/tshirt/processes/tshirt.yaml", "name: T-shirt", "name: Polo shirt")
+    edit(repo / "tshirt/tshirt/processes.csv", "tshirt,T-shirt,", "tshirt,Polo shirt,")
     with (repo / "tshirt/tshirt/database.yaml").open("a") as handle:
         handle.write("description: Footprint of one T-shirt for the sales team\n")
 
@@ -170,29 +171,25 @@ def test_changes_are_ranked_by_their_effect_not_by_their_place_in_the_file(
 def test_what_the_changes_do_not_explain_is_shown_as_interaction(
     repo: Path, commit: Commit, toy_args: list[str], invoke: Invoke
 ) -> None:
-    (repo / "tshirt/tshirt/processes/tshirt.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:tshirt,1,unit,\n"
-        "e02,input,tshirt:fabric,0.25,kg,tshirt:fabric\n"
-    )
-    (repo / "tshirt/tshirt/processes/fabric.yaml").write_text(
-        "name: fabric\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (repo / "tshirt/tshirt/processes/fabric.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:fabric,1,kg,\n"
-        "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
-        "e03,emission,toy:co2,2.0,kg,\n"
+    write_tables(
+        repo / "tshirt/tshirt",
+        {
+            "tshirt": "e01,reference,tshirt:tshirt,1,unit,\n"
+            "e02,input,tshirt:fabric,0.25,kg,tshirt:fabric",
+            "fabric": "e01,reference,tshirt:fabric,1,kg,\n"
+            "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
+            "e03,emission,toy:co2,2.0,kg,",
+        },
+        details={
+            "tshirt": "T-shirt,GLO,ordinary_transforming_activity",
+            "fabric": "fabric,GLO,ordinary_transforming_activity",
+        },
     )
     with (repo / "tshirt/tshirt/flows.csv").open("a") as handle:
         handle.write("tshirt:fabric,fabric,product,kg,,\n")
     commit("the study makes its own fabric")
     edit(repo / CSV, "tshirt:fabric,0.25,kg", "tshirt:fabric,0.5,kg")
-    edit(
-        repo / "tshirt/tshirt/processes/fabric.csv",
-        "toy:electricity,3,kWh",
-        "toy:electricity,6,kWh",
-    )
+    edit(repo / CSV, "toy:electricity,3,kWh", "toy:electricity,6,kWh")
 
     code, output = invoke("diff", "HEAD", "tshirt/tshirt", "--product", "tshirt:tshirt", *toy_args)
     _, every = invoke("diff", "HEAD", "tshirt/tshirt", *toy_args)
@@ -334,7 +331,7 @@ def test_a_study_that_cannot_be_read_is_a_validation_error_and_exits_1(
 
     assert code == 1
     assert "lots" in output
-    assert "processes/tshirt.csv" in output
+    assert "exchanges.csv:3" in output
     assert "Traceback" not in output
 
 
@@ -530,14 +527,11 @@ def test_the_json_for_a_release_names_it_and_has_no_folder(
 def test_percent_is_null_when_the_old_score_is_zero_and_nothing_is_nan(
     repo: Path, commit: Commit, toy_args: list[str], invoke_stdout: Invoke
 ) -> None:
-    (repo / CSV).write_text(
-        "line,role,flow,amount,unit,supplier\ne01,reference,tshirt:tshirt,1,unit,\n"
-    )
+    (repo / CSV).write_text(TABLE_HEADER + "tshirt,e01,reference,tshirt:tshirt,1,unit,\n")
     commit("an empty T-shirt")
     (repo / CSV).write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:tshirt,1,unit,\n"
-        "e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n"
+        TABLE_HEADER + "tshirt,e01,reference,tshirt:tshirt,1,unit,\n"
+        "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n"
     )
 
     payload = run_json(invoke_stdout, "HEAD", "tshirt/tshirt", *toy_args)
@@ -551,13 +545,10 @@ def test_percent_is_null_when_the_old_score_is_zero_and_nothing_is_nan(
 def test_a_product_on_one_side_only_is_null_on_the_other(
     repo: Path, commit: Commit, toy_args: list[str], invoke_stdout: Invoke
 ) -> None:
-    (repo / "tshirt/tshirt/processes/polo.yaml").write_text(
-        "name: polo\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (repo / "tshirt/tshirt/processes/polo.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:polo,1,unit,\n"
-        "e02,input,toy:electricity,1,kWh,toy:electricity-production\n"
+    add_process(
+        repo / "tshirt/tshirt",
+        "polo",
+        "e01,reference,tshirt:polo,1,unit,\ne02,input,toy:electricity,1,kWh,toy:electricity-production",
     )
     with (repo / "tshirt/tshirt/flows.csv").open("a") as handle:
         handle.write("tshirt:polo,polo,product,unit,,\n")
@@ -710,7 +701,7 @@ def test_a_difference_names_the_flow_of_its_line_and_a_parameter_has_none(
     shutil.copytree(TOY / "tshirt-parameter" / "tshirt", repo / "tshirt/tshirt")
     commit("a study with a parameter")
     edit(repo / "tshirt/tshirt/parameters.yaml", "value: 0.25", "value: 0.30")
-    edit(repo / "tshirt/tshirt/processes/tshirt.csv", "toy:electricity,0.5", "toy:electricity,0.4")
+    edit(repo / CSV, "toy:electricity,0.5", "toy:electricity,0.4")
 
     payload = run_json(invoke_stdout, "HEAD", "tshirt/tshirt", *toy_args)
 
@@ -900,14 +891,11 @@ def test_several_methods_are_listed_by_id_and_the_joined_id_is_not_written(
 def add_bag(repo: Path, kwh: float = 2) -> None:
     """A bag the T-shirt study makes from `kwh` of grid electricity: nothing in it buys the bag, so
     its score is not part of the T-shirt's."""
-    processes = repo / "tshirt/tshirt/processes"
-    (processes / "bag.yaml").write_text(
-        "name: bag\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "bag.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:bag,1,kg,\n"
-        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production\n"
+    add_process(
+        repo / "tshirt/tshirt",
+        "bag",
+        f"e01,reference,tshirt:bag,1,kg,\ne02,input,toy:electricity,{kwh},kWh,"
+        "toy:electricity-production",
     )
     with (repo / "tshirt/tshirt/flows.csv").open("a") as handle:
         handle.write("tshirt:bag,bag,product,kg,,\n")
@@ -919,7 +907,7 @@ def heavier_bag(repo: Path, commit: Commit, git: Git) -> None:
     add_bag(repo)
     commit("a bag")
     git("switch", "--quiet", "--create", "heavier-bag")
-    edit(repo / "tshirt/tshirt/processes/bag.csv", "toy:electricity,2,", "toy:electricity,3,")
+    edit(repo / CSV, "toy:electricity,2,", "toy:electricity,3,")
     commit("heavier bag")
 
 
@@ -941,11 +929,11 @@ def test_a_product_is_named_by_its_process_as_well(
     invoke_stdout: Invoke,
 ) -> None:  # fmt: skip
     add_bag(repo)
-    edit(repo / "tshirt/tshirt/processes/bag.yaml", "name: bag\n", "name: bag sewing\n")
+    edit(repo / "tshirt/tshirt/processes.csv", "bag,bag,GLO,", "bag,bag sewing,GLO,")
     commit("a bag, made by bag sewing")
     git("switch", "--quiet", "--create", "heavier-bag")
-    edit(repo / "tshirt/tshirt/processes/bag.csv", "toy:electricity,2,", "toy:electricity,3,")
-    edit(repo / "tshirt/tshirt/processes/bag.yaml", "name: bag sewing", "name: bag stitching")
+    edit(repo / CSV, "toy:electricity,2,", "toy:electricity,3,")
+    edit(repo / "tshirt/tshirt/processes.csv", "bag,bag sewing,", "bag,bag stitching,")
     commit("heavier bag, renamed")
 
     code, output = invoke("diff", "main", "tshirt/tshirt", *toy_args)

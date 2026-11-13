@@ -6,19 +6,20 @@ from headwater.model import InvalidDataError, Role
 from headwater.study import build_catalog, read_database, read_process_folder
 
 
-def test_file_that_is_not_a_process_csv_is_not_ignored(toy: Path) -> None:
-    (toy / "tshirt/tshirt/processes/dyeing.cvs").write_text("line,role\n")
+def test_a_misspelt_table_is_not_ignored(toy: Path) -> None:
+    (toy / "tshirt/tshirt/exchange.csv").write_text("process,line\n")
 
     with pytest.raises(InvalidDataError) as raised:
         read_database(toy / "tshirt/tshirt")
 
     (problem,) = raised.value.problems
     assert problem.code == "unknown-file"
-    assert "dyeing.cvs" in problem.item
+    assert problem.item == "exchange.csv"
+    assert "Did you mean 'exchanges.csv'?" in problem.message
 
 
-def test_hidden_files_in_processes_are_ignored(toy: Path) -> None:
-    (toy / "tshirt/tshirt/processes/.DS_Store").write_text("x")
+def test_hidden_files_are_ignored(toy: Path) -> None:
+    (toy / "tshirt/tshirt/.DS_Store").write_text("x")
 
     assert [p.id for p in read_database(toy / "tshirt/tshirt").processes] == ["tshirt:tshirt"]
 
@@ -37,7 +38,7 @@ def test_namespace_defaults_to_the_folder_name(toy: Path) -> None:
 
 
 def test_byte_order_mark_and_windows_line_endings_are_accepted(toy: Path) -> None:
-    path = toy / "tshirt/tshirt/processes/tshirt.csv"
+    path = toy / "tshirt/tshirt/exchanges.csv"
     path.write_bytes(b"\xef\xbb\xbf" + path.read_bytes().replace(b"\n", b"\r\n"))
 
     folder = read_database(toy / "tshirt/tshirt")
@@ -74,13 +75,13 @@ def test_treatment_is_derived_from_the_reference_flow_being_a_waste(toy_dir: Pat
     }
 
 
-def test_a_yml_file_is_not_a_process_file(toy: Path) -> None:
+def test_a_processes_folder_is_the_old_layout_whatever_it_holds(toy: Path) -> None:
+    (toy / "tshirt/tshirt/processes").mkdir()
     (toy / "tshirt/tshirt/processes/tshirt.yml").write_text("name: x\n")
 
     with pytest.raises(InvalidDataError) as raised:
         read_database(toy / "tshirt/tshirt")
 
     (problem,) = raised.value.problems
-    assert problem.code == "unknown-file"
-    assert "tshirt.yml" in problem.item
-    assert ".yaml" in problem.message
+    assert problem.code == "old-layout"
+    assert "processes.csv" in problem.message

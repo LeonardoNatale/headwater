@@ -175,7 +175,7 @@ def test_a_mapping_file_turns_the_lines_it_decides_into_mapped_ones(
     code, output = invoke(*args, "--out", tmp_path / "second", "--mapping", mapping)
     assert code == 0, output
     assert "mapping 1" in output
-    study = (tmp_path / "second" / "processes" / "t-shirt-glo.csv").read_text()
+    study = (tmp_path / "second" / "exchanges.csv").read_text()
     assert "toy:electricity-production" in study
 
 
@@ -274,7 +274,7 @@ def test_the_study_name_can_be_given(
     )
     assert code == 0, output
     assert "name: my-tshirt" in (out / "database.yaml").read_text()
-    assert (out / "processes" / "t-shirt-glo.csv").is_file()
+    assert (out / "processes.csv").read_text().splitlines()[1].startswith("t-shirt-glo,")
 
 
 def test_a_folder_that_is_not_empty_stops_the_import_and_nothing_is_written(

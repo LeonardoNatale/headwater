@@ -714,7 +714,7 @@ def test_a_zero_amount_of_waste_is_written_as_zero_not_minus_zero(
             "widget", line("treatment of wastewater", 0, "cubic meter", "RoW", product="wastewater")
         ),
     )
-    text = (done.folder / "processes" / "widget-glo.csv").read_text()
+    text = (done.folder / "exchanges.csv").read_text()
     assert "-0.0" not in text
     assert ",waste_to_treatment,mini:wastewater,0," in text
 

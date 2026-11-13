@@ -16,7 +16,9 @@ from typing import Any
 import pytest
 
 import headwater as hw
-from tests.conftest import open_database
+from tests.conftest import add_process, open_database
+
+from .conftest import copy_process
 
 Invoke = Callable[..., tuple[int, str]]
 
@@ -25,14 +27,12 @@ TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 
 def add_product(database: Path, stem: str, process: str, product: str, kwh: float) -> None:
     """A product the database makes from `kwh` of grid electricity, by the process `process`."""
-    processes = database / "processes"
-    (processes / f"{stem}.yaml").write_text(
-        f"name: {process}\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / f"{stem}.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
+    add_process(
+        database,
+        stem,
         f"e01,reference,tshirt:{stem},1,kg,\n"
-        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production\n"
+        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production",
+        details=f"{process},GLO,ordinary_transforming_activity",
     )
     with (database / "flows.csv").open("a") as handle:
         handle.write(f"tshirt:{stem},{product},product,kg,,\n")
@@ -132,9 +132,7 @@ def test_a_product_the_database_does_not_make_lists_the_ones_it_makes(
 def test_two_processes_that_make_one_flow_are_two_products(
     two: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    processes = two / "processes"
-    (processes / "bag-b.yaml").write_text((processes / "bag.yaml").read_text())
-    (processes / "bag-b.csv").write_text((processes / "bag.csv").read_text())
+    copy_process(two, "bag", "bag-b")
 
     code, output = invoke("calc", two, *toy_args, "--all-products")
     assert code == 0, output
@@ -258,9 +256,7 @@ def test_the_json_has_a_stable_shape(toy: Path, toy_args: list[str], invoke_stdo
 def test_the_json_lists_two_processes_that_make_one_flow_as_two_products(
     two: Path, toy_args: list[str], invoke_stdout: Invoke
 ) -> None:
-    processes = two / "processes"
-    (processes / "bag-b.yaml").write_text((processes / "bag.yaml").read_text())
-    (processes / "bag-b.csv").write_text((processes / "bag.csv").read_text())
+    copy_process(two, "bag", "bag-b")
 
     data = calc_json(invoke_stdout, two, *toy_args, "--all-products")
 

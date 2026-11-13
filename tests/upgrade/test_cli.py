@@ -63,10 +63,10 @@ def test_an_upgrade_that_maps_every_supplier_is_written_and_explained(
     assert "same dataset     1 supplier, 1 line" in output
     assert "by test on 2026-10-25 (upgrade-mapping.csv:2)" in output
     assert "[RoW]" in output and "[market]" in output
-    assert "Written: tshirt/database.yaml, tshirt/processes/tshirt.csv" in output
+    assert "Written: tshirt/database.yaml, tshirt/exchanges.csv" in output
     assert "1.2048 → 0.8775" in output
     assert "Release change" in output
-    assert "toy:2:fabric-b" in (studies / "tshirt" / "processes" / "tshirt.csv").read_text()
+    assert "toy:2:fabric-b" in (studies / "tshirt" / "exchanges.csv").read_text()
 
 
 def test_an_unmapped_supplier_writes_nothing_and_exits_1_with_a_row_to_fill(
@@ -118,7 +118,7 @@ def test_the_json_has_the_mapping_the_flags_and_the_diff(
     assert fabric["rule"] == "same-dataset"
     assert fabric["new"]["id"] == "toy:2:fabric-b"
     assert {f["kind"] for f in data["flags"]} == {"row", "market"}
-    assert data["written"] == ["tshirt/database.yaml", "tshirt/processes/tshirt.csv"]
+    assert data["written"] == ["tshirt/database.yaml", "tshirt/exchanges.csv"]
     [diff] = data["diffs"]
     [result] = diff["results"]
     assert result["background"] == pytest.approx(0.8775 - 1.2048, rel=1e-9)

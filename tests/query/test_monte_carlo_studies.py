@@ -30,7 +30,7 @@ from headwater.calc.monte_carlo import (
     uniforms,
 )
 from headwater.model import Exchange, InvalidDataError, Process
-from tests.conftest import open_database, open_study_folder, toy_database
+from tests.conftest import add_lines, open_database, open_study_folder, toy_database
 
 from .conftest import TOY_DIR, Records, pinned, pinned_study, toy_records
 
@@ -129,11 +129,12 @@ def dye(toy: Path, background: hw.Background) -> tuple[hw.Database, str]:
 
 
 def distribute(path: Path, **lines: str) -> None:
-    """Add the distribution columns to a process file, with these cells for these lines."""
+    """Add the distribution columns to exchanges.csv of a database with one process, with these
+    cells for these lines."""
     rows = path.read_text().splitlines()
     out = [rows[0] + COLUMNS]
     for row in rows[1:]:
-        line = row.split(",", 1)[0]
+        line = row.split(",", 2)[1]
         out.append(row + "," + lines.pop(line, ",,,"))
     assert not lines, f"no lines {sorted(lines)} in {path}"
     path.write_text("\n".join(out) + "\n")
@@ -158,7 +159,7 @@ def background_line(seed: int, iterations: int, median: float, scale: float) -> 
 
 
 def fabric_drawn(toy: Path, case: str = "tshirt") -> None:
-    distribute(toy_database(toy, case) / "processes/tshirt.csv", e02=f"lognormal,{LN11!r},,")
+    distribute(toy_database(toy, case) / "exchanges.csv", e02=f"lognormal,{LN11!r},,")
 
 
 # --- exit test 1: a database line with a lognormal gives the analytic range ----------------
@@ -199,7 +200,7 @@ def test_a_database_line_draws_the_same_alone_or_with_others(
     toy: Path, uncertain_fabric: hw.Background
 ) -> None:
     fabric_drawn(toy)
-    distribute(toy / "tshirt-dyed/dyes/processes/reactive-dye.csv", e03=f"lognormal,{LN12!r},,")
+    distribute(toy / "tshirt-dyed/dyes/exchanges.csv", e03=f"lognormal,{LN12!r},,")
     tshirt = tshirt_of(toy, "tshirt", uncertain_fabric)
     dyes = dye(toy, uncertain_fabric)
 
@@ -217,7 +218,7 @@ def test_a_used_database_draws_the_same_inside_the_database_that_uses_it(
 ) -> None:
     """The dye emits 4 kg of CO2 per kg, lognormal, and takes `kwh_per_kg`, a lognormal
     parameter. The dyed T-shirt is the T-shirt plus 0.01 kg of dye in every iteration."""
-    distribute(toy / "tshirt-dyed/dyes/processes/reactive-dye.csv", e03=f"lognormal,{LN12!r},,")
+    distribute(toy / "tshirt-dyed/dyes/exchanges.csv", e03=f"lognormal,{LN12!r},,")
     write(
         toy / "tshirt-dyed/dyes/parameters.yaml",
         f"database:\n  kwh_per_kg: {{value: 2, unit: kWh, distribution: lognormal, "
@@ -442,10 +443,11 @@ def test_a_parameter_with_a_distribution_moves_every_line_that_uses_it(
         root / "parameters.yaml",
         f"database:\n  fabric_kg: {{value: 0.25, distribution: lognormal, scale: {LN11!r}}}\n",
     )
-    csv = root / "processes/tshirt.csv"
-    csv.write_text(
-        csv.read_text() + "e04,waste_to_treatment,toy:textile-waste,fabric_kg * 0.2,kg,"
-        "toy:incineration-textile-waste\n"
+    add_lines(
+        root,
+        "tshirt",
+        "e04,waste_to_treatment,toy:textile-waste,fabric_kg * 0.2,kg,"
+        "toy:incineration-textile-waste",
     )
     mc = hw.monte_carlo(fixed, [tshirt_of(toy, "tshirt-parameter", fixed)], iterations=30, seed=5)
     p = 0.25 * np.exp(LN11 * ndtri(keyed(5, 30, parameter_key("tshirt", "fabric_kg"))))
@@ -472,7 +474,7 @@ def test_a_formula_parameter_follows_the_drawn_one(toy: Path, fixed: hw.Backgrou
 def test_a_database_reference_drawn_at_0_stops_naming_the_iteration_and_the_process(
     toy: Path, fixed: hw.Background
 ) -> None:
-    distribute(toy / "tshirt/tshirt/processes/tshirt.csv", e01="normal,0.5,,")
+    distribute(toy / "tshirt/tshirt/exchanges.csv", e01="normal,0.5,,")
     u = keyed(0, 1000, line_key("tshirt:tshirt", "e01"))
     first = int(np.flatnonzero(1.0 + 0.5 * ndtri(u) <= 0)[0])
 
@@ -497,7 +499,7 @@ def test_the_provenance_counts_the_database_lines_and_parameters_drawn(
     toy: Path, uncertain_fabric: hw.Background
 ) -> None:
     fabric_drawn(toy)
-    distribute(toy / "tshirt-dyed/dyes/processes/reactive-dye.csv", e03="normal,0.4,,")
+    distribute(toy / "tshirt-dyed/dyes/exchanges.csv", e03="normal,0.4,,")
     write(
         toy / "tshirt-dyed/dyes/parameters.yaml",
         "database:\n  kwh_per_kg: {value: 2, distribution: uniform, minimum: 1.5, maximum: 2.5}\n",

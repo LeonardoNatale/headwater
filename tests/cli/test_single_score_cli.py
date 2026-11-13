@@ -190,7 +190,7 @@ def test_diff_compares_the_single_score(
     commit("on toy-impacts")
     git("switch", "--quiet", "--create", "lighter")
     edit(
-        repo / "tshirt/tshirt/processes/tshirt.csv",
+        repo / "tshirt/tshirt/exchanges.csv",
         "e02,input,toy:cotton-fabric,0.25",
         "e02,input,toy:cotton-fabric,0.22",
     )

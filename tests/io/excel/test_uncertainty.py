@@ -238,8 +238,9 @@ def test_a_parameters_distribution_reaches_the_study(
 def test_a_workbook_with_no_uncertainty_imports_byte_for_byte_as_before(
     workbook: Path, out: Path, toy_release: Release
 ) -> None:
-    """The sha256 of each file the toy T-shirt workbook gives. The flows and the process files are
-    the bytes the import wrote before it read uncertainty."""
+    """The sha256 of each file the toy T-shirt workbook gives. database.yaml, the flows, the
+    parameters, and exchanges.csv without its process column are the bytes the import wrote before
+    it read uncertainty. processes.csv and the record are pinned as the two tables are written."""
     import_excel(workbook, toy_release, out)
     written = {
         p.relative_to(out).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -249,14 +250,15 @@ def test_a_workbook_with_no_uncertainty_imports_byte_for_byte_as_before(
     assert written == {
         "database.yaml": "22873e9484a42d3a155fb2979b2cd7b94915dfc8d25c05447f3d3121ba015cb6",
         ".headwater-import.json": (
-            "0b816527d3816b3a20562cbd153d16bb451e51bbff97f7260a594e146a4fb3a4"
+            "56f508363dc1c33a7196b88468f9b72cba9967cbafa769b4ef24698b32dcefc3"
         ),
+        "exchanges.csv": "9edaa09e3f662d680586460019a710866186025931b7c033715ec305b9898fe3",
         "flows.csv": "7517b5b36cc220588f9cf547890939eff5f97513954ea2ed1c63d8cb2bc8896b",
         "parameters.yaml": "b3084a6269ce9e77df3617ea139c9a8155b2352e460706093e933b2118a5bbdb",
-        "processes/t-shirt-glo.csv": (
-            "5aaa04da942bc78a7f64efb3d15c1f19086f99e5291abfc1c88137105f919aa9"
-        ),
-        "processes/t-shirt-glo.yaml": (
-            "932bebdbb3248611b51a2e3c6d2fae3b8e73c6af0362f3db2e5ef65f517d792f"
-        ),
+        "processes.csv": "c84085027680d4329bb016a8bd7696d2251c39618bd9d3c04a6d861237be078b",
     }
+    table = (out / "exchanges.csv").read_text(encoding="utf-8").splitlines(keepends=True)
+    lines = "".join(row.split(",", 1)[1] for row in table)  # the T-shirt's id has no comma
+    assert hashlib.sha256(lines.encode("utf-8")).hexdigest() == (
+        "5aaa04da942bc78a7f64efb3d15c1f19086f99e5291abfc1c88137105f919aa9"
+    )  # the process CSV the import wrote before it read uncertainty

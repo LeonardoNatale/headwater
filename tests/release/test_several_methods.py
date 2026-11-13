@@ -11,9 +11,9 @@ from headwater.release.indicators import read_indicators
 
 SOLVER = {"solver": "test"}
 
-TOY_DERIVED_HASH = "eee3dce2682688a2dd38d856eb9678e40882478a05bcf69825db959254a4dc22"
+TOY_DERIVED_HASH = "833abe2cacec511aa5cc9ac6cd678c783df25f1b0f8877a2a9615afd86a019ac"
 """The hash of the toy's indicators release for toy-climate, with the solver settings above, as
-headwater 0.1.0 builds it. It holds the engine version, so it changes only with a new version of
+headwater 0.2.0 builds it. It holds the engine version, so it changes only with a new version of
 headwater or a deliberate change of the format."""
 
 

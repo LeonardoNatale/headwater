@@ -28,7 +28,13 @@ from headwater.calc import study as study_calc
 from headwater.query import _scenario
 from headwater.query._internals import internals
 from headwater.query._scenario import Changed
-from tests.conftest import open_database, open_study_folder, toy_database
+from tests.conftest import (
+    add_lines,
+    add_process,
+    open_database,
+    open_study_folder,
+    toy_database,
+)
 
 from .conftest import TOY_DIR, pinned_study
 
@@ -37,13 +43,12 @@ SAME = 1e-12
 ELECTRICITY = "toy:electricity-production"
 FABRIC = "toy:fabric-production"
 WIND = "toy:electricity-wind"
-WIND_CSV = (
-    "line,role,flow,amount,unit,supplier\n"
+WIND_LINES = (
     "e01,reference,toy:electricity,1,kWh,\n"
     "e02,input,toy:cotton-fabric,0.01,kg,toy:fabric-production\n"
     "e03,emission,toy:co2,0.05,kg,\n"
 )
-WIND_YAML = "name: electricity, wind\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+WIND_DETAILS = '"electricity, wind",GLO,ordinary_transforming_activity'
 STUDY_YAML = """\
 name: tshirt-footprint
 goal: Footprint of one T-shirt, internal use, not a public comparison
@@ -105,19 +110,18 @@ def in_scenario(
 
 
 def edit_line(root: Path, process: str, line: str, new: str) -> None:
-    """Replace one line of a background process file, found by its line id."""
-    path = root / "background" / "processes" / f"{process}.csv"
+    """Replace one line of a background process in exchanges.csv, found by its process and line
+    id. `new` is the line without the process column."""
+    path = root / "background" / "exchanges.csv"
     lines = path.read_text().splitlines()
-    (at,) = [i for i, text in enumerate(lines) if text.startswith(f"{line},")]
-    lines[at] = new
+    (at,) = [i for i, text in enumerate(lines) if text.startswith(f"{process},{line},")]
+    lines[at] = f"{process},{new}"
     path.write_text("\n".join(lines) + "\n")
 
 
 def add_wind(root: Path) -> None:
     """A second electricity process that buys a little fabric, so fabric and wind make a loop."""
-    processes = root / "background" / "processes"
-    (processes / "electricity-wind.csv").write_text(WIND_CSV)
-    (processes / "electricity-wind.yaml").write_text(WIND_YAML)
+    add_process(root / "background", "electricity-wind", WIND_LINES, details=WIND_DETAILS)
 
 
 def refactorized(root: Path) -> hw.Result:
@@ -311,16 +315,13 @@ def test_a_change_to_one_process_of_the_database_leaves_its_other_processes_alon
     database = toy / "tshirt" / "tshirt"
     with (database / "flows.csv").open("a") as flows:
         flows.write("tshirt:sewing,sewing,product,unit,,\n")
-    (database / "processes" / "sewing.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:sewing,1,unit,\n"
-        f"e02,input,toy:electricity,0.2,kWh,{ELECTRICITY}\n"
+    add_process(
+        database,
+        "sewing",
+        f"e01,reference,tshirt:sewing,1,unit,\ne02,input,toy:electricity,0.2,kWh,{ELECTRICITY}",
+        details="sewing,GLO,ordinary_transforming_activity",
     )
-    (database / "processes" / "sewing.yaml").write_text(
-        WIND_YAML.replace("electricity, wind", "sewing")
-    )
-    with (database / "processes" / "tshirt.csv").open("a") as tshirt:
-        tshirt.write("e04,input,tshirt:sewing,1,unit,tshirt:sewing\n")
+    add_lines(database, "tshirt", "e04,input,tshirt:sewing,1,unit,tshirt:sewing")
     with_scenario(toy, "heavier", "  - process: tshirt:tshirt\n    line: e02\n    amount: 0.30\n")
 
     result = in_scenario("tshirt", either, "heavier", root=toy)

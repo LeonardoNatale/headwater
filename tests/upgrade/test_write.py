@@ -15,14 +15,14 @@ Edit = Callable[[Path, str, str], None]
 REL = 1e-9
 
 UPGRADED_TSHIRT = (
-    "line,role,flow,amount,unit,supplier,flow_name,comment\n"
-    "e01,reference,tshirt:tshirt,1,unit,,T-shirt,\n"
-    "e02,input,toy:cotton-fabric,0.25,kg,toy:2:fabric-b,cotton fabric,"
+    "process,line,role,flow,amount,unit,supplier,flow_name,comment\n"
+    "tshirt,e01,reference,tshirt:tshirt,1,unit,,T-shirt,\n"
+    "tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:2:fabric-b,cotton fabric,"
     '"bought in RoW, ""as usual"""\n'
-    "e03,input,toy:electricity,0.5,kWh,toy:2:market-elec,electricity,\n"
-    "e04,input,toy:dye,0.01,kg,toy:2:dye-r,reactive dye,\n"
-    'e05,emission,toy:ch4,0.001,kg,,"Methane, fossil",\n'
-    "e06,input,toy:tape,0.01,kg,toy:2:tape-rer,tape,\n"
+    "tshirt,e03,input,toy:electricity,0.5,kWh,toy:2:market-elec,electricity,\n"
+    "tshirt,e04,input,toy:dye,0.01,kg,toy:2:dye-r,reactive dye,\n"
+    'tshirt,e05,emission,toy:ch4,0.001,kg,,"Methane, fossil",\n'
+    "tshirt,e06,input,toy:tape,0.01,kg,toy:2:tape-rer,tape,\n"
 )
 """The fixture's T-shirt once upgraded with the reviewed rows: suppliers, and the flow name of
 the renamed dye, change. The quoted comment of e02 keeps its text."""
@@ -39,12 +39,12 @@ def test_only_suppliers_renamed_flows_and_the_pin_change(
 
     written = plan(studies / "tshirt", to=to, mapping=mapping).write()
 
-    assert (studies / "tshirt" / "processes" / "tshirt.csv").read_text() == UPGRADED_TSHIRT
+    assert (studies / "tshirt" / "exchanges.csv").read_text() == UPGRADED_TSHIRT
     pin = before.split("background: ")[1].split()[0]
     assert (studies / "tshirt" / "database.yaml").read_text() == before.replace(pin, to)
     assert sorted(p.relative_to(studies).as_posix() for p in written) == [
         "tshirt/database.yaml",
-        "tshirt/processes/tshirt.csv",
+        "tshirt/exchanges.csv",
     ]
 
 
@@ -80,7 +80,7 @@ def test_writing_into_another_folder_leaves_the_database_alone(
 
     assert snapshot(studies) == before
     copy = tmp_path / "check" / "tshirt"
-    assert (copy / "processes" / "tshirt.csv").read_text() == UPGRADED_TSHIRT
+    assert (copy / "exchanges.csv").read_text() == UPGRADED_TSHIRT
     assert all(p.is_relative_to(tmp_path / "check") for p in written)
     assert read_database(copy).database.background.name == "toy-2"
 
@@ -173,7 +173,7 @@ def test_a_flow_the_new_release_lacks_stops_the_upgrade(
 ) -> None:
     folder = studies / "tshirt"
     # toy-1 has dinitrogen monoxide, toy-2 does not
-    edit(folder / "processes" / "tshirt.csv", "e05,emission,toy:ch4", "e05,emission,toy:n2o")
+    edit(folder / "exchanges.csv", "e05,emission,toy:ch4", "e05,emission,toy:n2o")
 
     found = plan(folder, to=to, mapping=mapping)
 
@@ -212,9 +212,9 @@ def test_a_database_and_the_databases_it_uses_move_together(
 
     assert sorted(p.relative_to(studies).as_posix() for p in written) == [
         "dyes/database.yaml",
-        "dyes/processes/reactive-dye.csv",
+        "dyes/exchanges.csv",
         "tshirt-dyed/database.yaml",
-        "tshirt-dyed/processes/tshirt.csv",
+        "tshirt-dyed/exchanges.csv",
     ]
     assert open_database(studies / "tshirt-dyed").calc(hw.load(to), "tshirt-dyed:tshirt").score > 0
 
@@ -260,12 +260,12 @@ def toy1_pin(studies: Path) -> str:
 
 
 def test_a_lines_distribution_survives_the_upgrade(studies: Path, to: str, mapping: Path) -> None:
-    csv = studies / "tshirt" / "processes" / "tshirt.csv"
+    csv = studies / "tshirt" / "exchanges.csv"
     rows = csv.read_text().splitlines()
     csv.write_text(
         "\n".join(
             [rows[0] + ",distribution,scale,minimum,maximum"]
-            + [r + (",lognormal,0.1,," if r.startswith("e02") else ",,,,") for r in rows[1:]]
+            + [r + (",lognormal,0.1,," if r.startswith("tshirt,e02") else ",,,,") for r in rows[1:]]
         )
         + "\n"
     )
@@ -274,7 +274,7 @@ def test_a_lines_distribution_survives_the_upgrade(studies: Path, to: str, mappi
 
     upgraded = csv.read_text().splitlines()
     assert upgraded[0].endswith(",distribution,scale,minimum,maximum")
-    assert next(r for r in upgraded if r.startswith("e02")).endswith(",lognormal,0.1,,")
+    assert next(r for r in upgraded if r.startswith("tshirt,e02")).endswith(",lognormal,0.1,,")
     (process,) = read_database(studies / "tshirt").processes
     line = next(e for e in process.exchanges if e.line_id == "e02")
     assert line.supplier_id == "toy:2:fabric-b"

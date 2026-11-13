@@ -15,7 +15,7 @@ Problems = Callable[..., tuple[Problem, ...]]
 
 DATABASE = "tshirt-cut-off/tshirt"
 CUT_OFFS = f"{DATABASE}/cut_offs.csv"
-TSHIRT_CSV = f"{DATABASE}/processes/tshirt.csv"
+TSHIRT_CSV = f"{DATABASE}/exchanges.csv"
 HEADER = "process,line,flow,criterion,share,reason,who,when\n"
 TAPE = "tshirt:tshirt,e04,tshirt:packaging-tape,mass,{share},No supplier data,leo,2026-10-11\n"
 
@@ -38,7 +38,8 @@ def more_lines(toy: Path, write: Write) -> None:
     )
     csv = toy / TSHIRT_CSV
     csv.write_text(
-        csv.read_text() + "e05,input,tshirt:glue,0.005,kg,\ne06,input,tshirt:heat,0.1,MJ,\n"
+        csv.read_text()
+        + "tshirt,e05,input,tshirt:glue,0.005,kg,\ntshirt,e06,input,tshirt:heat,0.1,MJ,\n"
     )
 
 

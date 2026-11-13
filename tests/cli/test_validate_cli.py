@@ -62,7 +62,7 @@ def test_a_todo_the_import_left_is_a_warning_that_names_the_field(
 def test_errors_are_listed_with_their_places_and_exit_1(
     toy: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    path = study(toy) / "processes" / "tshirt.csv"
+    path = study(toy) / "exchanges.csv"
     edit(path, "toy:fabric-production", "toy:nowhere")
     edit(path, "0.5,kWh", "0.5,furlongs")
 
@@ -79,13 +79,13 @@ def test_errors_are_listed_with_their_places_and_exit_1(
 def test_a_study_that_cannot_be_read_is_reported_the_same_way(
     toy: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    edit(study(toy) / "processes" / "tshirt.csv", "0.25", "lots")
+    edit(study(toy) / "exchanges.csv", "0.25", "lots")
 
     code, output = invoke("validate", study(toy), *toy_args)
 
     assert code == 1
     assert "lots" in output
-    assert "processes/tshirt.csv" in output
+    assert "exchanges.csv:3" in output
     assert "Traceback" not in output
 
 

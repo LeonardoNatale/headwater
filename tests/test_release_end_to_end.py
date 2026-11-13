@@ -164,7 +164,7 @@ def test_sensitivity_matches_a_finite_difference_from_a_release(
     ).sensitivity
     root = tmp_path / "toy"
     shutil.copytree(TOY, root)
-    csv = root / "background" / "processes" / "fabric-production.csv"
+    csv = root / "background" / "exchanges.csv"
     text = csv.read_text()
     assert "e02,input,toy:electricity,3,kWh" in text
     csv.write_text(

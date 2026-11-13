@@ -37,7 +37,7 @@ def snapshot(folder: Path) -> dict[str, tuple[int, bytes]]:
 
 
 def test_the_working_tree_is_read_as_it_is(repo: Path) -> None:
-    edit(repo / "tshirt/tshirt/processes/tshirt.csv", "0.25", "0.22")  # not committed
+    edit(repo / "tshirt/tshirt/exchanges.csv", "0.25", "0.22")  # not committed
 
     read = read_at(repo / "tshirt" / "tshirt")
 
@@ -51,7 +51,7 @@ def test_a_ref_gives_the_study_as_committed_there(repo: Path, commit: Commit) ->
     first = subprocess.run(
         ["git", "-C", str(repo), "rev-parse", "HEAD"], capture_output=True, text=True
     ).stdout.strip()
-    edit(repo / "tshirt/tshirt/processes/tshirt.csv", "0.25", "0.22")
+    edit(repo / "tshirt/tshirt/exchanges.csv", "0.25", "0.22")
     commit("lighter T-shirt")
 
     old = read_at(repo / "tshirt" / "tshirt", "HEAD~1")
@@ -67,9 +67,9 @@ def test_a_ref_gives_the_study_as_committed_there(repo: Path, commit: Commit) ->
 
 
 def test_reading_a_ref_leaves_the_checkout_as_it_was(repo: Path, commit: Commit, git: Git) -> None:
-    edit(repo / "tshirt/tshirt/processes/tshirt.csv", "0.25", "0.22")
+    edit(repo / "tshirt/tshirt/exchanges.csv", "0.25", "0.22")
     commit("lighter T-shirt")
-    edit(repo / "tshirt/tshirt/processes/tshirt.csv", "0.22", "0.20")  # uncommitted
+    edit(repo / "tshirt/tshirt/exchanges.csv", "0.22", "0.20")  # uncommitted
     (repo / "tshirt/tshirt/notes.md").write_text("scratch\n")
     before = snapshot(repo)
     status = git("status", "--porcelain")
@@ -80,7 +80,7 @@ def test_reading_a_ref_leaves_the_checkout_as_it_was(repo: Path, commit: Commit,
     assert snapshot(repo) == before
     assert git("status", "--porcelain") == status
     assert git("worktree", "list") == worktrees
-    assert (repo / "tshirt/tshirt/processes/tshirt.csv").read_text().count("0.20") == 1
+    assert (repo / "tshirt/tshirt/exchanges.csv").read_text().count("0.20") == 1
 
 
 def test_the_study_may_be_given_relative_to_the_current_folder(
@@ -147,11 +147,25 @@ def test_a_study_that_is_not_at_the_ref_is_named(repo: Path, commit: Commit) -> 
 def test_a_folder_of_the_format_before_d46_at_the_ref_is_not_a_database_there(
     repo: Path, commit: Commit
 ) -> None:
-    """A folder that held study.yaml at the ref, and database.yaml now, is a new database: the
-    diff of the pull request that moves it compares nothing, as collect.py decides."""
+    """A folder that held study.yaml and processes/ at the ref, and database.yaml now, is a new
+    database: the diff of the pull request that moves it compares nothing, as collect.py
+    decides."""
     folder = repo / "tshirt" / "tshirt"
+    tables = {name: (folder / name).read_text() for name in ("processes.csv", "exchanges.csv")}
+    (folder / "processes").mkdir()
+    (folder / "processes" / "tshirt.yaml").write_text(
+        "name: T-shirt\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    )
+    (folder / "processes" / "tshirt.csv").write_text(
+        "".join(row.split(",", 1)[1] + "\n" for row in tables["exchanges.csv"].splitlines())
+    )
+    for name in tables:
+        (folder / name).unlink()
     (folder / "database.yaml").rename(folder / "study.yaml")
     commit("before D46")
+    shutil.rmtree(folder / "processes")
+    for name, text in tables.items():
+        (folder / name).write_text(text)
     (folder / "study.yaml").rename(folder / "database.yaml")
 
     with pytest.raises(StudyNotAtRef, match="holds no database.yaml and no study.yaml"):
@@ -170,7 +184,7 @@ def test_a_folder_outside_git_is_named(tmp_path: Path) -> None:
 
 
 def test_a_study_that_does_not_read_at_the_ref_says_which_ref(repo: Path, commit: Commit) -> None:
-    edit(repo / "tshirt/tshirt/processes/tshirt.csv", "0.25", "lots")
+    edit(repo / "tshirt/tshirt/exchanges.csv", "0.25", "lots")
     commit("a broken study")
 
     with pytest.raises(InvalidDataError) as error:

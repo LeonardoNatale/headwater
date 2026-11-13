@@ -143,7 +143,7 @@ def test_a_pin_that_is_not_the_release_given_shows_the_line_to_write(
 def test_a_study_that_does_not_validate_lists_what_is_wrong(
     toy: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    edit(study(toy) / "processes" / "tshirt.csv", "toy:fabric-production", "toy:nowhere")
+    edit(study(toy) / "exchanges.csv", "toy:fabric-production", "toy:nowhere")
 
     code, output = invoke("calc", study(toy), *toy_args)
 

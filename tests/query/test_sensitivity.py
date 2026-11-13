@@ -16,6 +16,7 @@ import headwater as hw
 import headwater.query.result as result_module
 from headwater.model import Role
 from headwater.release import Release
+from tests.conftest import add_lines
 
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
 SCORE = 1.19205
@@ -136,9 +137,9 @@ def test_an_emission_lever_matches_a_finite_difference(
         "e02",
     ).sensitivity
     edit(
-        toy / "background" / "processes" / "electricity-production.csv",
-        "e02,emission,toy:co2,0.5,kg",
-        "e02,emission,toy:co2,0.6,kg",
+        toy / "background" / "exchanges.csv",
+        "electricity-production,e02,emission,toy:co2,0.5,kg",
+        "electricity-production,e02,emission,toy:co2,0.6,kg",
     )
 
     after = calc("tshirt", root=toy, background=load_toy(toy))
@@ -149,8 +150,7 @@ def test_an_emission_lever_matches_a_finite_difference(
 
 def test_a_study_emission_is_a_lever_too(toy: Path, load_toy: LoadToy, calc: Calc) -> None:
     # A crop takes CO2 from the air: a negative emission, in the study itself.
-    with (toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv").open("a") as f:
-        f.write("e04,emission,toy:co2,-0.2,kg,\n")
+    add_lines(toy / "tshirt" / "tshirt", "tshirt", "e04,emission,toy:co2,-0.2,kg,")
 
     result = calc("tshirt", root=toy, background=load_toy(toy))
 
@@ -163,9 +163,9 @@ def test_a_study_emission_is_a_lever_too(toy: Path, load_toy: LoadToy, calc: Cal
 
 def test_a_resource_line_is_a_lever(toy: Path, load_toy: LoadToy, calc: Calc, edit: Edit) -> None:
     edit(
-        toy / "background" / "processes" / "electricity-production.csv",
-        "e02,emission,toy:co2",
-        "e02,resource,toy:co2",
+        toy / "background" / "exchanges.csv",
+        "electricity-production,e02,emission,toy:co2",
+        "electricity-production,e02,resource,toy:co2",
     )
 
     result = calc("tshirt", root=toy, background=load_toy(toy))
@@ -177,8 +177,11 @@ def test_own_use_is_a_lever_and_the_reference_on_its_matrix_cell_is_not(
     toy: Path, load_toy: LoadToy, calc: Calc
 ) -> None:
     # Own use is on the diagonal, the same matrix cell as the reference. The role tells them apart.
-    with (toy / "background" / "processes" / "electricity-production.csv").open("a") as f:
-        f.write("e04,own_use,toy:electricity,0.02,kWh,toy:electricity-production\n")
+    add_lines(
+        toy / "background",
+        "electricity-production",
+        "e04,own_use,toy:electricity,0.02,kWh,toy:electricity-production",
+    )
 
     levers = calc("tshirt", root=toy, background=load_toy(toy)).sensitivity()
 
@@ -241,8 +244,11 @@ def test_lines_that_cancel_in_one_matrix_cell_have_no_lever_in_a_folder(
     toy: Path, load_toy: LoadToy, calc: Calc
 ) -> None:
     # Fabric production buys 3 kWh and is credited 3 kWh from the same supplier: A holds 0 there.
-    with (toy / "background" / "processes" / "fabric-production.csv").open("a") as f:
-        f.write("e05,avoided_product,toy:electricity,3,kWh,toy:electricity-production\n")
+    add_lines(
+        toy / "background",
+        "fabric-production",
+        "e05,avoided_product,toy:electricity,3,kWh,toy:electricity-production",
+    )
 
     result = calc("tshirt", root=toy, background=load_toy(toy))
 

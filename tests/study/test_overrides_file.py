@@ -166,7 +166,7 @@ def test_an_override_of_a_process_of_the_database(
 
     assert problem.code == "override-database-process"
     assert problem.item == "tshirt:tshirt line e03"
-    assert "processes/" in problem.message
+    assert "exchanges.csv" in problem.message
     assert problem.location == "overrides/own.csv:2"
 
 

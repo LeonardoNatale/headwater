@@ -1,7 +1,7 @@
 """Importing again keeps what a person wrote in database.yaml.
 
-The import owns the process files and sets `name`, `background` and `uses` in database.yaml every
-time. `methods` follows the import only while the person has not changed it. Anything else a
+The import owns the tables of processes and sets `name`, `background` and `uses` in database.yaml
+every time. `methods` follows the import only while the person has not changed it. Anything else a
 person adds, a `description` or a comment, stays as it is, so the loop (import, edit
 database.yaml, decide in the mapping file, import again) never loses an edit.
 """
@@ -168,8 +168,8 @@ def _chemicals(folder: Path, release: Release, write_study) -> None:
     )
     text = (folder / "database.yaml").read_text().replace("toy-climate", "mini-climate")
     (folder / "database.yaml").write_text(text)
-    (folder / "processes" / "reactive-dye.yaml").write_text(
-        "name: reactive dye\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    (folder / "processes.csv").write_text(
+        "id,name,location,kind\nreactive-dye,reactive dye,GLO,ordinary_transforming_activity\n"
     )
 
 

@@ -91,9 +91,13 @@ def test_json_lists_the_same_matches(toy_release: Release, invoke_stdout: Invoke
 
 
 def test_location_product_and_kind_filter(toy: Path, invoke_stdout: Invoke) -> None:
-    processes = toy / "background" / "processes"
-    edit(processes / "electricity-production.yaml", "GLO", "RER")
-    edit(processes / "fabric-production.yaml", "ordinary_transforming_activity", "market_activity")
+    processes = toy / "background" / "processes.csv"
+    edit(processes, "electricity production,GLO", "electricity production,RER")
+    edit(
+        processes,
+        "cotton fabric production,GLO,ordinary_transforming_activity",
+        "cotton fabric production,GLO,market_activity",
+    )
     args = ("--release", toy / "background", "--namespace", "toy")
 
     _, in_rer = invoke_stdout("find", "production", *args, "--location", "RER")

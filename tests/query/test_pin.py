@@ -119,7 +119,7 @@ def test_the_pin_is_checked_before_the_database(
         "toy-background@fixture",
         "toy-background@latest",
     )
-    edit(toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv", "toy:cotton-fabric", "toy:nope")
+    edit(toy / "tshirt" / "tshirt" / "exchanges.csv", "toy:cotton-fabric", "toy:nope")
     database = open_database(toy / "tshirt" / "tshirt")
 
     with pytest.raises(InvalidDataError) as error:

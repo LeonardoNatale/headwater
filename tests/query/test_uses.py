@@ -13,7 +13,7 @@ import pytest
 
 import headwater as hw
 from headwater.model import InvalidDataError, Report
-from tests.conftest import open_database, open_study_folder
+from tests.conftest import add_lines, open_database, open_study_folder
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9
@@ -238,8 +238,7 @@ def test_a_database_used_through_another_is_calculated_too(
         "background: toy-background@fixture\n",
         "background: toy-background@fixture\nuses: [chemicals]\n",
     )
-    with (dyed / "dyes" / "processes" / "reactive-dye.csv").open("a") as f:
-        f.write("e04,input,chemicals:salt,0.5,kg,chemicals:salt\n")
+    add_lines(dyed / "dyes", "reactive-dye", "e04,input,chemicals:salt,0.5,kg,chemicals:salt")
 
     result = open_database(dyed / "tshirt").calc(background, "tshirt:tshirt")
 
@@ -260,8 +259,7 @@ def test_a_line_must_list_the_database_it_buys_from_even_when_it_comes_along(
         "background: toy-background@fixture\n",
         "background: toy-background@fixture\nuses: [chemicals]\n",
     )
-    with (dyed / "tshirt" / "processes" / "tshirt.csv").open("a") as f:
-        f.write("e05,input,chemicals:salt,0.001,kg,chemicals:salt\n")
+    add_lines(dyed / "tshirt", "tshirt", "e05,input,chemicals:salt,0.001,kg,chemicals:salt")
 
     report = open_database(dyed / "tshirt").validate(background)
 
@@ -274,8 +272,7 @@ def test_a_flow_of_the_used_database_with_no_factor_needs_its_own_row(
 ) -> None:
     with (dyed / "dyes" / "flows.csv").open("a") as f:
         f.write('dyes:cod,"COD, Chemical Oxygen Demand",elementary,kg,water,\n')
-    with (dyed / "dyes" / "processes" / "reactive-dye.csv").open("a") as f:
-        f.write("e04,emission,dyes:cod,0.05,kg,\n")
+    add_lines(dyed / "dyes", "reactive-dye", "e04,emission,dyes:cod,0.05,kg,")
 
     report = open_database(dyed / "tshirt").validate(background)
 
@@ -297,7 +294,7 @@ def test_a_flow_of_the_used_database_with_no_factor_needs_its_own_row(
 def test_an_error_in_a_used_database_names_its_folder(
     background: hw.Background, dyed: Path
 ) -> None:
-    _edit(dyed / "dyes" / "processes" / "reactive-dye.csv", "kwh_per_kg,kWh", "kwh_per_kg,kg")
+    _edit(dyed / "dyes" / "exchanges.csv", "kwh_per_kg,kWh", "kwh_per_kg,kg")
 
     report = open_database(dyed / "tshirt").validate(background)
 
@@ -310,7 +307,7 @@ def test_a_change_to_the_used_database_moves_the_input_hash(
     background: hw.Background, dyed: Path
 ) -> None:
     before = open_database(dyed / "tshirt").calc(background, "tshirt:tshirt").provenance.input_hash
-    _edit(dyed / "dyes" / "processes" / "reactive-dye.csv", "toy:co2,4,", "toy:co2,4.5,")
+    _edit(dyed / "dyes" / "exchanges.csv", "toy:co2,4,", "toy:co2,4.5,")
 
     after = open_database(dyed / "tshirt").calc(background, "tshirt:tshirt")
 
@@ -323,8 +320,7 @@ def test_the_cut_offs_of_a_used_database_travel_with_it(
 ) -> None:
     with (dyed / "dyes" / "flows.csv").open("a") as f:
         f.write("dyes:fixative,fixative,product,kg,,\n")
-    with (dyed / "dyes" / "processes" / "reactive-dye.csv").open("a") as f:
-        f.write("e04,input,dyes:fixative,0.001,kg,\n")
+    add_lines(dyed / "dyes", "reactive-dye", "e04,input,dyes:fixative,0.001,kg,")
     (dyed / "dyes" / "cut_offs.csv").write_text(
         "process,line,flow,criterion,share,reason,who,when\n"
         "dyes:reactive-dye,e04,dyes:fixative,mass,0.001,No fixative data,leo,2026-10-24\n"

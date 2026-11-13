@@ -13,7 +13,7 @@ import pytest
 
 import headwater as hw
 from headwater.model import InvalidDataError
-from tests.conftest import open_database
+from tests.conftest import add_lines, open_database
 
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
 
@@ -25,8 +25,7 @@ def add_n2o(toy: Path, to_process: str, folder: str = "background") -> None:
     """Nitrous oxide has no factor in toy-climate."""
     with (toy / folder / "flows.csv").open("a") as f:
         f.write("toy:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (toy / folder / "processes" / f"{to_process}.csv").open("a") as f:
-        f.write("e09,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy / folder, to_process, "e09,emission,toy:n2o,0.0001,kg,")
 
 
 def test_a_result_with_every_flow_covered_lists_nothing(calc: Calc) -> None:
@@ -52,8 +51,7 @@ def test_a_flow_used_by_two_processes_is_listed_once_with_both(
     toy: Path, load_toy: LoadToy, calc: Calc
 ) -> None:
     add_n2o(toy, "fabric-production")
-    with (toy / "background" / "processes" / "electricity-production.csv").open("a") as f:
-        f.write("e09,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e09,emission,toy:n2o,0.0001,kg,")
 
     (flow,) = calc("tshirt", root=toy, background=load_toy(toy)).not_characterised
 

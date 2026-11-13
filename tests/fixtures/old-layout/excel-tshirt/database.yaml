@@ -1,0 +1,4 @@
+# Imported by headwater from inventory 1.xlsx (Brightway Excel format).
+name: toy-foreground
+background: toy-background@6864b7dbb65d
+methods: [toy-climate]

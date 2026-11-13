@@ -1,0 +1,5 @@
+line,role,flow,amount,unit,supplier,flow_name,comment
+e01,reference,toy-foreground:t-shirt-glo,1,unit,,T-shirt,
+e02,input,toy:cotton-fabric,fabric_kg,kg,toy:fabric-production,cotton fabric,Fabric in the bill of materials
+e03,input,toy:electricity,0.5,kWh,toy:electricity-production,electricity,
+e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste,textile waste,Scraps sent to incineration

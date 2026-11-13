@@ -10,7 +10,7 @@ from headwater.study import read_database, read_method, read_process_folder
 
 Edit = Callable[[Path, str, str], None]
 
-TSHIRT_CSV = "tshirt/tshirt/processes/tshirt.csv"
+TSHIRT_CSV = "tshirt/tshirt/exchanges.csv"
 DATABASE_YAML = "tshirt/tshirt/database.yaml"
 CUT_OFF_YAML = "tshirt-cut-off/tshirt/database.yaml"
 
@@ -38,7 +38,7 @@ def test_amount_with_a_decimal_comma(toy: Path, edit: Edit) -> None:
     assert problem.code == "bad-number"
     assert problem.item == "tshirt:tshirt line e02"
     assert "'0,25'" in problem.message
-    assert problem.location == "processes/tshirt.csv:3"
+    assert problem.location == "exchanges.csv:3"
 
 
 @pytest.mark.parametrize("text", ["nan", "inf", "-inf", ""])
@@ -72,7 +72,7 @@ def test_duplicate_line_id(toy: Path, edit: Edit) -> None:
 
 
 def test_process_without_a_reference_line(toy: Path, edit: Edit) -> None:
-    edit(toy / TSHIRT_CSV, "e01,reference,tshirt:tshirt,1,unit,\n", "")
+    edit(toy / TSHIRT_CSV, "tshirt,e01,reference,tshirt:tshirt,1,unit,\n", "")
 
     (problem,) = problems_of(toy / "tshirt/tshirt")
 
@@ -109,7 +109,7 @@ def test_missing_column(toy: Path) -> None:
 
     assert problem.code == "bad-columns"
     assert "unit" in problem.message
-    assert problem.location == "processes/tshirt.csv:1"
+    assert problem.location == "exchanges.csv:1"
 
 
 def test_misspelled_column(toy: Path, edit: Edit) -> None:
@@ -132,7 +132,7 @@ def test_row_with_the_wrong_number_of_cells(toy: Path, edit: Edit) -> None:
     (problem,) = problems_of(toy / "tshirt/tshirt")
 
     assert problem.code == "bad-row"
-    assert problem.location == "processes/tshirt.csv:4"
+    assert problem.location == "exchanges.csv:4"
 
 
 def test_process_file_that_is_empty(toy: Path) -> None:
@@ -141,7 +141,7 @@ def test_process_file_that_is_empty(toy: Path) -> None:
     (problem,) = problems_of(toy / "tshirt/tshirt")
 
     assert problem.code == "bad-columns"
-    assert problem.location == "processes/tshirt.csv"
+    assert problem.location == "exchanges.csv"
 
 
 def test_all_rows_are_checked_not_only_the_first_bad_one(toy: Path, edit: Edit) -> None:
@@ -158,7 +158,7 @@ def test_all_rows_are_checked_not_only_the_first_bad_one(toy: Path, edit: Edit) 
 
 def test_database_without_processes(toy: Path) -> None:
     (toy / TSHIRT_CSV).unlink()
-    (toy / "tshirt/tshirt/processes/tshirt.yaml").unlink()
+    (toy / "tshirt/tshirt/processes.csv").unlink()
 
     (problem,) = problems_of(toy / "tshirt/tshirt")
 
@@ -421,51 +421,52 @@ def test_a_process_file_that_is_not_utf8_is_an_error_naming_the_file(toy: Path) 
     (problem,) = problems_of(toy / "tshirt/tshirt")
 
     assert problem.code == "unreadable-file"
-    assert "processes/tshirt.csv" in problem.item
+    assert problem.item == "exchanges.csv"
 
 
 # --- quotes, YAML merge keys, columns, method files ------------------------------------------
 
-COMMENT_HEADER = "line,role,flow,amount,unit,supplier,comment\n"
+COMMENT_HEADER = "process,line,role,flow,amount,unit,supplier,comment\n"
 
 
 def test_unclosed_quote_does_not_swallow_the_next_lines(toy: Path) -> None:
     # Without the check, line e04 would become part of the comment of e03 and vanish.
-    (toy / "tshirt-waste/tshirt/processes/tshirt.csv").write_text(
+    (toy / "tshirt-waste/tshirt/exchanges.csv").write_text(
         COMMENT_HEADER
-        + "e01,reference,tshirt:tshirt,1,unit,,\n"
-        + "e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,\n"
-        + 'e03,input,toy:electricity,0.5,kWh,toy:electricity-production,"check this\n'
-        + "e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste,\n"
+        + "tshirt,e01,reference,tshirt:tshirt,1,unit,,\n"
+        + "tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,\n"
+        + 'tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,"check this\n'
+        + "tshirt,e04,waste_to_treatment,toy:textile-waste,0.05,kg,"
+        + "toy:incineration-textile-waste,\n"
     )
 
     (problem,) = problems_of(toy / "tshirt-waste/tshirt")
 
     assert problem.code == "bad-csv"
-    assert "processes/tshirt.csv" in (problem.location or "")
+    assert "exchanges.csv" in (problem.location or "")
 
 
 def test_a_quoted_value_that_spans_lines_is_an_error(toy: Path) -> None:
     (toy / TSHIRT_CSV).write_text(
         COMMENT_HEADER
-        + "e01,reference,tshirt:tshirt,1,unit,,\n"
-        + 'e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,"two\nlines"\n'
-        + "e03,input,toy:electricity,0.5,kWh,toy:electricity-production,\n"
+        + "tshirt,e01,reference,tshirt:tshirt,1,unit,,\n"
+        + 'tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,"two\nlines"\n'
+        + "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,\n"
     )
 
     (problem,) = problems_of(toy / "tshirt/tshirt")
 
     assert problem.code == "bad-row"
     assert "several lines" in problem.message
-    assert problem.location == "processes/tshirt.csv:3"  # the line where the row starts
+    assert problem.location == "exchanges.csv:3"  # the line where the row starts
 
 
 def test_a_quoted_comma_is_fine(toy: Path) -> None:
     (toy / TSHIRT_CSV).write_text(
         COMMENT_HEADER
-        + "e01,reference,tshirt:tshirt,1,unit,,\n"
-        + 'e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,"organic, GOTS"\n'
-        + "e03,input,toy:electricity,0.5,kWh,toy:electricity-production,\n"
+        + "tshirt,e01,reference,tshirt:tshirt,1,unit,,\n"
+        + 'tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,"organic, GOTS"\n'
+        + "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,\n"
     )
 
     folder = read_database(toy / "tshirt/tshirt")

@@ -138,10 +138,6 @@ def test_the_upgraded_study_is_the_one_built_on_the_new_release(
 
 
 def _lines(folder: Path) -> dict[tuple[str, str], dict[str, str]]:
-    """Every line of the study's process files, by file and line id."""
-    found: dict[tuple[str, str], dict[str, str]] = {}
-    for path in sorted((folder / "processes").glob("*.csv")):
-        with path.open(newline="", encoding="utf-8") as handle:
-            for row in csv.DictReader(handle):
-                found[(path.stem, row["line"])] = row
-    return found
+    """Every line of the study's exchanges.csv, by process and line id."""
+    with (folder / "exchanges.csv").open(newline="", encoding="utf-8") as handle:
+        return {(row["process"], row["line"]): row for row in csv.DictReader(handle)}

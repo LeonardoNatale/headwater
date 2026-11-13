@@ -1,0 +1,17 @@
+{
+ "format": "headwater-excel-import/1",
+ "files": {
+  "flows.csv": "7517b5b36cc220588f9cf547890939eff5f97513954ea2ed1c63d8cb2bc8896b",
+  "parameters.yaml": "b3084a6269ce9e77df3617ea139c9a8155b2352e460706093e933b2118a5bbdb",
+  "processes/t-shirt-glo.csv": "5aaa04da942bc78a7f64efb3d15c1f19086f99e5291abfc1c88137105f919aa9",
+  "processes/t-shirt-glo.yaml": "932bebdbb3248611b51a2e3c6d2fae3b8e73c6af0362f3db2e5ef65f517d792f"
+ },
+ "study": {
+  "name": "toy-foreground",
+  "background": "toy-background@6864b7dbb65d",
+  "methods": [
+   "toy-climate"
+  ]
+ },
+ "notes": []
+}

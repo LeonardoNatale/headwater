@@ -34,7 +34,7 @@ from headwater.model import InvalidDataError, Pin
 from headwater.query._internals import internals
 from headwater.release import Release, ReleaseInfo, build, method_hash
 from headwater.study import read_method, read_process_folder
-from tests.conftest import open_database, open_study_folder
+from tests.conftest import add_lines, open_database, open_study_folder
 
 CARBON = Path(__file__).resolve().parent / "fixtures" / "carbon"
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
@@ -423,9 +423,10 @@ def test_a_study_s_own_flow_needs_no_row_when_one_of_the_methods_covers_it(
     """The garment burns 0.1 kg of its own scraps: non-fossil CO2, which EF v3.1 does not cover."""
     study = tmp_path / "garment"
     shutil.copytree(CARBON / "studies" / "garment", study)
-    lines = study / "processes" / "garment.csv"
+    lines = study / "exchanges.csv"
     lines.write_text(
-        lines.read_text() + "e03,emission,carbon:co2-non-fossil,0.1,kg,\n", encoding="utf-8"
+        lines.read_text() + "garment,e03,emission,carbon:co2-non-fossil,0.1,kg,\n",
+        encoding="utf-8",
     )
     ef = hw.load(release.path, method=methods / "EF-3.1")
     several = hw.load(release.path, method=_several(methods))
@@ -447,8 +448,7 @@ def _with_cod(tmp_path: Path, *rows: str) -> Path:
     shutil.copytree(CARBON / "studies" / "garment", study)
     with (study / "flows.csv").open("a", encoding="utf-8") as file:
         file.write('garment:cod,"COD, Chemical Oxygen Demand",elementary,kg,water,\n')
-    with (study / "processes" / "garment.csv").open("a", encoding="utf-8") as file:
-        file.write("e03,emission,garment:cod,0.002,kg,\n")
+    add_lines(study, "garment", "e03,emission,garment:cod,0.002,kg,")
     (study / "no_factor.csv").write_text(
         "flow,method,reason,who,when\n" + "".join(f"{r}\n" for r in rows), encoding="utf-8"
     )

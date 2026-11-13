@@ -22,7 +22,7 @@ TOY = ROOT / "tests" / "fixtures" / "toy"
 RELEASE = next((ROOT / "src" / "headwater" / "demo" / "releases").glob("toy-background@*"))
 REL = 1e-9
 DYED = "studies/tshirt-dyed"
-DYE_CSV = f"{DYED}/dyes/processes/reactive-dye.csv"
+DYE_CSV = f"{DYED}/dyes/exchanges.csv"
 
 
 def edit(path: Path, old: str, new: str) -> None:

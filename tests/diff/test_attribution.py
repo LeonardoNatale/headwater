@@ -16,7 +16,7 @@ from headwater.diff import Change, Difference, diff_databases, differences
 from headwater.diff._changes import no_effect
 from headwater.model import HeadwaterError
 from headwater.study import DatabaseFolder, read_database
-from tests.conftest import toy_database
+from tests.conftest import add_lines, add_process, toy_database, write_tables
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
@@ -33,7 +33,7 @@ def study(root: Path, name: str = "tshirt") -> DatabaseFolder:
 
 
 def csv(root: Path) -> Path:
-    return root / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    return root / "tshirt" / "tshirt" / "exchanges.csv"
 
 
 @pytest.fixture
@@ -102,19 +102,16 @@ def two_process_study(toy: Path) -> Path:
     Fabric: 2.0 + 3 × 0.5298 = 3.5894. T-shirt: 0.25 × 3.5894 = 0.89735.
     """
     root = toy / "tshirt" / "tshirt"
-    (root / "processes" / "tshirt.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:tshirt,1,unit,\n"
-        "e02,input,tshirt:fabric,0.25,kg,tshirt:fabric\n"
-    )
-    (root / "processes" / "fabric.yaml").write_text(
-        "name: fabric\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (root / "processes" / "fabric.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:fabric,1,kg,\n"
-        "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
-        "e03,emission,toy:co2,2.0,kg,\n"
+    write_tables(
+        root,
+        {
+            "tshirt": "e01,reference,tshirt:tshirt,1,unit,\n"
+            "e02,input,tshirt:fabric,0.25,kg,tshirt:fabric",
+            "fabric": "e01,reference,tshirt:fabric,1,kg,\n"
+            "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
+            "e03,emission,toy:co2,2.0,kg,",
+        },
+        details={"tshirt": "T-shirt,GLO,ordinary_transforming_activity"},
     )
     with (root / "flows.csv").open("a") as handle:
         handle.write("tshirt:fabric,fabric,product,kg,,\n")
@@ -129,11 +126,7 @@ def test_what_two_changes_do_together_beyond_each_alone_is_the_interaction(
     same = {r.product_id: r for r in diff_databases(old, old, background).rows}
     assert same["tshirt:tshirt"].old == pytest.approx(0.89735, rel=REL)
     edit(csv(toy), "tshirt:fabric,0.25,kg", "tshirt:fabric,0.5,kg")
-    edit(
-        toy / "tshirt/tshirt/processes/fabric.csv",
-        "toy:electricity,3,kWh",
-        "toy:electricity,6,kWh",
-    )
+    edit(csv(toy), "toy:electricity,3,kWh", "toy:electricity,6,kWh")
 
     rows = diff_databases(old, study(toy), background).rows
     row = {r.product_id: r for r in rows}["tshirt:tshirt"]
@@ -154,19 +147,15 @@ def test_what_two_changes_do_together_beyond_each_alone_is_the_interaction(
 def test_a_line_that_buys_from_a_new_process_gets_the_effect_of_that_purchase(
     toy: Path, old: DatabaseFolder, background: hw.Background
 ) -> None:
-    processes = toy / "tshirt" / "tshirt" / "processes"
-    (processes / "packaging.yaml").write_text(
-        "name: packaging\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    folder = toy / "tshirt" / "tshirt"
+    add_process(
+        folder,
+        "packaging",
+        "e01,reference,tshirt:packaging,1,unit,\ne02,emission,toy:co2,0.5,kg,",
     )
-    (processes / "packaging.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:packaging,1,unit,\n"
-        "e02,emission,toy:co2,0.5,kg,\n"
-    )
-    with (toy / "tshirt" / "tshirt" / "flows.csv").open("a") as handle:
+    with (folder / "flows.csv").open("a") as handle:
         handle.write("tshirt:packaging,packaging,product,unit,,\n")
-    with csv(toy).open("a") as handle:
-        handle.write("e04,input,tshirt:packaging,2,unit,tshirt:packaging\n")
+    add_lines(folder, "tshirt", "e04,input,tshirt:packaging,2,unit,tshirt:packaging")
 
     rows = diff_databases(old, study(toy), background).rows
     row = {r.product_id: r for r in rows}["tshirt:tshirt"]
@@ -228,7 +217,7 @@ def test_a_parameter_gets_the_effect_of_every_line_it_moves(
 def test_a_change_that_does_not_move_the_score_is_a_driver_of_zero(
     toy: Path, old: DatabaseFolder, background: hw.Background
 ) -> None:
-    edit(toy / "tshirt/tshirt/processes/tshirt.yaml", "name: T-shirt", "name: Polo shirt")
+    edit(toy / "tshirt/tshirt/processes.csv", "tshirt,T-shirt,", "tshirt,Polo shirt,")
 
     [row] = diff_databases(old, study(toy), background).rows
 
@@ -287,14 +276,11 @@ def test_every_indicator_of_the_method_is_compared(
 def test_a_product_that_exists_on_one_side_only_has_no_drivers(
     toy: Path, old: DatabaseFolder, background: hw.Background
 ) -> None:
-    processes = toy / "tshirt" / "tshirt" / "processes"
-    (processes / "polo.yaml").write_text(
-        "name: polo\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "polo.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
+    add_process(
+        toy / "tshirt" / "tshirt",
+        "polo",
         "e01,reference,tshirt:polo,1,unit,\n"
-        "e02,input,toy:electricity,1,kWh,toy:electricity-production\n"
+        "e02,input,toy:electricity,1,kWh,toy:electricity-production",
     )
     with (toy / "tshirt" / "tshirt" / "flows.csv").open("a") as handle:
         handle.write("tshirt:polo,polo,product,unit,,\n")

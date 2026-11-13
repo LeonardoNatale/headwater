@@ -84,7 +84,7 @@ def test_a_database_in_git_names_its_commit(repo: Path) -> None:
 
 
 def test_a_change_to_a_database_it_uses_is_a_change(repo: Path) -> None:
-    dye = repo / "tshirt-dyed" / "dyes" / "processes" / "reactive-dye.csv"
+    dye = repo / "tshirt-dyed" / "dyes" / "exchanges.csv"
     dye.write_text(dye.read_text().replace("toy:co2,4,", "toy:co2,3.5,"))
 
     result = open_database(repo / "tshirt-dyed" / "tshirt").calc(background(), "tshirt:tshirt")
@@ -205,7 +205,7 @@ def test_a_diff_asks_git_for_no_database_state_and_its_json_is_unchanged(
         return real(paths)
 
     monkeypatch.setattr(database_module, "git_state", counted)
-    dye = repo / "tshirt-dyed" / "dyes" / "processes" / "reactive-dye.csv"
+    dye = repo / "tshirt-dyed" / "dyes" / "exchanges.csv"
     dye.write_text(dye.read_text().replace("toy:co2,4,", "toy:co2,3.5,"))
     git(repo, "commit", "--quiet", "-am", "a cleaner dye")
 

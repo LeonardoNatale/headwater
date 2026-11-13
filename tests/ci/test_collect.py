@@ -15,7 +15,7 @@ from headwater.release import find
 REL = 1e-9
 Git = Callable[..., str]
 Commit = Callable[[str], str]
-FABRIC = "studies/tshirt/tshirt/processes/tshirt.csv"
+FABRIC = "studies/tshirt/tshirt/exchanges.csv"
 
 
 def edit(path: Path, old: str, new: str) -> None:
@@ -79,12 +79,9 @@ def test_a_study_added_is_new_and_a_study_deleted_is_removed(
 ) -> None:
     git("switch", "--quiet", "--create", "reshuffle")
     copy = repo / "studies/tshirt-copy/tshirt"
-    (copy / "processes").mkdir(parents=True)
-    for f in ("database.yaml", "flows.csv"):
+    copy.mkdir(parents=True)
+    for f in ("database.yaml", "flows.csv", "processes.csv", "exchanges.csv"):
         (copy / f).write_text((repo / "studies/tshirt/tshirt" / f).read_text())
-    for f in ("tshirt.csv", "tshirt.yaml"):
-        text = (repo / "studies/tshirt/tshirt/processes" / f).read_text()
-        (copy / "processes" / f).write_text(text)
     git("rm", "--quiet", "-r", "studies/tshirt-local-electricity/tshirt")
     commit("copy one, delete one")
 
@@ -113,7 +110,7 @@ def test_under_limits_the_search_to_a_folder_by_whole_path_parts(
     git("switch", "--quiet", "--create", "both")
     edit(repo / FABRIC, "toy:cotton-fabric,0.25", "toy:cotton-fabric,0.22")
     edit(
-        repo / "studies/tshirt-local-electricity/tshirt/processes/tshirt.csv",
+        repo / "studies/tshirt-local-electricity/tshirt/exchanges.csv",
         "toy:cotton-fabric,0.25",
         "toy:cotton-fabric,0.22",
     )
