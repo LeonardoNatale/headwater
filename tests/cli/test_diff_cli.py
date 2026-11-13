@@ -848,7 +848,7 @@ def test_a_new_database_that_cannot_be_calculated_exits_2_with_its_message(
 
     assert code == 2
     [problem] = json.loads(stdout)["errors"]  # D49: one error document, the text on stderr
-    assert problem["code"] == "calculation"
+    assert problem["code"] == "diff"  # the diff names the calculation that failed
     assert "the matrix cannot be solved" in problem["message"]
     assert "working tree" in both.split("{")[0]
 
