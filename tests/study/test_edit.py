@@ -297,10 +297,10 @@ def test_an_edit_changes_its_own_row_and_nothing_else(bg: hw.Background, cases: 
     database = editor.save()
 
     assert changed_lines(before, files(cases)) == [
-        "-tshirt-parameter/tshirt/processes/tshirt.csv: "
-        "e03,input,toy:electricity,0.5,kWh,toy:electricity-production",
-        "+tshirt-parameter/tshirt/processes/tshirt.csv: "
-        "e03,input,toy:electricity,0.6,kWh,toy:electricity-production",
+        "-tshirt-parameter/tshirt/exchanges.csv: "
+        "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production",
+        "+tshirt-parameter/tshirt/exchanges.csv: "
+        "tshirt,e03,input,toy:electricity,0.6,kWh,toy:electricity-production",
     ]
     # the parameter and the formula line survive: fabric_kg still drives line e02
     assert database.calc(bg, "tshirt:tshirt").score == pytest.approx(
@@ -451,18 +451,18 @@ def test_an_editor_saves_again_after_a_save(bg: hw.Background, cases: Path) -> N
 def test_a_file_with_a_bom_and_windows_line_endings_keeps_them(
     bg: hw.Background, cases: Path
 ) -> None:
-    path = toy_database(cases, "tshirt") / "processes" / "tshirt.csv"
+    path = toy_database(cases, "tshirt") / "exchanges.csv"
     path.write_bytes(b"\xef\xbb\xbf" + path.read_bytes().replace(b"\n", b"\r\n"))
     editor = open_database(toy_database(cases, "tshirt")).edit(bg)
     editor.process("tshirt").set_exchange("e03", amount=0.6)
     editor.process("tshirt").new_exchange("emission", "toy:co2", 0.01, "kg", comment="Ironing")
     editor.save()
     assert path.read_bytes() == (
-        b"\xef\xbb\xbfline,role,flow,amount,unit,supplier,comment\r\n"
-        b"e01,reference,tshirt:tshirt,1,unit,,\r\n"
-        b"e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,\r\n"
-        b"e03,input,toy:electricity,0.6,kWh,toy:electricity-production,\r\n"
-        b"e04,emission,toy:co2,0.01,kg,,Ironing\r\n"
+        b"\xef\xbb\xbfprocess,line,role,flow,amount,unit,supplier,comment\r\n"
+        b"tshirt,e01,reference,tshirt:tshirt,1,unit,,\r\n"
+        b"tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,\r\n"
+        b"tshirt,e03,input,toy:electricity,0.6,kWh,toy:electricity-production,\r\n"
+        b"tshirt,e04,emission,toy:co2,0.01,kg,,Ironing\r\n"
     )
 
 
@@ -484,7 +484,7 @@ def test_a_parameter_of_one_process_goes_under_its_id(bg: hw.Background, cases: 
     assert files(path) == files(toy_database(TOY, "tshirt-parameter"))
 
 
-def test_a_process_is_added_and_removed_with_its_two_files(bg: hw.Background, cases: Path) -> None:
+def test_a_process_is_added_and_removed_with_its_rows(bg: hw.Background, cases: Path) -> None:
     path = toy_database(cases, "tshirt")
     editor = open_database(path).edit(bg)
     bag = editor.new_process(
@@ -492,14 +492,27 @@ def test_a_process_is_added_and_removed_with_its_two_files(bg: hw.Background, ca
     )
     bag.new_exchange("input", "toy:cotton-fabric", 0.1, "kg", supplier="toy:fabric-production")
     editor.process("tshirt").new_exchange("input", "tshirt:bag", 1, "unit", supplier=bag.id)
-    with pytest.raises(ValueError, match=r"processes/tshirt\.csv:5"):
+    with pytest.raises(ValueError, match=r"exchanges\.csv:7"):
         editor.remove_process("bag")
     database = editor.save()
     assert database.calc(bg, "tshirt:tshirt").score == pytest.approx(
         1.19205 + 0.1 * 3.7086, rel=REL
     )
-    assert (path / "processes" / "bag.yaml").read_text() == (
-        "name: cotton bag\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    # The bag sorts before the T-shirt, in both tables, and the new line of the T-shirt goes
+    # after its last line.
+    assert (path / "processes.csv").read_text() == (
+        "id,name,location,kind\n"
+        "bag,cotton bag,GLO,ordinary_transforming_activity\n"
+        "tshirt,T-shirt,GLO,ordinary_transforming_activity\n"
+    )
+    assert (path / "exchanges.csv").read_text() == (
+        "process,line,role,flow,amount,unit,supplier\n"
+        "bag,e01,reference,tshirt:bag,1,unit,\n"
+        "bag,e02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production\n"
+        "tshirt,e01,reference,tshirt:tshirt,1,unit,\n"
+        "tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production\n"
+        "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n"
+        "tshirt,e04,input,tshirt:bag,1,unit,tshirt:bag\n"
     )
 
     editor.process("tshirt").remove_exchange("e04")
@@ -507,7 +520,9 @@ def test_a_process_is_added_and_removed_with_its_two_files(bg: hw.Background, ca
     editor.save()
     flows = (path / "flows.csv").read_text()
     assert flows.endswith("tshirt:bag,cotton bag,product,unit,,\n")  # a flow is not removed
-    assert sorted(files(path)) == sorted(files(toy_database(TOY, "tshirt")))
+    assert {k: v for k, v in files(path).items() if k != "flows.csv"} == {
+        k: v for k, v in files(toy_database(TOY, "tshirt")).items() if k != "flows.csv"
+    }
 
 
 # --- what the review found ---------------------------------------------------------------------
@@ -538,7 +553,7 @@ def test_an_override_file_stays_in_overrides(bg: hw.Background, cases: Path) -> 
 def test_a_file_changed_on_disk_after_it_was_read_is_not_overwritten(
     bg: hw.Background, cases: Path
 ) -> None:
-    path = toy_database(cases, "tshirt") / "processes" / "tshirt.csv"
+    path = toy_database(cases, "tshirt") / "exchanges.csv"
     editor = open_database(toy_database(cases, "tshirt")).edit(bg)
     editor.process("tshirt").set_exchange("e03", amount=0.6)
     path.write_text(path.read_text().replace("0.25", "0.3"))  # a hand edit meanwhile
@@ -566,7 +581,38 @@ def test_a_process_date_is_written_as_a_date(bg: hw.Background, cases: Path) -> 
     editor = open_database(path).edit(bg)
     editor.process("tshirt").set(time_start=date(2024, 1, 1))
     editor.save()
-    assert (path / "processes" / "tshirt.yaml").read_text() == (
-        "name: T-shirt\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-        "time_start: 2024-01-01\n"
+    assert (path / "processes.csv").read_text() == (
+        "id,name,location,kind,time_start\n"
+        "tshirt,T-shirt,GLO,ordinary_transforming_activity,2024-01-01\n"
     )
+
+
+def test_one_changed_amount_is_a_one_line_git_diff(
+    bg: hw.Background, cases: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """D39 on the shared tables: one amount changed through the editor is one changed line of
+    exchanges.csv, as git counts it, in a database with more than one process."""
+    import subprocess
+
+    monkeypatch.setenv("GIT_CONFIG_GLOBAL", str(cases / "no-config"))
+    monkeypatch.setenv("GIT_CONFIG_NOSYSTEM", "1")
+    path = toy_database(cases, "tshirt")
+    editor = open_database(path).edit(bg)
+    bag = editor.new_process("bag", name="bag", location="GLO", product="bag", unit="unit")
+    bag.new_exchange("input", "toy:cotton-fabric", 0.1, "kg", supplier="toy:fabric-production")
+    editor.save()
+
+    def git(*args: str) -> str:
+        done = subprocess.run(
+            ["git", "-C", str(path), *args], check=True, capture_output=True, text=True
+        )
+        return done.stdout
+
+    git("init", "-q")
+    git("add", ".")
+    git("-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-q", "-m", "start")
+    editor = open_database(path).edit(bg)
+    editor.process("tshirt").set_exchange("e03", amount=0.6)
+    editor.save()
+
+    assert git("diff", "--numstat") == "1\t1\texchanges.csv\n"

@@ -1,0 +1,8 @@
+process,line,role,flow,amount,unit,supplier
+fabric-production,e01,reference,carbon:fabric,1,kg,
+fabric-production,e02,resource,carbon:co2-in-air,1.5,kg,
+fabric-production,e03,emission,carbon:co2-fossil,0.5,kg,
+fabric-production,e04,emission,carbon:co2-from-soil,0.2,kg,
+fabric-production,e05,waste_to_treatment,carbon:residue,1,kg,carbon:residue-treatment
+residue-treatment,e01,reference,carbon:residue,1,kg,
+residue-treatment,e02,emission,carbon:co2-non-fossil,0.4,kg,

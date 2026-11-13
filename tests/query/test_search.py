@@ -225,9 +225,13 @@ def test_the_order_does_not_depend_on_the_order_of_the_table() -> None:
 @pytest.fixture
 def mixed(toy: Path, edit, load_toy) -> hw.Background:
     """The toy with electricity in RER, and the fabric a market."""
-    processes = toy / "background" / "processes"
-    edit(processes / "electricity-production.yaml", "GLO", "RER")
-    edit(processes / "fabric-production.yaml", "ordinary_transforming_activity", "market_activity")
+    processes = toy / "background" / "processes.csv"
+    edit(processes, "electricity production,GLO", "electricity production,RER")
+    edit(
+        processes,
+        "cotton fabric production,GLO,ordinary_transforming_activity",
+        "cotton fabric production,GLO,market_activity",
+    )
     return load_toy(toy)
 
 

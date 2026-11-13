@@ -8,7 +8,7 @@ from headwater.model.roles import Role
 class Override(BaseModel):
     """Changed lines of one background process, for one study.
 
-    Each line is the whole new line, as written in a process file: a blank supplier means no
+    Each line is the whole new line, as written in exchanges.csv: a blank supplier means no
     supplier. The study gets its own copy of the process with these lines in place of the
     release's, and only the study's own purchases use the copy. The background stays as it is.
     Example: line `e02` of the fabric production, now 2.5 kWh of electricity per kg.

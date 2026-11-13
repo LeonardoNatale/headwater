@@ -2,6 +2,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 import headwater as hw
+from tests.conftest import add_lines
 
 
 def test_print_shows_the_process_the_score_the_indicator_and_the_method(
@@ -26,8 +27,7 @@ def test_print_says_how_many_flows_have_no_factor(
 ) -> None:
     with (toy / "background" / "flows.csv").open("a") as f:
         f.write("toy:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (toy / "background" / "processes" / "electricity-production.csv").open("a") as f:
-        f.write("e04,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e04,emission,toy:n2o,0.0001,kg,")
 
     result = calc("tshirt", root=toy, background=load_toy(toy))
 

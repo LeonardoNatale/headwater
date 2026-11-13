@@ -2,9 +2,9 @@
 
 Only the cells that name the old release change: a CSV record that needs no change keeps its
 exact text, and a YAML value is replaced where it stands, so comments and layout stay. Example:
-`e02,input,toy:cotton-fabric,0.25,kg,toy:1:fabric-a,cotton fabric,` becomes
-`e02,input,toy:cotton-fabric,0.25,kg,toy:2:fabric-b,cotton fabric,`, and the rest of the file is
-untouched.
+`tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:1:fabric-a,cotton fabric,` of exchanges.csv
+becomes `tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:2:fabric-b,cotton fabric,`, and the rest
+of the file is untouched.
 """
 
 import shutil
@@ -15,6 +15,7 @@ from typing import cast
 import yaml
 
 from headwater.study import DatabaseFolder, StudyFolder
+from headwater.study._tables import EXCHANGES
 from headwater.study._write import edit_csv
 from headwater.upgrade._moves import Moves
 
@@ -74,8 +75,8 @@ def write_studies(
 def _files(root: Path) -> Iterator[tuple[Path, Edit]]:
     """The files that can name the old release, each with how to edit it."""
     yield root / "database.yaml", _database_yaml
-    for path in sorted((root / "processes").glob("*.csv")):
-        yield path, _process_csv
+    if (root / EXCHANGES).is_file():
+        yield root / EXCHANGES, _process_csv
     for path in sorted((root / "overrides").glob("*.csv")):
         yield path, _override_csv
     for path in sorted((root / "scenarios").glob("*.yaml")):

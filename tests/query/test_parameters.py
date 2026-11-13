@@ -32,12 +32,12 @@ processes:
     mill_kwh: 2.5
 """
 TSHIRT = """\
-line,role,flow,amount,unit,supplier
-e01,reference,tshirt:tshirt,batch,unit,
-e02,input,toy:cotton-fabric,batch * fabric_gross,kg,toy:fabric-production
-e03,input,toy:electricity,"batch * max(sew_kwh, 0.1) * 1000",Wh,toy:electricity-production
-e04,waste_to_treatment,toy:textile-waste,batch * scraps_g,g,toy:incineration-textile-waste
-e05,emission,toy:co2,batch * 0.01 * exp(loss),kg,
+process,line,role,flow,amount,unit,supplier
+tshirt,e01,reference,tshirt:tshirt,batch,unit,
+tshirt,e02,input,toy:cotton-fabric,batch * fabric_gross,kg,toy:fabric-production
+tshirt,e03,input,toy:electricity,"batch * max(sew_kwh, 0.1) * 1000",Wh,toy:electricity-production
+tshirt,e04,waste_to_treatment,toy:textile-waste,batch * scraps_g,g,toy:incineration-textile-waste
+tshirt,e05,emission,toy:co2,batch * 0.01 * exp(loss),kg,
 """
 WEAVING = """\
 process,line,role,flow,amount,unit,supplier,comment
@@ -52,7 +52,7 @@ def rich(toy: Path) -> Path:
     database = toy / "rich" / "tshirt"
     shutil.copytree(toy / "tshirt" / "tshirt", database)
     (database / "parameters.yaml").write_text(PARAMETERS)
-    (database / "processes" / "tshirt.csv").write_text(TSHIRT)
+    (database / "exchanges.csv").write_text(TSHIRT)
     (database / "overrides").mkdir()
     (database / "overrides" / "weaving.csv").write_text(WEAVING)
     return toy
@@ -139,7 +139,7 @@ def test_a_derivative_that_is_not_a_number_is_named(
 ) -> None:
     database = toy / "tshirt" / "tshirt"
     (database / "parameters.yaml").write_text("database:\n  extra: 0\n")
-    csv = database / "processes" / "tshirt.csv"
+    csv = database / "exchanges.csv"
     csv.write_text(csv.read_text().replace(",0.5,kWh", ",0.5 + sqrt(extra),kWh"))
     result = open_study("tshirt", either, root=toy).calc(either, "tshirt:tshirt")
 
@@ -154,7 +154,7 @@ def test_parameters_are_worked_out_on_every_calc(
     # A record changed after the database was read still gives what its formula says.
     database = toy / "tshirt" / "tshirt"
     (database / "parameters.yaml").write_text("database:\n  fabric_kg: 0.25\n")
-    csv = database / "processes" / "tshirt.csv"
+    csv = database / "exchanges.csv"
     csv.write_text(csv.read_text().replace(",0.25,kg", ",fabric_kg,kg"))
     opened = open_study("tshirt", either, root=toy)
     processes = tuple(

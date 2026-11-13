@@ -79,7 +79,8 @@ COMMANDS = {
     ),
     "database": Entry(
         "headwater.cli.excel:database_app",
-        "Import databases from Excel or Brightway, and list what reaches a database.",
+        "Import databases from Excel or Brightway, list what reaches a database, and convert "
+        "the layout before 0.2.0.",
     ),
     "demo": Entry(
         "headwater.cli.demo:demo_command",

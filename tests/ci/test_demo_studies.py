@@ -123,7 +123,7 @@ def test_the_demo_comment_lists_the_databases_then_the_study(
     run("init", "--quiet", "--initial-branch", "main")
     run("add", "--all")
     run("commit", "--quiet", "-m", "the demo")
-    dye = repo / "studies" / "dyes" / "processes" / "reactive-dye.csv"
+    dye = repo / "studies" / "dyes" / "exchanges.csv"
     dye.write_text(dye.read_text().replace("toy:co2,4,", "toy:co2,3.5,"))
     run("commit", "--quiet", "--all", "-m", "a cleaner dye")
     monkeypatch.chdir(repo)

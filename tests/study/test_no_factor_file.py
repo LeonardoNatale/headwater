@@ -20,6 +20,7 @@ from headwater.study import (
     validate,
     validate_database,
 )
+from tests.conftest import add_lines
 
 Write = Callable[[Path, str], None]
 Edit = Callable[[Path, str, str], None]
@@ -302,8 +303,7 @@ def test_a_background_flow_with_no_factor_stays_a_warning(
 ) -> None:
     with (toy / "background/flows.csv").open("a") as f:
         f.write("toy:n2o,Dinitrogen monoxide,elementary,kg,air,\n")
-    with (toy / "background/processes/electricity-production.csv").open("a") as f:
-        f.write("e04,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e04,emission,toy:n2o,0.0001,kg,")
     background = read_process_folder(toy / "background", namespace="toy")
     database = read_database(toy / DATABASE)
 
@@ -321,8 +321,7 @@ def test_a_flow_of_the_database_and_the_background_is_an_error_for_the_database_
     # warning the background's.
     with (toy / "background/flows.csv").open("a") as f:
         f.write('tshirt:cod,"COD, Chemical Oxygen Demand",elementary,kg,water,\n')
-    with (toy / "background/processes/electricity-production.csv").open("a") as f:
-        f.write("e04,emission,tshirt:cod,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e04,emission,tshirt:cod,0.0001,kg,")
     (toy / DATABASE / "flows.csv").write_text(
         "id,name,kind,unit,compartment,cas\ntshirt:tshirt,T-shirt,product,unit,,\n"
     )

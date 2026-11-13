@@ -1,4 +1,4 @@
-"""Reading a distribution written next to an amount: a line of a process file, or a parameter.
+"""Reading a distribution written next to an amount: a line of exchanges.csv, or a parameter.
 
 The centre of a distribution is always the amount itself, so it is never written: the median of
 a lognormal (`scale` is the natural log of the geometric standard deviation), the mean of a
@@ -12,7 +12,7 @@ from collections.abc import Callable, Mapping
 from headwater.model import Distribution, Problem, Uncertainty, did_you_mean
 
 COLUMNS = ("distribution", "scale", "minimum", "maximum")
-"""The cells of a distribution, as columns of a process file and keys of a parameter."""
+"""The cells of a distribution, as columns of exchanges.csv and keys of a parameter."""
 
 _NEEDS: dict[Distribution, tuple[str, ...]] = {
     Distribution.lognormal: ("scale",),

@@ -1,0 +1,4 @@
+name: tshirt
+background: toy-background@fixture
+methods: [toy-climate]
+uses: [dyes]

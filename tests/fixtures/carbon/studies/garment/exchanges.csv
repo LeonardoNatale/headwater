@@ -1,0 +1,3 @@
+process,line,role,flow,amount,unit,supplier
+garment,e01,reference,garment:garment,1,unit,
+garment,e02,input,carbon:fabric,1,kg,carbon:fabric-production

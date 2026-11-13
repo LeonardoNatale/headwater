@@ -81,8 +81,12 @@ def test_a_subtree_shows_its_shares_of_its_own_score(calc) -> None:
 
 def test_an_explanation_of_a_score_of_zero_prints_no_share(toy, load_toy, edit) -> None:
     # Incineration that emits nothing scores exactly 0: there is no share of nothing.
-    path = toy / "background" / "processes" / "incineration-textile-waste.csv"
-    edit(path, "e02,emission,toy:co2,1.2,kg", "e02,emission,toy:co2,0,kg")
+    path = toy / "background" / "exchanges.csv"
+    edit(
+        path,
+        "incineration-textile-waste,e02,emission,toy:co2,1.2,kg",
+        "incineration-textile-waste,e02,emission,toy:co2,0,kg",
+    )
     background = load_toy(toy)
 
     text = str(background.contributions("toy:incineration-textile-waste"))

@@ -363,11 +363,11 @@ def test_a_parameter_change_that_makes_an_amount_negative(
     scenario: Callable[[str, str], Path], toy: Path, write: Write, problems_of: Problems
 ) -> None:
     write(
-        toy / DATABASE / "processes/tshirt.csv",
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:tshirt,1,unit,\n"
-        "e02,input,toy:cotton-fabric,fabric_kg - 0.1,kg,toy:fabric-production\n"
-        "e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n",
+        toy / DATABASE / "exchanges.csv",
+        "process,line,role,flow,amount,unit,supplier\n"
+        "tshirt,e01,reference,tshirt:tshirt,1,unit,\n"
+        "tshirt,e02,input,toy:cotton-fabric,fabric_kg - 0.1,kg,toy:fabric-production\n"
+        "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n",
     )
     study = scenario("small", "changes:\n  - {parameter: fabric_kg, value: 0.05}\n")
 

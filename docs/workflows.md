@@ -106,10 +106,10 @@ A product of a database is named by the id of the process that makes it, as in s
 
 | Option | Meaning |
 |---|---|
-| `--release` | The background to use instead: `name@hash`, a release folder, or a folder of process files |
-| `--method` | A method id the release holds, or a method folder. It replaces the methods the database names. A folder of process files needs a method folder. |
+| `--release` | The background to use instead: `name@hash`, a release folder, or a folder of processes (`processes.csv` and `exchanges.csv`) |
+| `--method` | A method id the release holds, or a method folder. It replaces the methods the database names. A folder of processes needs a method folder. |
 | `--method-folder` | A method folder, once per folder, for a method the database names by its id and its release does not hold (see below) |
-| `--namespace` | For a folder of process files, the prefix of its process ids, for example `toy` |
+| `--namespace` | For a folder of processes, the prefix of its process ids, for example `toy` |
 | `--indicator` | An indicator of the method, by id. `calc` and `diff` take it once per indicator and print them in the method's order; by default, all of them. `contributions`, `where` and `sensitivity` take one, and need it when the method has several. |
 | `--set` | A normalisation and weighting set folder, once per set, for `calc`, `contributions`, `where`, `sensitivity` and `diff`. Its normalised and weighted scores and its single score are indicators after the method's, such as `toy-nw:single-score`. `diff` refuses it across a release change. |
 
@@ -195,7 +195,7 @@ Then `headwater calc <database> --set methods/toy-nw` prints the set's scores af
 
 **`headwater schema [FOLDER]`** writes the JSON schemas of database.yaml, study.yaml and scenario files into `FOLDER/.schemas` ([design.md](design.md#schemas)), with the process ids of the databases in FOLDER as the suggested products. Point an editor at one with a first line such as `# yaml-language-server: $schema=../.schemas/study.schema.json`.
 
-**`headwater find TEXT --release NAME@HASH [--location RER] [--product WORDS] [--kind KIND] [--limit 20] [--json]`** prints the id of a background process from part of its name or product, best match first, one line each: the id, `name | product | location`, the unit and the rule that matched. It takes no study and no method, so it solves nothing: it reads the release's process and flow tables. `--release` is a release (`name@hash`, or its folder) or a folder of process files, and `--namespace` is the prefix of its ids, as for the other commands. For the toy:
+**`headwater find TEXT --release NAME@HASH [--location RER] [--product WORDS] [--kind KIND] [--limit 20] [--json]`** prints the id of a background process from part of its name or product, best match first, one line each: the id, `name | product | location`, the unit and the rule that matched. It takes no study and no method, so it solves nothing: it reads the release's process and flow tables. `--release` is a release (`name@hash`, or its folder) or a folder of processes, and `--namespace` is the prefix of its ids, as for the other commands. For the toy:
 
 ```
 $ headwater find electricity --release toy-background@3f9a1c2d4e5f
@@ -320,6 +320,25 @@ The exit code is 0 whether or not anything differs, 1 when the folder has valida
 | `differences` | One per difference: `id`, `kind`, `change` (`added`, `removed`, `changed`), `item`, `description` (with the ids of suppliers and flows), `text` (the same, each supplier named in words: `supplier electricity production (GLO) → solar electricity (FR)`), `fields` (`name`, `old`, `new`, with ids), `affects` (lines a changed parameter moves), `scored`, `flow` (`id` and `name` of the flow the difference is about, `name` null when it is not known, or null for a difference with no flow, such as a parameter), `database` (the database the difference is in when it is one the database uses, or for a study any database its products reach, such as `dyes`; null for the folder's own). A study's own differences are of the kinds `product` (an amount), `no_factor`, `scenario` and `study` (a field of study.yaml); a database's fields are of the kind `database`. An edited comment is its own difference, `kind` `comment`, not scored, whose `item` is the line (`tshirt:tshirt line e02`), the override line (`override of toy:electricity-production line e02`) or the parameter (`parameter fabric_kg`) |
 | `processes` | The `name` and `location` of every supplier the lines of either side buy from, by id, from its release or from its database |
 
+## Converting the layout before 0.2.0
+
+Before headwater 0.2.0 a database held `processes/`, one YAML and one CSV per process. It is now two tables, `processes.csv` and `exchanges.csv` (D48), and every command refuses `processes/`, naming the command that converts a folder once:
+
+```bash
+headwater database convert studies
+```
+
+```
+converted studies/dyes: 1 process and 3 lines, from 2 files in processes/ to processes.csv and exchanges.csv
+converted studies/tshirt: 1 process and 3 lines, from 2 files in processes/ to processes.csv and exchanges.csv
+```
+
+- FOLDER is a database, a background folder, or a folder that holds them, one level down, as `studies` above. Studies hold no processes and are left as they are.
+- Each folder is written into a copy first and read back. Every process must read the same as before, its id, name, location, kind, time and lines with their formulas and distributions, and so must the rest of the folder. Only when every folder passes are the tables put in place and `processes/` removed. Ids, scores, input hashes and release hashes do not change.
+- Each cell of a line keeps its text, so an amount written `0.30` stays `0.30`. The comment lines of a process YAML go into the `comment` column of its row, joined by a space, and the record of an Excel or Brightway import names the two tables, so importing again still replaces them.
+- Refused, and nothing written: a folder already converted, a comment after a value in a YAML file (`location: GLO  # was RER`, move it to a line of its own), and a folder that does not read, each named with its file and line.
+- Commit the conversion on its own. `headwater diff` across that commit converts the old side in its temporary copy, with the same checks, so it shows that no score changed.
+
 ## Importing from Excel
 
 Brightway inventories in Excel (`.xlsx`) convert into a database folder, so nobody retypes them.
@@ -331,7 +350,7 @@ headwater database import-excel inventory.xlsx --release toy-background@3f9a1c2d
 
 `--method` is given once per method to use several together, as for `calc`: `--method EF-3.1 --method IPCC-2021` writes `methods: [EF-3.1, IPCC-2021]` in database.yaml. A method folder is written by its id, `methods: [EF-3.1]`. With no `--method`, the import validates with the release's one method and writes no `methods`. When the release does not hold that id, the commands that read the database need the folder ([Command line](#command-line)), and the import's last line says so with the command to run: `headwater validate studies/tshirt --method-folder methods/EF-3.1`.
 
-**Example.** The line `market for steel | steel | RER`, 2 `kilogram`, becomes the line `input`, 2 `kg`, supplier `ecoinvent:3.12:cutoff:<ids>`. One activity becomes one pair of files in `processes/`, its id is `<database>:<name>-<location>`, such as `tshirt:t-shirt-glo`, or `<database>:<product>-<location>` when several activities share a name and location, such as the steps of one process ([design.md](design.md#excel-import) has the rule), and the database gets `flows.csv`, `parameters.yaml` and a `database.yaml`.
+**Example.** The line `market for steel | steel | RER`, 2 `kilogram`, becomes the line `input`, 2 `kg`, supplier `ecoinvent:3.12:cutoff:<ids>`. One activity becomes one row of `processes.csv`, with the activity's comment and the cell it was read from in its `comment` column, and its lines rows of `exchanges.csv`. Its id is `<database>:<name>-<location>`, such as `tshirt:t-shirt-glo`, or `<database>:<product>-<location>` when several activities share a name and location, such as the steps of one process ([design.md](design.md#excel-import) has the rule), and the database gets `flows.csv`, `parameters.yaml` and a `database.yaml`.
 
 **What it reads.** The layout of `bw2io.ExcelImporter`: one `Database` row, `Project parameters` and `Database parameters` tables, and an `Activity` block for each activity, with metadata rows, an optional `Parameters` table and an `Exchanges` table. A sheet whose first cell is `skip` is not read, and a first row `cutoff <n>` keeps the first n columns. Values are the ones Excel stored.
 
@@ -345,7 +364,7 @@ headwater database import-excel inventory.xlsx --release toy-background@3f9a1c2d
 
 **Formulas.** The `formula` column and the parameter tables become `parameters.yaml` and formula amounts, in the syntax of [Parameters and formulas](design.md#parameters-and-formulas). Brightway writes waste sent for treatment as a negative amount, so its formula is written with the sign turned. A formula headwater cannot express (`^`, `sin(x)`, a name that is not a parameter) is reported. The line keeps the number Excel stored, and the formula goes in the line's comment. A formula whose value differs from the amount next to it is noted: headwater uses the formula's.
 
-**Uncertainty.** The columns `uncertainty type`, `loc`, `scale`, `minimum` and `maximum`, on a line or on a row of a parameter table, become its distribution, in the four distribution columns of a process file or the same keys of `parameters.yaml` ([design.md](design.md#uncertainty)). Example: the fabric line, 0.25 `kilogram` with `uncertainty type` 2, `loc` -1.38629 (ln 0.25) and `scale` 0.0953102 (ln 1.1), becomes `lognormal` with `scale` 0.0953102. The waste line, -0.05 `kilogram` with `uncertainty type` 4 between -0.06 and -0.04, becomes 0.05 kg `uniform` between 0.04 and 0.06: the bounds turn with the sign. Lognormal, normal, uniform and triangular (stats_arrays types 2 to 5) are copied, centred on the amount. Text that is a number is read as the number, as bw2io reads it, and `undefined` or `no uncertainty` means none. With no `loc`, Brightway centres a distribution on the amount itself, so a normal or a triangular is copied, and a lognormal is not. A distribution a database cannot hold is reported at its row and not copied: another type, a `loc` that is not the amount (or its logarithm, for a lognormal), one on a line or parameter whose amount is a formula, one on a line that is not linked yet, and a spread with no `uncertainty type`.
+**Uncertainty.** The columns `uncertainty type`, `loc`, `scale`, `minimum` and `maximum`, on a line or on a row of a parameter table, become its distribution, in the four distribution columns of exchanges.csv or the same keys of `parameters.yaml` ([design.md](design.md#uncertainty)). Example: the fabric line, 0.25 `kilogram` with `uncertainty type` 2, `loc` -1.38629 (ln 0.25) and `scale` 0.0953102 (ln 1.1), becomes `lognormal` with `scale` 0.0953102. The waste line, -0.05 `kilogram` with `uncertainty type` 4 between -0.06 and -0.04, becomes 0.05 kg `uniform` between 0.04 and 0.06: the bounds turn with the sign. Lognormal, normal, uniform and triangular (stats_arrays types 2 to 5) are copied, centred on the amount. Text that is a number is read as the number, as bw2io reads it, and `undefined` or `no uncertainty` means none. With no `loc`, Brightway centres a distribution on the amount itself, so a normal or a triangular is copied, and a lognormal is not. A distribution a database cannot hold is reported at its row and not copied: another type, a `loc` that is not the amount (or its logarithm, for a lognormal), one on a line or parameter whose amount is a formula, one on a line that is not linked yet, and a spread with no `uncertainty type`.
 
 **What did not map is still written.** A line with no supplier keeps the workbook's own words: its flow is named after the reference product, and its comment says `UNMAPPED (reason)`, then the line as the workbook has it (`electricity production | electricity | RER, 0.5 kilowatt hour`) and why. So a mapping row can be written without opening the workbook again, and `headwater validate` refuses the database until a person decides. Each row of the workbook has one outcome in the report: `mapped`, `unmapped`, `waiting` or `unexpressible`. Identical lines are reported once, with all their places in the workbook (`inventory!A71`) and the processes that might have been meant. Lines that wait for a database folder that is not there yet are grouped under `Waiting for database <folder>`.
 
@@ -378,9 +397,9 @@ The import ends with what validation found, `Validation: 0 errors.`, then each e
 
 Example. After the first import you add `description: Knitting, gate-to-gate, per kg of fabric` and a comment to database.yaml, and import again. The description and the comment are as you left them. If nothing the import sets changed, the file is not changed by one byte.
 
-The rule has two parts, one for the process files and one for database.yaml.
+The rule has two parts, one for the files of processes and flows, and one for database.yaml.
 
-- **Process files.** The first import records a hash of each file it wrote in the hidden `.headwater-import.json`. A second import replaces those files, and only those, when none was edited since: it also removes the files of an activity that left the workbook. If a person edited one of them, the import refuses, names the file and writes nothing, so an edit is never overwritten: keep it in the workbook or the mapping file, or import into another folder. Files a person added (`cut_offs.csv`, `overrides/`, `scenarios/`, notes) are never touched, so check that their line ids still fit. A folder that holds files and no record of an import is refused.
+- **Processes and flows.** The first import records a hash of each file it wrote in the hidden `.headwater-import.json`: `processes.csv`, `exchanges.csv`, `flows.csv` and `parameters.yaml`. A second import replaces those files, and only those, when none was edited since, so an activity that left the workbook leaves the tables. If a person edited one of them, the import refuses, names the file and writes nothing, so an edit is never overwritten: keep it in the workbook or the mapping file, or import into another folder. Files a person added (`cut_offs.csv`, `overrides/`, `scenarios/`, notes) are never touched, so check that their line ids still fit. A folder that holds files and no record of an import is refused.
 - **database.yaml.** It is merged, not replaced, and an edit never stops the import. `name`, `background` and `uses` are the import's every time: the processes it writes depend on them. `uses` is taken out when the database no longer uses another. `methods` follows the import only while you have not changed it: the record keeps what the import wrote, so it can tell. A `methods` of yours that the import would have set differently is listed in the report: `database.yaml keeps methods: [EF-3.1, IPCC-2021], which a person wrote. This import would have written methods: [EF-3.1].` Only the line of a field that must change is replaced. Other fields, comments and their order are not moved. A field you deleted is written again. A database.yaml that is not valid YAML stops the import before it writes anything. So does a layout it cannot edit by line, when a field must change: a key in quotes, the whole file in braces, or a comment at the left margin inside a list. The message says `database.yaml: cannot be updated in place (...). The import changes a field by its line, `field: value` at the start of a line. Write the fields that way, or remove the file to have it written again.`
 
 **The exit code** is 0 when every line mapped and the database validates and can be calculated, 1 when something needs a decision (the database is still written), and 2 when nothing was written: a workbook or mapping file that is wrong, a folder with files that an import did not write, or with process files that were edited since, a database.yaml that is not YAML or that the import cannot edit by line, an unknown release or method. A flow the method has no factor for makes the exit code 1: `validate` and `calc` refuse a database that emits one until its `no_factor.csv` acknowledges the flow ([design.md](design.md#flows-with-no-factor)).
@@ -432,7 +451,7 @@ To review (2):
   [RoW] cotton fabric production | cotton fabric | RoW (toy:1:fabric-a → toy:2:fabric-b): RoW leaves out the places with a dataset of their own: toy-2@bd46d2b98059 adds IN. At tshirt:tshirt line e02
   [market] market for electricity | electricity | GLO (toy:1:market-elec → toy:2:market-elec): buys from 1 new supplier: electricity production, wind | electricity | GLO, largest share moved: electricity production | electricity | GLO, 100% → 50%. At tshirt:tshirt line e03
 
-Written: tshirt/processes/tshirt.csv, tshirt/database.yaml
+Written: tshirt/database.yaml, tshirt/exchanges.csv
 ```
 
 Then the diff across the release change, as `headwater diff` prints it:
@@ -473,7 +492,7 @@ Not mapped: 1 supplier, 1 line
 ```
 headwater upgrade studies/tshirt-footprint studies/fabric --to toy-2@bd46d2b98059 --mapping upgrades/toy-1-toy-2.csv
 ...
-Written: fabric/study.yaml, tshirt-footprint/scenarios/clean-grid.yaml, tshirt/database.yaml, tshirt/processes/tshirt.csv
+Written: fabric/study.yaml, tshirt-footprint/scenarios/clean-grid.yaml, tshirt/database.yaml, tshirt/exchanges.csv
 ...
 Study tshirt-footprint: valid.
 Study fabric: valid.

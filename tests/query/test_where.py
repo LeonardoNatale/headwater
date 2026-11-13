@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 import headwater as hw
+from tests.conftest import write_tables
 
 from .conftest import CalcToy, Edit, LoadToy
 
@@ -18,6 +19,7 @@ REL = 1e-9
 ELECTRICITY = "toy:electricity-production"
 FABRIC = "toy:fabric-production"
 INCINERATION = "toy:incineration-textile-waste"
+TSHIRT_DETAILS = {"tshirt": "T-shirt,GLO,ordinary_transforming_activity"}
 
 
 def rows(where: hw.Where) -> list[tuple[str, float, str, str]]:
@@ -53,7 +55,11 @@ def test_the_t_shirt_by_process(calc: CalcToy) -> None:
 
 
 def test_the_t_shirt_by_location(calc: CalcToy, toy: Path, load_toy: LoadToy, edit: Edit) -> None:
-    edit(toy / "background" / "processes" / "electricity-production.yaml", "GLO", "RER")
+    edit(
+        toy / "background" / "processes.csv",
+        "electricity production,GLO",
+        "electricity production,RER",
+    )
     result = calc("tshirt", load_toy(toy), root=toy)
 
     where = result.where()
@@ -81,7 +87,11 @@ def test_one_location_sums_every_process_there(calc: CalcToy, either: hw.Backgro
 
 
 def test_top_sums_the_rest(calc: CalcToy, toy: Path, load_toy: LoadToy, edit: Edit) -> None:
-    edit(toy / "background" / "processes" / "electricity-production.yaml", "GLO", "RER")
+    edit(
+        toy / "background" / "processes.csv",
+        "electricity production,GLO",
+        "electricity production,RER",
+    )
     where = calc("tshirt", load_toy(toy), root=toy).where(top=1)
 
     assert rows(where) == [(ELECTRICITY, pytest.approx(1.25, rel=REL), "kWh", "RER")]
@@ -116,7 +126,11 @@ def test_the_t_shirt_as_text(calc: CalcToy, toy: Path, load_toy: LoadToy, edit: 
         "By location:\n"
         "  GLO: 1.19205 (100.0%), 2 processes"
     )
-    edit(toy / "background" / "processes" / "electricity-production.yaml", "GLO", "RER")
+    edit(
+        toy / "background" / "processes.csv",
+        "electricity production,GLO",
+        "electricity production,RER",
+    )
     assert str(calc("tshirt", load_toy(toy), root=toy).where(top=1)) == (
         "1 unit of T-shirt: 1.19205\n"
         "By process:\n"
@@ -133,12 +147,15 @@ def test_a_process_that_makes_two_units_per_run(
 ) -> None:
     """The amount is what the process makes, not how many times it runs: a run that makes 2
     T-shirts and emits 1 kg CO2 runs half a time for one T-shirt, which still makes 1 T-shirt."""
-    (toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:tshirt,2,unit,\n"
-        "e02,input,toy:cotton-fabric,0.5,kg,toy:fabric-production\n"
-        "e03,input,toy:electricity,1,kWh,toy:electricity-production\n"
-        "e04,emission,toy:co2,1,kg,\n"
+    write_tables(
+        toy / "tshirt" / "tshirt",
+        {
+            "tshirt": "e01,reference,tshirt:tshirt,2,unit,\n"
+            "e02,input,toy:cotton-fabric,0.5,kg,toy:fabric-production\n"
+            "e03,input,toy:electricity,1,kWh,toy:electricity-production\n"
+            "e04,emission,toy:co2,1,kg,\n"
+        },
+        details=TSHIRT_DETAILS,
     )
 
     where = calc("tshirt", load_toy(toy), root=toy).where()
@@ -210,8 +227,11 @@ def test_a_scenario_that_changes_a_purchase(calc: CalcToy, toy: Path, load_toy: 
 
 
 def test_a_score_of_zero(calc: CalcToy, toy: Path, load_toy: LoadToy) -> None:
-    path = toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
-    path.write_text("line,role,flow,amount,unit,supplier\ne01,reference,tshirt:tshirt,1,unit,\n")
+    write_tables(
+        toy / "tshirt" / "tshirt",
+        {"tshirt": "e01,reference,tshirt:tshirt,1,unit,"},
+        details=TSHIRT_DETAILS,
+    )
 
     where = calc("tshirt", load_toy(toy), root=toy).where()
 
@@ -269,9 +289,14 @@ def test_an_unknown_product_names_the_closest(bg: hw.Background) -> None:
         bg.where("toy:fabric-productio")
 
 
-def test_a_background_product_with_nothing_upstream(toy: Path, load_toy: LoadToy) -> None:
-    path = toy / "background" / "processes" / "incineration-textile-waste.csv"
-    path.write_text("line,role,flow,amount,unit,supplier\ne01,reference,toy:textile-waste,1,kg,\n")
+def test_a_background_product_with_nothing_upstream(
+    toy: Path, load_toy: LoadToy, edit: Edit
+) -> None:
+    edit(
+        toy / "background" / "exchanges.csv",
+        "incineration-textile-waste,e02,emission,toy:co2,1.2,kg,\n",
+        "",
+    )
 
     where = load_toy(toy).where(INCINERATION)
 

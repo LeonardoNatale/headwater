@@ -1,0 +1,5 @@
+# One T-shirt
+# Read from inventory!A7 of inventory 1.xlsx.
+name: T-shirt
+location: GLO
+kind: ordinary_transforming_activity

@@ -81,7 +81,7 @@ def owner_of(chain: Iterable["DatabaseFolder"]) -> dict[str, str]:
 
 def in_used(name: str, location: str | None) -> str:
     """Where a file of the used database `name` is, seen from the database that uses it, a folder
-    next to it: `processes/x.csv:3` of `dyes` is `../dyes/processes/x.csv:3`."""
+    next to it: `exchanges.csv:3` of `dyes` is `../dyes/exchanges.csv:3`."""
     return f"../{name}/{location}" if location else f"../{name}"
 
 

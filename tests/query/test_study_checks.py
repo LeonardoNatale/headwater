@@ -39,8 +39,10 @@ def placed(tmp_path: Path, records) -> hw.Background:
 
 
 def set_location(root: Path, location: str) -> None:
-    path = root / "tshirt" / "tshirt" / "processes" / "tshirt.yaml"
-    path.write_text(path.read_text().replace("location: GLO", f"location: {location}"))
+    path = root / "tshirt" / "tshirt" / "processes.csv"
+    text = path.read_text()
+    assert "tshirt,T-shirt,GLO," in text
+    path.write_text(text.replace("tshirt,T-shirt,GLO,", f"tshirt,T-shirt,{location},"))
 
 
 def test_a_location_the_release_does_not_name_is_refused(placed, calc, toy: Path) -> None:
@@ -51,6 +53,7 @@ def test_a_location_the_release_does_not_name_is_refused(placed, calc, toy: Path
 
     (problem,) = raised.value.problems
     assert (problem.code, problem.item) == ("unknown-location", "process tshirt:tshirt")
+    assert problem.location == "processes.csv"
     assert "'ROW'" in problem.message
     assert "Did you mean 'RoW'?" in problem.message
 
@@ -83,7 +86,7 @@ def test_a_database_flow_that_differs_from_the_background_is_refused(
 
 
 def test_a_supplier_the_background_does_not_hold_gets_a_suggestion(either, calc, toy: Path) -> None:
-    csv = toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    csv = toy / "tshirt" / "tshirt" / "exchanges.csv"
     csv.write_text(csv.read_text().replace(",toy:fabric-production", ",toy:fabric-productoin"))
 
     with pytest.raises(hw.InvalidDataError) as raised:
@@ -96,7 +99,7 @@ def test_a_supplier_the_background_does_not_hold_gets_a_suggestion(either, calc,
 
 def test_validate_reports_what_calc_would_refuse(either, open_study, toy: Path) -> None:
     set_location(toy, "XX")
-    csv = toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    csv = toy / "tshirt" / "tshirt" / "exchanges.csv"
     csv.write_text(csv.read_text().replace(",0.5,kWh,", ",0.5,kg,"))
 
     report = open_study("tshirt", either, root=toy).validate(either)

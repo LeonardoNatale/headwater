@@ -20,6 +20,7 @@ import headwater as hw
 from headwater.diff import DiffError, Source, diff_databases, render_text
 from headwater.study import DatabaseFolder, read_database
 from headwater.upgrade import plan
+from tests.conftest import add_lines, add_process
 
 Edit = Callable[[Path, str, str], None]
 REL = 1e-9
@@ -42,6 +43,18 @@ def old(studies: Path) -> DatabaseFolder:
     return read_database(studies / "tshirt")
 
 
+def add_print(folder: Path) -> None:
+    """A second process of the T-shirt database, printing, that buys 0.2 kWh from toy-1's
+    market. Its lines leave the flow_name and comment columns of the fixture empty."""
+    add_process(
+        folder,
+        "print",
+        "e01,reference,tshirt:print,1,unit,,,\n"
+        "e02,input,toy:electricity,0.2,kWh,toy:1:market-elec,,",
+        details="printing,GLO,ordinary_transforming_activity",
+    )
+
+
 def upgraded(studies: Path, to: str, mapping: Path) -> DatabaseFolder:
     plan(studies / "tshirt", to=to, mapping=mapping).write()
     return read_database(studies / "tshirt")
@@ -58,7 +71,7 @@ def test_the_release_change_and_the_study_edit_are_told_apart(
 ) -> None:
     upgraded(studies, to, mapping)
     edit(
-        studies / "tshirt" / "processes" / "tshirt.csv",
+        studies / "tshirt" / "exchanges.csv",
         "e02,input,toy:cotton-fabric,0.25",
         "e02,input,toy:cotton-fabric,0.22",
     )
@@ -133,8 +146,8 @@ def test_a_supplier_with_no_successor_that_the_new_study_drops_counts_as_the_rel
 ) -> None:
     upgraded(studies, to, mapping)
     edit(
-        studies / "tshirt" / "processes" / "tshirt.csv",
-        "e06,input,toy:tape,0.01,kg,toy:2:tape-rer,tape,\n",
+        studies / "tshirt" / "exchanges.csv",
+        "tshirt,e06,input,toy:tape,0.01,kg,toy:2:tape-rer,tape,\n",
         "",
     )
 
@@ -159,18 +172,10 @@ def test_every_product_of_the_study_can_be_compared(
     edit: Edit,
 ) -> None:
     folder = studies / "tshirt"
-    (folder / "processes" / "print.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:print,1,unit,\n"
-        "e02,input,toy:electricity,0.2,kWh,toy:1:market-elec\n"
-    )
-    (folder / "processes" / "print.yaml").write_text(
-        "name: printing\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
+    add_print(folder)
     flows = folder / "flows.csv"
     flows.write_text(flows.read_text() + "tshirt:print,print,product,unit,,\n")
-    tshirt = folder / "processes" / "tshirt.csv"
-    tshirt.write_text(tshirt.read_text() + "e07,input,tshirt:print,1,unit,tshirt:print,print,\n")
+    add_lines(folder, "tshirt", "e07,input,tshirt:print,1,unit,tshirt:print,print,")
     old = read_database(folder)
 
     new = upgraded(studies, to, mapping)
@@ -195,7 +200,7 @@ def test_a_diff_on_one_release_has_no_release_part(
     studies: Path, old: DatabaseFolder, old_background: hw.Background, edit: Edit
 ) -> None:
     edit(
-        studies / "tshirt" / "processes" / "tshirt.csv",
+        studies / "tshirt" / "exchanges.csv",
         "e02,input,toy:cotton-fabric,0.25",
         "e02,input,toy:cotton-fabric,0.22",
     )
@@ -216,8 +221,7 @@ def test_a_line_whose_dataset_and_product_are_gone_is_the_release_s(
 ) -> None:
     before = tmp_path / "before" / "tshirt"
     shutil.copytree(studies / "tshirt", before)
-    process = before / "processes" / "tshirt.csv"
-    process.write_text(process.read_text() + "e07,input,toy:glue,0.01,kg,toy:1:glue,glue,\n")
+    add_lines(before, "tshirt", "e07,input,toy:glue,0.01,kg,toy:1:glue,glue,")
     upgraded(studies, to, mapping)
 
     [row] = diff_databases(
@@ -253,14 +257,7 @@ def test_the_text_of_two_products_across_a_release_change_names_the_product(
     new_background: hw.Background,
 ) -> None:
     folder = studies / "tshirt"
-    (folder / "processes" / "print.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:print,1,unit,\n"
-        "e02,input,toy:electricity,0.2,kWh,toy:1:market-elec\n"
-    )
-    (folder / "processes" / "print.yaml").write_text(
-        "name: printing\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
+    add_print(folder)
     flows = folder / "flows.csv"
     flows.write_text(flows.read_text() + "tshirt:print,print,product,unit,,\n")
     old = read_database(folder)

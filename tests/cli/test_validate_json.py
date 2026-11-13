@@ -55,7 +55,7 @@ def test_a_valid_study_has_the_shape_and_nothing_in_its_lists(
 def test_errors_carry_their_code_item_message_place_and_the_text_the_command_prints(
     toy: Path, toy_args: list[str], invoke: Invoke, invoke_stdout: Invoke
 ) -> None:
-    path = study(toy) / "processes" / "tshirt.csv"
+    path = study(toy) / "exchanges.csv"
     edit(path, "toy:fabric-production", "toy:fabric-productoin")
     edit(path, "0.5,kWh", "0.5,MJ2")
 
@@ -96,7 +96,7 @@ def test_a_warning_is_listed_and_the_study_is_still_valid(
 def test_a_study_that_cannot_be_read_gives_its_errors_and_no_background(
     toy: Path, toy_args: list[str], invoke_stdout: Invoke
 ) -> None:
-    edit(study(toy) / "processes" / "tshirt.csv", "0.25", "lots")
+    edit(study(toy) / "exchanges.csv", "0.25", "lots")
 
     code, payload = run(invoke_stdout, study(toy), *toy_args)
 
@@ -106,7 +106,7 @@ def test_a_study_that_cannot_be_read_gives_its_errors_and_no_background(
     assert payload["background"] is None and payload["method"] is None
     assert payload["methods"] is None
     assert any("lots" in e["text"] for e in payload["errors"])
-    assert any(e["location"] == "processes/tshirt.csv:3" for e in payload["errors"])
+    assert any(e["location"] == "exchanges.csv:3" for e in payload["errors"])
 
 
 def test_the_release_is_named_in_full(

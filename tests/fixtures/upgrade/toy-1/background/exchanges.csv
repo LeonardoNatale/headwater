@@ -1,0 +1,15 @@
+process,line,role,flow,amount,unit,supplier
+dye,e01,reference,toy:dye,1,kg,
+dye,e02,emission,toy:co2,4.0,kg,
+elec,e01,reference,toy:electricity,1,kWh,
+elec,e02,emission,toy:co2,0.5,kg,
+elec,e03,emission,toy:n2o,0.0001,kg,
+fabric-a,e01,reference,toy:cotton-fabric,1,kg,
+fabric-a,e02,input,toy:electricity,3,kWh,toy:1:market-elec
+fabric-a,e03,emission,toy:co2,2.0,kg,
+glue,e01,reference,toy:glue,1,kg,
+glue,e02,emission,toy:co2,2.0,kg,
+market-elec,e01,reference,toy:electricity,1,kWh,
+market-elec,e02,input,toy:electricity,1,kWh,toy:1:elec
+tape,e01,reference,toy:tape,1,kg,
+tape,e02,emission,toy:co2,1.0,kg,

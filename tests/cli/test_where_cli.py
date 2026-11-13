@@ -5,7 +5,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 import headwater as hw
-from tests.conftest import open_database, toy_database
+from tests.conftest import TABLE_HEADER, add_process, open_database, toy_database
 
 Invoke = Callable[..., tuple[int, str]]
 
@@ -43,7 +43,11 @@ def test_where_prints_what_the_python_api_prints(
 
 
 def test_top_is_passed_on(toy: Path, invoke: Invoke) -> None:
-    edit(toy / "background" / "processes" / "electricity-production.yaml", "GLO", "RER")
+    edit(
+        toy / "background" / "processes.csv",
+        "electricity production,GLO",
+        "electricity production,RER",
+    )
     args = ("--release", toy / "background", "--method", toy / "methods" / "toy-climate")
 
     code, output = invoke("where", study(toy), *args, "--namespace", "toy", "--top", "1")
@@ -58,8 +62,8 @@ def test_top_is_passed_on(toy: Path, invoke: Invoke) -> None:
 def test_a_score_of_zero_has_nothing_to_show(
     toy: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    path = study(toy) / "processes" / "tshirt.csv"
-    path.write_text("line,role,flow,amount,unit,supplier\ne01,reference,tshirt:tshirt,1,unit,\n")
+    path = study(toy) / "exchanges.csv"
+    path.write_text(TABLE_HEADER + "tshirt,e01,reference,tshirt:tshirt,1,unit,\n")
 
     code, output = invoke("where", study(toy), *toy_args)
 
@@ -70,7 +74,7 @@ def test_a_score_of_zero_has_nothing_to_show(
 def test_a_study_that_does_not_validate_is_not_split(
     toy: Path, toy_args: list[str], invoke: Invoke
 ) -> None:
-    edit(study(toy) / "processes" / "tshirt.csv", "toy:fabric-production", "toy:nowhere")
+    edit(study(toy) / "exchanges.csv", "toy:fabric-production", "toy:nowhere")
 
     code, output = invoke("where", study(toy), *toy_args)
 
@@ -107,13 +111,11 @@ def test_a_method_with_several_indicators_needs_one_named(
 def two_products(toy: Path) -> Path:
     """The T-shirt database with a second product, a bag made from 2 kWh of grid electricity."""
     database = study(toy)
-    (database / "processes" / "bag.yaml").write_text(
-        "name: bag sewing\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (database / "processes" / "bag.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:bag,1,kg,\n"
-        "e02,input,toy:electricity,2,kWh,toy:electricity-production\n"
+    add_process(
+        database,
+        "bag",
+        "e01,reference,tshirt:bag,1,kg,\ne02,input,toy:electricity,2,kWh,toy:electricity-production",
+        details="bag sewing,GLO,ordinary_transforming_activity",
     )
     with (database / "flows.csv").open("a") as handle:
         handle.write("tshirt:bag,bag,product,kg,,\n")

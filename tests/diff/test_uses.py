@@ -16,7 +16,7 @@ from headwater.model import InvalidDataError
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9
-DYE_CSV = "tshirt-dyed/dyes/processes/reactive-dye.csv"
+DYE_CSV = "tshirt-dyed/dyes/exchanges.csv"
 
 
 def edit(path: Path, old: str, new: str) -> None:

@@ -31,8 +31,8 @@ from headwater.study.reader import DATABASE_YAML, read_database
 
 STUDY_YAML = "study.yaml"
 _STUDY_ENTRIES = (STUDY_YAML, "no_factor.csv", "scenarios")
+_PROCESS_ENTRIES = ("processes", "processes.csv", "exchanges.csv")
 _DATABASE_ENTRIES = (
-    "processes",
     "flows.csv",
     "flow_properties.csv",
     "units.csv",
@@ -268,19 +268,20 @@ def _read_record(root: Path, problems: list[Problem]) -> Study | None:
 def _check_entries(root: Path, problems: list[Problem]) -> None:
     """A study holds study.yaml, scenarios/ and no_factor.csv. A file of a database in it is an
     error, processes first: a study holds no processes (D46)."""
-    if (root / "processes").exists():
-        problems.append(
-            Problem(
-                "study-processes",
-                "processes",
-                "a study holds no processes: a process belongs in a database, a folder next to "
-                "the study with database.yaml, and the study names it in products (D46)",
-                location="processes",
+    for name in _PROCESS_ENTRIES:
+        if (root / name).exists():
+            problems.append(
+                Problem(
+                    "study-processes",
+                    name,
+                    "a study holds no processes: a process belongs in a database, a folder next "
+                    "to the study with database.yaml, and the study names it in products (D46)",
+                    location=name,
+                )
             )
-        )
     for entry in sorted(root.iterdir()):
         name = entry.name
-        if name.startswith(".") or name in _STUDY_ENTRIES or name == "processes":
+        if name.startswith(".") or name in _STUDY_ENTRIES or name in _PROCESS_ENTRIES:
             continue
         if name in _DATABASE_ENTRIES:
             problems.append(

@@ -1,4 +1,0 @@
-line,role,flow,amount,unit,supplier
-e01,reference,tshirt:tshirt,1,unit,
-e02,input,toy:cotton-fabric,fabric_kg,kg,toy:fabric-production
-e03,input,toy:electricity,0.5,kWh,toy:electricity-production

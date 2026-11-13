@@ -11,6 +11,8 @@ from typing import Any
 
 import pytest
 
+from tests.conftest import add_lines
+
 Git = Callable[..., str]
 Commit = Callable[[str], str]
 
@@ -18,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TOY = ROOT / "tests" / "fixtures" / "toy"
 RELEASE = next((ROOT / "src" / "headwater" / "demo" / "releases").glob("toy-background@*"))
 REL = 1e-9
-DYE_CSV = "studies/tshirt-dyed/dyes/processes/reactive-dye.csv"
+DYE_CSV = "studies/tshirt-dyed/dyes/exchanges.csv"
 SALT = "e01,reference,chemicals:salt,1,kg,\ne02,emission,toy:co2,0.2,kg,"
 
 
@@ -57,8 +59,11 @@ def chemicals(dyed: Path, commit: Commit, write_study) -> Path:
     )
     with (dyed / "studies/tshirt-dyed/dyes/database.yaml").open("a") as f:
         f.write("uses: [chemicals]\n")
-    with (dyed / DYE_CSV).open("a") as f:
-        f.write("e04,input,chemicals:salt,0.5,kg,chemicals:salt\n")
+    add_lines(
+        dyed / "studies/tshirt-dyed/dyes",
+        "reactive-dye",
+        "e04,input,chemicals:salt,0.5,kg,chemicals:salt",
+    )
     commit("dyes use chemicals")
     return dyed
 
@@ -90,7 +95,7 @@ def test_a_study_used_through_another_names_the_chain(
 ) -> None:
     git("switch", "--quiet", "--create", "saltier")
     edit(
-        chemicals / "studies/tshirt-dyed/chemicals/processes/salt.csv",
+        chemicals / "studies/tshirt-dyed/chemicals/exchanges.csv",
         "toy:co2,0.2,",
         "toy:co2,0.3,",
     )
@@ -120,7 +125,7 @@ def test_a_study_that_changed_itself_also_says_what_it_uses_that_changed(
     git("switch", "--quiet", "--create", "both")
     edit(dyed / DYE_CSV, "toy:co2,4,", "toy:co2,4.5,")
     edit(
-        dyed / "studies/tshirt-dyed/tshirt/processes/tshirt.csv",
+        dyed / "studies/tshirt-dyed/tshirt/exchanges.csv",
         "dyes:reactive-dye,0.01",
         "dyes:reactive-dye,0.02",
     )
@@ -139,7 +144,7 @@ def test_a_study_that_uses_nothing_that_changed_is_left_out(
 ) -> None:
     git("switch", "--quiet", "--create", "lighter")
     edit(
-        dyed / "studies/tshirt/tshirt/processes/tshirt.csv",
+        dyed / "studies/tshirt/tshirt/exchanges.csv",
         "toy:cotton-fabric,0.25",
         "toy:cotton-fabric,0.22",
     )

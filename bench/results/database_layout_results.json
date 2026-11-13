@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-13",
+  "machine": "Apple M2 Pro, 10 cores, Darwin 25.6.0",
+  "python": "3.14.3",
+  "runs": 7,
+  "release": "toy-background@6864b7dbb65d",
+  "load_average_before": [
+    2.78,
+    3.41,
+    3.86
+  ],
+  "sizes": {
+    "160": {
+      "0.1.0": {
+        "headwater": "0.1.0",
+        "dependencies": {
+          "numpy": "2.5.3",
+          "scipy": "1.18.1",
+          "pyarrow": "26.0.0",
+          "pydantic": "2.14.0",
+          "duckdb": "1.5.6"
+        },
+        "processes": 160,
+        "files": 322,
+        "records": "17c4204ed7464f15812329f953b01aee1a99bb96f6c3caa992520aebcbcb1798",
+        "open_first_ms": 58.2,
+        "open_median_ms": 51.3,
+        "validate_first_ms": 2.6,
+        "validate_median_ms": 2.3
+      },
+      "0.2.0": {
+        "headwater": "0.2.0",
+        "dependencies": {
+          "numpy": "2.5.3",
+          "scipy": "1.18.1",
+          "pyarrow": "26.0.0",
+          "pydantic": "2.14.0",
+          "duckdb": "1.5.6"
+        },
+        "processes": 160,
+        "files": 4,
+        "records": "17c4204ed7464f15812329f953b01aee1a99bb96f6c3caa992520aebcbcb1798",
+        "open_first_ms": 14.5,
+        "open_median_ms": 11.5,
+        "validate_first_ms": 2.5,
+        "validate_median_ms": 2.2
+      }
+    },
+    "2000": {
+      "0.1.0": {
+        "headwater": "0.1.0",
+        "dependencies": {
+          "numpy": "2.5.3",
+          "scipy": "1.18.1",
+          "pyarrow": "26.0.0",
+          "pydantic": "2.14.0",
+          "duckdb": "1.5.6"
+        },
+        "processes": 2000,
+        "files": 4002,
+        "records": "430354864143a465e31c4e060ad4fa46d0e9b3da51ff0ec6a1e65db15f949b53",
+        "open_first_ms": 698.8,
+        "open_median_ms": 671.0,
+        "validate_first_ms": 27.7,
+        "validate_median_ms": 27.5
+      },
+      "0.2.0": {
+        "headwater": "0.2.0",
+        "dependencies": {
+          "numpy": "2.5.3",
+          "scipy": "1.18.1",
+          "pyarrow": "26.0.0",
+          "pydantic": "2.14.0",
+          "duckdb": "1.5.6"
+        },
+        "processes": 2000,
+        "files": 4,
+        "records": "430354864143a465e31c4e060ad4fa46d0e9b3da51ff0ec6a1e65db15f949b53",
+        "open_first_ms": 156.5,
+        "open_median_ms": 137.9,
+        "validate_first_ms": 27.4,
+        "validate_median_ms": 27.0
+      }
+    }
+  },
+  "load_average_after": [
+    2.82,
+    3.39,
+    3.85
+  ]
+}

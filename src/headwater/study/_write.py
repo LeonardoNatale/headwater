@@ -4,8 +4,9 @@ A new file is written as the toy fixtures are: a CSV has the columns it needs, a
 written as short as it reads back (`1`, `0.25`), and a YAML file has one field per line. A file
 that exists is changed in place: a CSV row that does not change keeps its text, and a YAML entry
 is replaced on its own lines, so comments and layout stay. Example: setting the amount of line e03
-to 0.6 changes that row, `e03,input,toy:electricity,0.6,kWh,toy:electricity-production`, and no
-other byte of the database.
+of the T-shirt to 0.6 changes that row of exchanges.csv,
+`tshirt,e03,input,toy:electricity,0.6,kWh,toy:electricity-production`, and no other byte of the
+database.
 """
 
 import csv
@@ -18,9 +19,9 @@ from typing import Any, cast
 
 import yaml
 
-from headwater.io.files import yaml_comments, yaml_scalar
-from headwater.model import Database, Exchange, Flow, Parameter, ProcessDetails
-from headwater.study._exchanges import EXCHANGE_COLUMNS, EXCHANGE_OPTIONAL
+from headwater.io.files import one_line, yaml_scalar
+from headwater.model import Database, Exchange, Flow, Parameter, Process, ProcessDetails
+from headwater.study._tables import PROCESS_COLUMNS, PROCESS_OPTIONAL, TABLE_COLUMNS, TABLE_OPTIONAL
 from headwater.study._uncertainty import COLUMNS as DISTRIBUTION_COLUMNS
 
 FLOW_COLUMNS = ("id", "name", "kind", "unit", "compartment", "cas")
@@ -104,16 +105,46 @@ def exchange_cells(e: Exchange) -> Cells:
     return cells
 
 
-def process_csv(exchanges: Iterable[Exchange]) -> str:
-    rows = [exchange_cells(e) for e in exchanges]
-    return csv_text(used_columns(EXCHANGE_COLUMNS, EXCHANGE_OPTIONAL, rows), rows)
+def line_cells(code: str, e: Exchange) -> Cells:
+    """A row of exchanges.csv: `code`, the process's id in the table, then the line's cells."""
+    return {"process": code, **exchange_cells(e)}
 
 
-def process_yaml(details: ProcessDetails, comments: Iterable[str] = ()) -> str:
-    fields = details.model_dump(include=set(ProcessDetails.model_fields))
-    order = ("name", "location", "time_start", "time_end", "kind")
-    body = "".join(f"{k}: {yaml_value(fields[k])}\n" for k in order if fields[k] is not None)
-    return yaml_comments(comments) + body
+def process_cells(code: str, details: ProcessDetails, comment: str = "") -> Cells:
+    """A row of processes.csv: `code`, the part of the id after `<database>:`, then the details,
+    and the comment, text for people."""
+    cells = {"id": code, "name": details.name, "location": details.location}
+    cells["kind"] = details.kind.value
+    for column in ("time_start", "time_end"):
+        found = cast(date | None, getattr(details, column))
+        cells[column] = found.isoformat() if found is not None else ""
+    cells["comment"] = comment
+    return cells
+
+
+def comment_cell(lines: Iterable[str]) -> str:
+    """Comment lines as one cell, joined by a space, since a cell is one line:
+    `["Dyed in-house.", "Read from a!A3."]` gives `Dyed in-house. Read from a!A3.`."""
+    return " ".join(text for line in lines if (text := one_line(line)))
+
+
+def processes_csv(rows: Sequence[Cells]) -> str:
+    return csv_text(used_columns(PROCESS_COLUMNS, PROCESS_OPTIONAL, rows), rows)
+
+
+def exchanges_csv(rows: Sequence[Cells]) -> str:
+    return csv_text(used_columns(TABLE_COLUMNS, TABLE_OPTIONAL, rows), rows)
+
+
+def tables(
+    processes: Iterable[Process], comments: Mapping[str, str] | None = None
+) -> tuple[str, str]:
+    """processes.csv and exchanges.csv of `processes`, which are of one namespace: the processes
+    sorted by id, each one's lines in its order, and `comments` by process id."""
+    found = sorted(((p.id.split(":", 1)[1], p) for p in processes), key=lambda c: c[0])
+    rows = [process_cells(code, p, (comments or {}).get(p.id, "")) for code, p in found]
+    lines = [line_cells(code, e) for code, p in found for e in p.exchanges]
+    return processes_csv(rows), exchanges_csv(lines)
 
 
 def flows_csv(flows: Iterable[Flow]) -> str:
@@ -209,9 +240,12 @@ def edit_csv(
     text: str,
     edit: Callable[[Cells], Cells | None] | None = None,
     add: Sequence[Mapping[str, str]] = (),
+    *,
+    before: Callable[[int, Cells], bool] | None = None,
 ) -> str:
     """`text` with each record that `edit` changes written again, each it returns None for left
-    out, and the rows of `add` at the end.
+    out, and the rows of `add` at the end, or before the first record for which `before` is
+    true. `before` gets the line the record starts on, as `csv_rows` numbers it, and its cells.
 
     The header and every record left alone keep their text, quotes and line endings. A column
     that a new or changed row fills and the header does not have is added at the end of the
@@ -224,10 +258,11 @@ def edit_csv(
     head = ""
     records: list[tuple[str, list[str], Cells | None]] = []  # text, cells, new cells or None
     kept: set[int] = set()  # the records `edit` leaves as they are
+    starts: list[int] = []  # the line each record starts on
     at = 0
     for cells in reader:
         original = "".join(lines[at : reader.line_num])
-        at = reader.line_num
+        start, at = at + 1, reader.line_num
         if not head:
             header, head = [c.strip() for c in cells], original
             continue
@@ -236,13 +271,27 @@ def edit_csv(
         if new == row:
             kept.add(len(records))
         records.append((original, cells, new))
+        starts.append(start)
     ending = _ending(head) or "\n"
     filled = [new for i, (_, _, new) in enumerate(records) if new and i not in kept] + [*add]
     extra = list(dict.fromkeys(k for r in filled for k, v in r.items() if v and k not in header))
     if extra:
         head = head.rstrip("\r\n") + "," + ",".join(extra) + ending
     out = [head]
+    order = [*header, *extra]
+    at_record = None
+    if before is not None and add:
+        at_record = next(
+            (
+                i
+                for i, (_, cells, _) in enumerate(records)
+                if before(starts[i], dict(zip(header, cells, strict=False)))
+            ),
+            None,
+        )
     for i, (original, cells, new) in enumerate(records):
+        if i == at_record:
+            out += [_record([row.get(c, "") for c in order], ending) for row in add]
         if new is None:
             continue
         own = _ending(original)
@@ -254,9 +303,11 @@ def edit_csv(
         values += cells[len(header) :] + [new.get(k, "") for k in extra]
         out.append(_record(values, own))
     out.append("".join(lines[at:]))
+    if at_record is not None:
+        return bom + "".join(out)
     if add and not _ending("".join(out)):
         out.append(ending)
-    out += [_record([row.get(c, "") for c in [*header, *extra]], ending) for row in add]
+    out += [_record([row.get(c, "") for c in order], ending) for row in add]
     return bom + "".join(out)
 
 

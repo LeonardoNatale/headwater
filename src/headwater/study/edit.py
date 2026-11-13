@@ -11,8 +11,9 @@ Example: the toy T-shirt in a few calls.
                         supplier="toy:electricity-production")
     database.save()
 
-Each call changes the text of a file in memory, as a person would by hand: a new row, a row
-written again, a YAML entry replaced on its own lines. `save` writes the changed files into a copy
+Each call changes the text of a file in memory, as a person would by hand: a new row of
+processes.csv or exchanges.csv at its place, a row written again, a YAML entry replaced on its own
+lines. `save` writes the changed files into a copy
 of the folder, reads the copy as `hw.open` does and checks it against the background as
 `Database.validate` does. Only then are the files moved into place, so an edit that makes the
 database invalid raises, naming the problem, and writes nothing.
@@ -25,7 +26,7 @@ import os
 import re
 import shutil
 import tempfile
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
 from datetime import date
 from pathlib import Path
@@ -46,10 +47,11 @@ from headwater.model import (
 )
 from headwater.study._cut_offs import COLUMNS as CUT_OFF_COLUMNS
 from headwater.study._cut_offs import FILE as CUT_OFFS
-from headwater.study._exchanges import EXCHANGE_COLUMNS, EXCHANGE_OPTIONAL
+from headwater.study._exchanges import EXCHANGE_OPTIONAL
 from headwater.study._files import number_or_formula, parse_yaml, problems_from_validation
 from headwater.study._overrides import COLUMNS as OVERRIDE_COLUMNS
 from headwater.study._parameters import FILE as PARAMETERS
+from headwater.study._tables import EXCHANGES, PROCESSES
 from headwater.study._uses import on_disk, users_of, uses_on_disk
 from headwater.study._write import (
     Cells,
@@ -59,10 +61,12 @@ from headwater.study._write import (
     database_yaml,
     edit_csv,
     entry_text,
+    exchanges_csv,
     flow_cells,
     flows_csv,
     number,
-    process_yaml,
+    process_cells,
+    processes_csv,
     put_yaml,
     used_columns,
     yaml_value,
@@ -162,8 +166,10 @@ class DatabaseEditor:
     ) -> "ProcessEditor":
         """Add a process, with its reference line e01, as Brightway's `new_activity`.
 
-        `code` names its files and ends its id: `tshirt` is `processes/tshirt.csv` and
-        `tshirt:tshirt`. It makes `amount` `unit` of `product`, a new flow of that name with the
+        `code` is its id in the tables and ends its id: `tshirt` is `tshirt:tshirt`. Its row of
+        processes.csv goes before the first row with a greater id, and its line into
+        exchanges.csv before the first row of a process with a greater id, so tables sorted by
+        id stay sorted. It makes `amount` `unit` of `product`, a new flow of that name with the
         process's id, or of `flow`, the id of a flow that exists.
         """
         if (product is None) == (flow is None):
@@ -173,30 +179,32 @@ class DatabaseEditor:
             )
         if not _CODE.fullmatch(code):
             raise ValueError(
-                f"code {code!r} names files: use letters, digits, dots, underscores and hyphens"
+                f"code {code!r} is an id: use letters, digits, dots, underscores and hyphens"
             )
         process = ProcessEditor(self, self._files, code)
-        if self._files.text(process.csv) is not None or self._files.text(process.yaml) is not None:
+        if code in self._codes() or any(
+            row.get("process") == code for _, row in self._files.rows(EXCHANGES)
+        ):
             raise ValueError(f"process {process.id} is already in the database")
         fields = {"name": name, "location": location, "kind": kind}
-        details = _validated(ProcessDetails, fields, process.yaml)
+        details = _validated(ProcessDetails, fields, f"process {process.id}")
         if flow is None:
             flow = self.new_flow(code, name=str(product), kind="product", unit=unit)
-        reference = {"line": "e01", "role": Role.reference.value, "flow": flow, "unit": unit}
-        self._files.put(process.yaml, process_yaml(details))
-        self._files.put(
-            process.csv, csv_text(EXCHANGE_COLUMNS, [reference | {"amount": _amount(amount)}])
-        )
+        reference = {"process": code, "line": "e01", "role": Role.reference.value, "flow": flow}
+        reference |= {"amount": _amount(amount), "unit": unit, "supplier": ""}
+        self._files.insert(PROCESSES, process_cells(code, details), processes_csv, "id", code)
+        self._files.insert(EXCHANGES, reference, exchanges_csv, "process", code)
         return process
+
+    def _codes(self) -> list[str]:
+        """The ids in processes.csv as it is now."""
+        return [row.get("id", "") for _, row in self._files.rows(PROCESSES)]
 
     def process(self, process_id: str) -> "ProcessEditor":
         """The process of this database with this id, `tshirt:tshirt`, or this code, `tshirt`."""
         code = process_id.removeprefix(f"{self.name}:")
-        if not _CODE.fullmatch(code) or self._files.text(f"processes/{code}.csv") is None:
-            codes = [
-                r.removeprefix("processes/").removesuffix(".csv")
-                for r in self._files.listed("processes", ".csv")
-            ]
+        codes = self._codes()
+        if code not in codes:
             raise ValueError(
                 f"database {self.name} has no process {process_id!r}.{did_you_mean(code, codes)} "
                 f"Its processes: {', '.join(codes)}"
@@ -204,15 +212,14 @@ class DatabaseEditor:
         return ProcessEditor(self, self._files, code)
 
     def remove_process(self, process_id: str) -> None:
-        """Take out a process and its two files, as Brightway's `act.delete()`. A process that
-        another line buys from, a cut-off or a parameter names is refused, naming them."""
+        """Take out a process, its row of processes.csv and its rows of exchanges.csv, as
+        Brightway's `act.delete()`. A process that another line buys from, a cut-off or a
+        parameter names is refused, naming them."""
         process = self.process(process_id)
         named = [
-            f"{rel}:{n}"
-            for rel in self._files.listed("processes", ".csv")
-            if rel != process.csv
-            for n, row in self._files.rows(rel)
-            if row.get("supplier") == process.id
+            f"{EXCHANGES}:{n}"
+            for n, row in self._files.rows(EXCHANGES)
+            if row.get("process") != process.code and row.get("supplier") == process.id
         ]
         named += [
             f"{CUT_OFFS}:{n}"
@@ -222,8 +229,8 @@ class DatabaseEditor:
         if process.id in (_parameters(self._files.text(PARAMETERS)).get("processes") or {}):
             named.append(PARAMETERS)
         _refuse_if_named(f"process {process.id}", named)
-        self._files.put(process.csv, None)
-        self._files.put(process.yaml, None)
+        self._files.edit(PROCESSES, lambda c: None if _key(c, "id") == (process.code,) else c)
+        self._files.edit(EXCHANGES, lambda c: None if _key(c, "process") == (process.code,) else c)
 
     # --- parameters ----------------------------------------------------------------------------
 
@@ -479,6 +486,30 @@ class _Files:
             text = edit_csv(text, add=[cells])
         self.put(rel, text)
 
+    def insert(
+        self,
+        rel: str,
+        cells: Cells,
+        new: Callable[[Sequence[Cells]], str],
+        column: str,
+        code: str,
+        after: int | None = None,
+    ) -> None:
+        """Add a row to a table of processes, or write the table with it. The row goes after the
+        line `after` when it is given, or else before the first row whose `column` is greater
+        than `code`, or at the end."""
+        text = self.text(rel)
+        if text is None or not text.strip():
+            self.put(rel, new([cells]))
+            return
+
+        def before(line: int, row: Cells) -> bool:
+            if after is not None:
+                return line > after
+            return row.get(column, "").strip() > code
+
+        self.put(rel, edit_csv(text, add=[cells], before=before))
+
     def on_disk(self, rel: str) -> str | None:
         """The file as it is on disk now, which may not be what was read."""
         path = self.root / rel
@@ -491,7 +522,7 @@ class _Files:
 
 
 class ProcessEditor:
-    """The two files of one process of a database: its details and its lines."""
+    """One process of a database: its row of processes.csv and its rows of exchanges.csv."""
 
     def __init__(self, database: DatabaseEditor, files: _Files, code: str) -> None:
         self._database = database
@@ -506,18 +537,20 @@ class ProcessEditor:
         return f"{self._database.name}:{self.code}"
 
     @property
-    def csv(self) -> str:
-        return f"processes/{self.code}.csv"
-
-    @property
-    def yaml(self) -> str:
-        return f"processes/{self.code}.yaml"
-
-    @property
     def exchanges(self) -> tuple[Cells, ...]:
-        """Each line as written in the file, column by column: `{"line": "e02", "amount":
-        "fabric_kg", ...}`. An amount is its text, a number or a formula."""
-        return tuple(row for _, row in self._files.rows(self.csv))
+        """Each line as written in exchanges.csv, column by column, without its `process`:
+        `{"line": "e02", "amount": "fabric_kg", ...}`. An amount is its text, a number or a
+        formula."""
+        return tuple({k: v for k, v in row.items() if k != "process"} for _, row in self._mine())
+
+    def _mine(self) -> list[tuple[int, Cells]]:
+        """The rows of exchanges.csv of this process, with their lines."""
+        return [(n, r) for n, r in self._files.rows(EXCHANGES) if r.get("process") == self.code]
+
+    def _is(self, cells: Mapping[str, str], line: str | None = None) -> bool:
+        if line is None:
+            return _key(cells, "process") == (self.code,)
+        return _key(cells, "process", "line") == (self.code, line)
 
     def exchange(self, line: str) -> Cells:
         """The exchange with this line id, as `exchanges` gives it."""
@@ -530,10 +563,20 @@ class ProcessEditor:
         return found[line]
 
     def set(self, **details: object) -> None:
-        """Change the name, location, kind, time_start or time_end of the process."""
-        text = self._files.text(self.yaml) or ""
-        new = _set_fields(text, self.yaml, ProcessDetails, details, _details)
-        self._files.put(self.yaml, new)
+        """Change the name, location, kind, time_start or time_end of the process: the cells of
+        its row of processes.csv that change, and no other."""
+        [row] = [r for _, r in self._files.rows(PROCESSES) if _key(r, "id") == (self.code,)]
+        what = f"process {self.id}"
+        data = {c: row.get(c, "") for c in ("name", "location", "kind")}
+        data |= {c: row[c] for c in ("time_start", "time_end") if row.get(c)}
+        before = _details(_validated(ProcessDetails, data, what))
+        merged = {k: v for k, v in {**data, **details}.items() if v is not None}
+        new = _validated(ProcessDetails, merged, what)
+        cells = process_cells(self.code, new)
+        changes = {k: cells[k] for k in details if before.get(k) != _details(new).get(k)}
+        self._files.edit(
+            PROCESSES, lambda c: _changed(c, changes) if _key(c, "id") == (self.code,) else c
+        )
 
     def new_exchange(
         self,
@@ -554,16 +597,18 @@ class ProcessEditor:
         next free one: `e04` after e03. `role` is always given, never read from a sign: `input`,
         `emission`, `waste_to_treatment` and the others of the design. `amount` is a number or a
         formula of the database's parameters."""
-        ids = [row.get("line", "") for row in self.exchanges]
+        mine = self._mine()
+        ids = [row.get("line", "") for _, row in mine]
         numbers = [int(m.group(1)) for i in ids if (m := _LINE.fullmatch(i))]
         n = max(numbers, default=0) + 1
         while f"e{n:02d}" in ids:
             n += 1
-        cells = {"line": f"e{n:02d}", "role": _role(role), "flow": flow}
+        cells = {"process": self.code, "line": f"e{n:02d}", "role": _role(role), "flow": flow}
         cells |= {"amount": _amount(amount), "unit": unit, "supplier": supplier or ""}
         cells |= _cells(flow_name=flow_name, comment=comment, distribution=distribution)
         cells |= _cells(scale=scale, minimum=minimum, maximum=maximum)
-        self._files.put(self.csv, edit_csv(self._files.text(self.csv) or "", add=[cells]))
+        last = max((n for n, _ in mine), default=None)
+        self._files.insert(EXCHANGES, cells, exchanges_csv, "process", self.code, after=last)
         return cells["line"]
 
     def set_exchange(
@@ -600,9 +645,7 @@ class ProcessEditor:
             maximum=maximum,
             keep_blank=True,
         )
-        self._files.edit(
-            self.csv, lambda c: _changed(c, changes) if _key(c, "line") == (line,) else c
-        )
+        self._files.edit(EXCHANGES, lambda c: _changed(c, changes) if self._is(c, line) else c)
 
     def remove_exchange(self, line: str) -> None:
         """Take out a line, as Brightway's `exc.delete()`. A line a cut-off names is refused,
@@ -616,7 +659,7 @@ class ProcessEditor:
                 if _key(row, "process", "line") == (self.id, line)
             ],
         )
-        self._files.edit(self.csv, lambda c: None if _key(c, "line") == (line,) else c)
+        self._files.edit(EXCHANGES, lambda c: None if self._is(c, line) else c)
 
 
 class OverrideEditor:

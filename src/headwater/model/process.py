@@ -144,7 +144,7 @@ class Exchange(BaseModel):
 
 
 class ProcessDetails(BaseModel):
-    """What `processes/<stem>.yaml` says about a process: not its exchanges.
+    """What a row of `processes.csv` says about a process: not its exchanges.
 
     `location` is an ecoinvent geography short code such as `GLO`, `RER` or `TR`. It is not
     checked against a list yet.
@@ -187,7 +187,8 @@ class ProcessDetails(BaseModel):
 class Process(ProcessDetails):
     """An activity making one reference flow, at a place and a time.
 
-    Its id is the namespace plus the file name, for example `tshirt:tshirt`. The name is for people.
+    Its id is the namespace plus its id in processes.csv, for example `tshirt:tshirt`. The name is
+    for people.
     """
 
     id: str = Field(min_length=1)

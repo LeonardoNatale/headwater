@@ -27,9 +27,9 @@ def test_record_error_survives_pickling() -> None:
 
 
 def test_problem_str_names_item_message_and_location() -> None:
-    problem = Problem("x", "tshirt:tshirt line e02", "bad", location="processes/tshirt.csv:3")
+    problem = Problem("x", "tshirt:tshirt line e02", "bad", location="exchanges.csv:3")
 
-    assert str(problem) == "tshirt:tshirt line e02: bad [processes/tshirt.csv:3]"
+    assert str(problem) == "tshirt:tshirt line e02: bad [exchanges.csv:3]"
 
 
 def test_a_report_prints_what_it_holds() -> None:

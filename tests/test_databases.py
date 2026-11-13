@@ -14,7 +14,7 @@ import pytest
 
 import headwater as hw
 from headwater.model import InvalidDataError
-from tests.conftest import open_database
+from tests.conftest import add_process, open_database
 
 TOY = Path(__file__).resolve().parent / "fixtures" / "toy"
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
@@ -135,13 +135,10 @@ def test_the_same_inputs_in_another_folder_hash_alike(bg: hw.Background) -> None
 
 def test_each_product_of_a_database_has_its_own_input_hash(bg: hw.Background, toy: Path) -> None:
     folder = toy / "tshirt" / "tshirt"
-    (folder / "processes" / "bag.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:bag,1,unit,\n"
-        "e02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production\n"
-    )
-    (folder / "processes" / "bag.yaml").write_text(
-        "name: bag\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    add_process(
+        folder,
+        "bag",
+        "e01,reference,tshirt:bag,1,unit,\ne02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production",
     )
     with (folder / "flows.csv").open("a") as flows:
         flows.write("tshirt:bag,bag,product,unit,,\n")
@@ -163,13 +160,10 @@ def test_a_diff_of_a_product_only_the_new_side_makes_has_no_old_hash(
 
     folder = toy / "tshirt" / "tshirt"
     old = read_database(folder)
-    (folder / "processes" / "bag.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:bag,1,unit,\n"
-        "e02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production\n"
-    )
-    (folder / "processes" / "bag.yaml").write_text(
-        "name: bag\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    add_process(
+        folder,
+        "bag",
+        "e01,reference,tshirt:bag,1,unit,\ne02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production",
     )
     with (folder / "flows.csv").open("a") as flows:
         flows.write("tshirt:bag,bag,product,unit,,\n")

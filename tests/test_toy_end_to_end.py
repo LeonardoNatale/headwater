@@ -14,7 +14,7 @@ import pytest
 import headwater as hw
 from headwater.calc import SingularMatrixError, Step
 from headwater.model import InvalidDataError, Role
-from tests.conftest import open_database, toy_database
+from tests.conftest import add_lines, open_database, toy_database
 
 TOY = Path(__file__).resolve().parent / "fixtures" / "toy"
 REL = 1e-9  # AGENTS.md: relative 1e-9 for toy fixtures
@@ -113,7 +113,7 @@ def test_sensitivity_matches_a_finite_difference(toy: Path) -> None:
     before = calc("tshirt", root=toy)
     sensitivity = lever(before.sensitivity(), "toy:fabric-production", "e02").sensitivity
     edit(
-        toy / "background" / "processes" / "fabric-production.csv",
+        toy / "background" / "exchanges.csv",
         "e02,input,toy:electricity,3,kWh",
         "e02,input,toy:electricity,4,kWh",
     )
@@ -242,7 +242,7 @@ def test_waste_line_is_positive_kg_sent_and_positive_burden_per_kg_treated(
 
 def test_input_with_no_supplier_raises_naming_the_line(toy: Path) -> None:
     edit(
-        toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv",
+        toy / "tshirt" / "tshirt" / "exchanges.csv",
         "0.25,kg,toy:fabric-production",
         "0.25,kg,",
     )
@@ -258,7 +258,7 @@ def test_input_with_no_supplier_raises_naming_the_line(toy: Path) -> None:
 
 
 def test_unknown_unit_raises_naming_the_line_and_the_unit(toy: Path) -> None:
-    edit(toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv", "0.25,kg,", "0.25,kgs,")
+    edit(toy / "tshirt" / "tshirt" / "exchanges.csv", "0.25,kg,", "0.25,kgs,")
     study = open_database(toy / "tshirt" / "tshirt")
 
     with pytest.raises(hw.HeadwaterError, match="tshirt:tshirt line e02") as info:
@@ -275,8 +275,7 @@ def test_flow_with_no_factor_raises_at_calculation_naming_the_flow(toy: Path) ->
     study_dir = toy / "tshirt" / "tshirt"
     with (study_dir / "flows.csv").open("a") as f:
         f.write("tshirt:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (study_dir / "processes" / "tshirt.csv").open("a") as f:
-        f.write("e04,emission,tshirt:n2o,0.001,kg,\n")
+    add_lines(study_dir, "tshirt", "e04,emission,tshirt:n2o,0.001,kg,")
     study = open_database(study_dir)  # the files are fine; the method is what lacks the factor
 
     with pytest.raises(hw.HeadwaterError, match="flow tshirt:n2o") as info:
@@ -290,8 +289,7 @@ def test_flow_with_no_factor_raises_at_calculation_naming_the_flow(toy: Path) ->
 def test_background_flow_with_no_factor_is_listed_on_the_result_not_raised(toy: Path) -> None:
     with (toy / "background" / "flows.csv").open("a") as f:
         f.write("toy:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (toy / "background" / "processes" / "electricity-production.csv").open("a") as f:
-        f.write("e04,emission,toy:n2o,0.0001,kg,\n")
+    add_lines(toy / "background", "electricity-production", "e04,emission,toy:n2o,0.0001,kg,")
 
     result = calc("tshirt", root=toy, background=load_toy(toy))  # ecoinvent has such flows
 
@@ -313,8 +311,7 @@ def test_factor_for_one_location_is_refused_not_used_as_global(toy: Path) -> Non
 
 def test_singular_matrix_error_names_the_process_by_id(toy: Path) -> None:
     # The T-shirt uses up all it makes, so it has no net output: the matrix cannot be solved.
-    with (toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv").open("a") as f:
-        f.write("e04,own_use,tshirt:tshirt,1,unit,tshirt:tshirt\n")
+    add_lines(toy / "tshirt" / "tshirt", "tshirt", "e04,own_use,tshirt:tshirt,1,unit,tshirt:tshirt")
     study = open_database(toy / "tshirt" / "tshirt")
 
     with pytest.raises(hw.HeadwaterError, match="tshirt:tshirt") as info:
@@ -326,8 +323,11 @@ def test_singular_matrix_error_names_the_process_by_id(toy: Path) -> None:
 
 def test_own_use_in_a_treatment_raises_naming_the_line(toy: Path) -> None:
     # calc has no sign for own use in a treatment; validation stops it first, naming the line.
-    with (toy / "background" / "processes" / "incineration-textile-waste.csv").open("a") as f:
-        f.write("e03,own_use,toy:textile-waste,0.01,kg,toy:incineration-textile-waste\n")
+    add_lines(
+        toy / "background",
+        "incineration-textile-waste",
+        "e03,own_use,toy:textile-waste,0.01,kg,toy:incineration-textile-waste",
+    )
 
     with pytest.raises(InvalidDataError, match="toy:incineration-textile-waste line e03") as info:
         load_toy(toy)
@@ -388,7 +388,7 @@ def test_result_carries_its_provenance(background: hw.Background) -> None:
 def test_input_hash_is_stable_and_changes_with_one_amount(toy: Path) -> None:
     first = calc("tshirt", root=toy).provenance.input_hash
     again = calc("tshirt", root=toy).provenance.input_hash
-    edit(toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv", "0.25,kg", "0.30,kg")
+    edit(toy / "tshirt" / "tshirt" / "exchanges.csv", "0.25,kg", "0.30,kg")
 
     changed = calc("tshirt", root=toy)
 

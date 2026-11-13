@@ -1,6 +1,0 @@
-line,role,flow,amount,unit,supplier
-e01,reference,carbon:fabric,1,kg,
-e02,resource,carbon:co2-in-air,1.5,kg,
-e03,emission,carbon:co2-fossil,0.5,kg,
-e04,emission,carbon:co2-from-soil,0.2,kg,
-e05,waste_to_treatment,carbon:residue,1,kg,carbon:residue-treatment

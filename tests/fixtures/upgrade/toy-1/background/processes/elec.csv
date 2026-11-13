@@ -1,4 +1,0 @@
-line,role,flow,amount,unit,supplier
-e01,reference,toy:electricity,1,kWh,
-e02,emission,toy:co2,0.5,kg,
-e03,emission,toy:n2o,0.0001,kg,

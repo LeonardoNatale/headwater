@@ -14,6 +14,8 @@ uses: [{uses}]
 """
 
 EXCHANGE_HEADER = "line,role,flow,amount,unit,supplier\n"
+TABLE_HEADER = "process," + EXCHANGE_HEADER
+PROCESS_HEADER = "id,name,location,kind\n"
 
 
 def toy_database(root: Path, case: str) -> Path:
@@ -80,22 +82,61 @@ def _write_study(
     flows: Sequence[str] = (),
     background: str = "toy-background@fixture",
 ) -> Path:
-    """A database folder on the toy background. `processes` maps a file name to the lines of its
-    CSV, without the header: `{"salt": "e01,reference,chemicals:salt,1,kg,\\n..."}`. Each process
-    is in GLO. `flows` are rows of `flows.csv`, without the header."""
+    """A database folder on the toy background. `processes` maps a process's id in the tables
+    to its lines, without the process column: `{"salt": "e01,reference,chemicals:salt,1,kg,"}`.
+    Each process is in GLO. `flows` are rows of `flows.csv`, without the header."""
     name = name or folder.name
-    (folder / "processes").mkdir(parents=True, exist_ok=True)
+    folder.mkdir(parents=True, exist_ok=True)
     (folder / "database.yaml").write_text(
         DATABASE_YAML.format(name=name, background=background, uses=", ".join(uses))
     )
     if flows:
         (folder / "flows.csv").write_text(FLOW_HEADER + "".join(f"{row}\n" for row in flows))
-    for stem, lines in processes.items():
-        (folder / "processes" / f"{stem}.csv").write_text(EXCHANGE_HEADER + lines.strip() + "\n")
-        (folder / "processes" / f"{stem}.yaml").write_text(
-            f"name: {stem}\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-        )
+    write_tables(folder, processes)
     return folder
+
+
+def write_tables(
+    folder: Path, processes: Mapping[str, str], details: Mapping[str, str] | None = None
+) -> None:
+    """processes.csv and exchanges.csv of a folder. `processes` maps a process's id in the tables
+    to its lines, without the header and the process column: `{"salt": "e01,reference,..."}`.
+    `details` maps an id to the rest of its row of processes.csv, `Salt,GLO,ordinary_...`; by
+    default the id is the name, in GLO."""
+    rows = [
+        f"{code},{(details or {}).get(code, f'{code},GLO,ordinary_transforming_activity')}\n"
+        for code in sorted(processes)
+    ]
+    (folder / "processes.csv").write_text(PROCESS_HEADER + "".join(rows))
+    lines = [
+        f"{code},{line}\n"
+        for code in sorted(processes)
+        for line in processes[code].strip().splitlines()
+    ]
+    (folder / "exchanges.csv").write_text(TABLE_HEADER + "".join(lines))
+
+
+def add_lines(folder: Path, process: str, *lines: str) -> None:
+    """Add lines of a process at the end of exchanges.csv, each without the process column:
+    `add_lines(db, "tshirt", "e04,emission,toy:co2,0.01,kg,")`."""
+    table = folder / "exchanges.csv"
+    text = table.read_text()
+    if text and not text.endswith("\n"):
+        text += "\n"
+    table.write_text(text + "".join(f"{process},{line}\n" for line in lines))
+
+
+def add_process(folder: Path, code: str, lines: str, details: str | None = None) -> None:
+    """Add a process at the end of both tables: its row of processes.csv and its lines, given
+    without the process column, one per line of `lines`. `details` is the rest of its row,
+    `"Sewing,RER,market_activity"`; by default the id is the name, in GLO."""
+    table = folder / "processes.csv"
+    text = table.read_text()
+    if text and not text.endswith("\n"):
+        text += "\n"
+    row = details if details is not None else f"{code},GLO,ordinary_transforming_activity"
+    table.write_text(text + f"{code},{row}\n")
+    add_lines(folder, code, *lines.strip().splitlines())
 
 
 @pytest.fixture

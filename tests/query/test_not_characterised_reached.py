@@ -9,7 +9,7 @@ import pytest
 import headwater as hw
 from headwater.calc.solve import Factorization
 from headwater.model import Flow, FlowKind, InvalidDataError
-from tests.conftest import open_database
+from tests.conftest import add_lines, open_database
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 REL = 1e-9
@@ -108,8 +108,7 @@ def test_the_list_is_computed_on_demand_from_the_supply_already_solved(
 def test_the_toy_folder_behaves_the_same_way(toy: Path) -> None:
     with (toy / "background" / "flows.csv").open("a") as f:
         f.write("toy:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (toy / "background" / "processes" / "incineration-textile-waste.csv").open("a") as f:
-        f.write("e03,emission,toy:n2o,0.001,kg,\n")
+    add_lines(toy / "background", "incineration-textile-waste", "e03,emission,toy:n2o,0.001,kg,")
     background = hw.load(
         toy / "background", method=toy / "methods" / "toy-climate", namespace="toy"
     )
@@ -133,8 +132,7 @@ def test_a_flow_the_study_emits_itself_with_no_factor_is_still_an_error_on_a_rel
     study_dir = root / "tshirt" / "tshirt"
     with (study_dir / "flows.csv").open("a") as f:
         f.write("tshirt:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2\n")
-    with (study_dir / "processes" / "tshirt.csv").open("a") as f:
-        f.write("e04,emission,tshirt:n2o,0.001,kg,\n")
+    add_lines(study_dir, "tshirt", "e04,emission,tshirt:n2o,0.001,kg,")
 
     with pytest.raises(InvalidDataError, match="flow tshirt:n2o") as info:
         calc("tshirt", background, root=root)

@@ -63,7 +63,7 @@ def test_each_score_is_what_calc_gives_for_that_indicator(
 def test_a_study_that_does_not_validate_is_refused_as_calc_refuses_it(
     toy: Path, two_indicators: hw.Background
 ) -> None:
-    csv = toy / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    csv = toy / "tshirt" / "tshirt" / "exchanges.csv"
     csv.write_text(csv.read_text().replace("toy:fabric-production", "toy:nowhere"))
     study = open_database(toy / "tshirt" / "tshirt")
 

@@ -13,12 +13,15 @@ from pathlib import Path
 
 import pytest
 
+from tests.conftest import add_process
+
 Invoke = Callable[..., tuple[int, str]]
 Commit = Callable[[str], str]
 Git = Callable[..., str]
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
-DYE_CSV = "tshirt-dyed/dyes/processes/reactive-dye.csv"
+DYE_CSV = "tshirt-dyed/dyes/exchanges.csv"
+BAG_SEWING = "bag sewing,GLO,ordinary_transforming_activity"
 
 
 def edit(path: Path, old: str, new: str) -> None:
@@ -30,14 +33,11 @@ def edit(path: Path, old: str, new: str) -> None:
 def add_bag(database: Path) -> None:
     """The process `bag sewing`, id `tshirt:bag-sewing`, which makes the flow `tshirt:bag` from
     2 kWh of grid electricity: 1.0596."""
-    processes = database / "processes"
-    (processes / "bag-sewing.yaml").write_text(
-        "name: bag sewing\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "bag-sewing.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:bag,1,kg,\n"
-        "e02,input,toy:electricity,2,kWh,toy:electricity-production\n"
+    add_process(
+        database,
+        "bag-sewing",
+        "e01,reference,tshirt:bag,1,kg,\ne02,input,toy:electricity,2,kWh,toy:electricity-production",
+        details=BAG_SEWING,
     )
     with (database / "flows.csv").open("a") as handle:
         handle.write("tshirt:bag,bag,product,kg,,\n")
@@ -198,9 +198,7 @@ def test_diff_product_takes_the_id_of_a_process(
 ) -> None:
     add_bag(repo / "tshirt" / "tshirt")
     commit("a bag")
-    edit(
-        repo / "tshirt/tshirt/processes/bag-sewing.csv", "toy:electricity,2,", "toy:electricity,3,"
-    )
+    edit(repo / "tshirt/tshirt/exchanges.csv", "toy:electricity,2,", "toy:electricity,3,")
 
     code, output = invoke_stdout(
         "diff", "main", "tshirt/tshirt", "--product", "tshirt:bag-sewing", "--json", *toy_args
@@ -245,11 +243,11 @@ def test_two_processes_that_make_one_flow_are_both_scored(
 ) -> None:
     database = toy / "tshirt" / "tshirt"
     add_bag(database)
-    shutil.copy(database / "processes/bag-sewing.yaml", database / "processes/bag-b.yaml")
-    (database / "processes/bag-b.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:bag,1,kg,\n"
-        "e02,input,toy:electricity,3,kWh,toy:electricity-production\n"
+    add_process(
+        database,
+        "bag-b",
+        "e01,reference,tshirt:bag,1,kg,\ne02,input,toy:electricity,3,kWh,toy:electricity-production",
+        details=BAG_SEWING,
     )
 
     code, output = invoke_stdout("calc", database, "--json", *toy_args)

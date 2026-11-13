@@ -18,31 +18,31 @@ Edit = Callable[[Path, str, str], None]
 Write = Callable[[Path, str], None]
 
 TSHIRT = "tshirt/tshirt"
-HEADER = "line,role,flow,amount,unit,supplier,distribution,scale,minimum,maximum\n"
-REFERENCE = "e01,reference,tshirt:tshirt,1,unit,,,,,\n"
-ELECTRICITY = "e03,input,toy:electricity,0.5,kWh,toy:electricity-production,,,,\n"
+HEADER = "process,line,role,flow,amount,unit,supplier,distribution,scale,minimum,maximum\n"
+REFERENCE = "tshirt,e01,reference,tshirt:tshirt,1,unit,,,,,\n"
+ELECTRICITY = "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,,,,\n"
 LN11 = math.log(1.1)
 
 
 def tshirt_with(fabric: str) -> str:
-    """The T-shirt's process file with line e02 as given: the cells after the supplier."""
+    """The T-shirt's exchanges.csv with line e02 as given: the cells after the supplier."""
     return (
         HEADER
         + REFERENCE
-        + f"e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,{fabric}\n"
+        + f"tshirt,e02,input,toy:cotton-fabric,0.25,kg,toy:fabric-production,{fabric}\n"
         + ELECTRICITY
     )
 
 
 def fabric_line(toy: Path, write: Write, fabric: str) -> Uncertainty | None:
-    write(toy / TSHIRT / "processes/tshirt.csv", tshirt_with(fabric))
+    write(toy / TSHIRT / "exchanges.csv", tshirt_with(fabric))
     database = read_database(toy / TSHIRT)
     (process,) = database.processes
     return next(e for e in process.exchanges if e.line_id == "e02").uncertainty
 
 
 def problems(toy: Path, write: Write, fabric: str) -> tuple[Problem, ...]:
-    write(toy / TSHIRT / "processes/tshirt.csv", tshirt_with(fabric))
+    write(toy / TSHIRT / "exchanges.csv", tshirt_with(fabric))
     with pytest.raises(InvalidDataError) as raised:
         read_database(toy / TSHIRT)
     return raised.value.problems
@@ -112,7 +112,7 @@ def test_a_distribution_that_does_not_fit_is_an_error(
     assert problem.code in ("bad-uncertainty", "incomplete-uncertainty", "bad-number")
     assert problem.item == "tshirt:tshirt line e02"
     assert words in problem.message
-    assert problem.location == "processes/tshirt.csv:3"
+    assert problem.location == "exchanges.csv:3"
 
 
 def test_an_unknown_distribution_suggests_the_closest(toy: Path, write: Write) -> None:
@@ -124,7 +124,7 @@ def test_an_unknown_distribution_suggests_the_closest(toy: Path, write: Write) -
 
 def test_a_lognormal_on_an_amount_of_0_is_an_error(toy: Path, write: Write) -> None:
     text = tshirt_with(f"lognormal,{LN11!r},,").replace("0.25,kg", "0,kg")
-    write(toy / TSHIRT / "processes/tshirt.csv", text)
+    write(toy / TSHIRT / "exchanges.csv", text)
     with pytest.raises(InvalidDataError) as raised:
         read_database(toy / TSHIRT)
 
@@ -136,7 +136,7 @@ def test_a_lognormal_on_an_amount_of_0_is_an_error(toy: Path, write: Write) -> N
 def test_a_formula_line_cannot_have_its_own_distribution(toy: Path, write: Write) -> None:
     write(toy / TSHIRT / "parameters.yaml", "database:\n  fabric_kg: 0.25\n")
     text = tshirt_with(f"lognormal,{LN11!r},,").replace("0.25,kg", "fabric_kg,kg")
-    write(toy / TSHIRT / "processes/tshirt.csv", text)
+    write(toy / TSHIRT / "exchanges.csv", text)
     with pytest.raises(InvalidDataError) as raised:
         read_database(toy / TSHIRT)
 

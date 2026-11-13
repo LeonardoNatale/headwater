@@ -7,6 +7,8 @@ has no factor for. The list names the flow once, with its first 20 processes and
 from collections.abc import Callable
 from pathlib import Path
 
+from tests.conftest import add_lines, add_process
+
 Invoke = Callable[..., tuple[int, str]]
 
 SHOWN = 20
@@ -18,7 +20,6 @@ def add_emitters(toy: Path, count: int, flow_of: Callable[[int], str]) -> list[s
     ids of the processes."""
     background = toy / "background"
     flows = background / "flows.csv"
-    fabric = background / "processes" / "fabric-production.csv"
     known: set[str] = set()
     ids: list[str] = []
     for k in range(count):
@@ -29,16 +30,10 @@ def add_emitters(toy: Path, count: int, flow_of: Callable[[int], str]) -> list[s
             if flow_of(k) not in known:
                 known.add(flow_of(k))
                 handle.write(f'{flow_of(k)},"Gas {flow_of(k)}",elementary,kg,air,\n')
-        (background / "processes" / f"{name}.yaml").write_text(
-            f"name: {name}\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+        add_process(
+            background, name, f"e01,reference,toy:{name},1,kg,\ne02,emission,{flow_of(k)},0.001,kg,"
         )
-        (background / "processes" / f"{name}.csv").write_text(
-            "line,role,flow,amount,unit,supplier\n"
-            f"e01,reference,toy:{name},1,kg,\n"
-            f"e02,emission,{flow_of(k)},0.001,kg,\n"
-        )
-        with fabric.open("a") as handle:
-            handle.write(f"x{k:03d},input,toy:{name},0.001,kg,toy:{name}\n")
+        add_lines(background, "fabric-production", f"x{k:03d},input,toy:{name},0.001,kg,toy:{name}")
     return ids
 
 

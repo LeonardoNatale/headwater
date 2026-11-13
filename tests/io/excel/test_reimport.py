@@ -1,6 +1,7 @@
 """Importing again into the same folder: the loop of import, read the report, decide in the
 mapping file, import again. And what a second import does to files a person has changed."""
 
+import csv
 import json
 from pathlib import Path
 
@@ -38,6 +39,13 @@ def files(folder: Path) -> dict[str, bytes]:
     return {
         p.relative_to(folder).as_posix(): p.read_bytes() for p in folder.rglob("*") if p.is_file()
     }
+
+
+def ids(table: Path) -> list[str]:
+    """The first cell of each row of a table: the process of each row of processes.csv or
+    exchanges.csv."""
+    with table.open(encoding="utf-8", newline="") as file:
+        return [row[0] for row in list(csv.reader(file))[1:]]
 
 
 def test_the_lines_a_mapping_decides_fill_in_when_the_workbook_is_imported_again(
@@ -82,10 +90,10 @@ def test_a_file_that_a_person_edited_stops_the_import_and_nothing_is_written(
 ) -> None:
     book = workbooks.write()
     import_excel(book, toy_release, out)
-    edited = out / "processes" / "t-shirt-glo.csv"
+    edited = out / "exchanges.csv"
     edited.write_text(edited.read_text().replace("0.5,kWh", "0.6,kWh"))
     before = files(out)
-    with pytest.raises(InvalidDataError, match="processes/t-shirt-glo.csv") as error:
+    with pytest.raises(InvalidDataError, match="file exchanges.csv") as error:
         import_excel(book, toy_release, out)
     assert [p.code for p in error.value.problems] == ["folder-edited"]
     assert "overwrite the edit" in str(error.value)
@@ -104,7 +112,7 @@ def test_files_a_person_added_are_never_touched(
     assert (out / "NOTES.md").read_text() == "mine"
 
 
-def test_a_process_the_workbook_no_longer_has_goes_with_its_files(
+def test_a_process_the_workbook_no_longer_has_goes_with_its_rows(
     workbooks: Workbooks, toy_release: Release, out: Path
 ) -> None:
     two = workbooks.write(
@@ -128,11 +136,11 @@ def test_a_process_the_workbook_no_longer_has_goes_with_its_files(
         }
     )
     import_excel(two, toy_release, out)
-    assert (out / "processes" / "extra-glo.csv").is_file()
+    assert ids(out / "processes.csv") == ["extra-glo", "t-shirt-glo"]
+    assert "extra-glo" in ids(out / "exchanges.csv")
     import_excel(workbooks.write(), toy_release, out)
-    assert not (out / "processes" / "extra-glo.csv").exists()
-    assert not (out / "processes" / "extra-glo.yaml").exists()
-    assert (out / "processes" / "t-shirt-glo.csv").is_file()
+    assert ids(out / "processes.csv") == ["t-shirt-glo"]
+    assert set(ids(out / "exchanges.csv")) == {"t-shirt-glo"}
 
 
 def test_a_file_that_was_deleted_is_written_again(
@@ -171,10 +179,10 @@ def test_the_record_lists_each_file_with_its_hash_and_what_was_written_in_databa
     record = json.loads((out / MANIFEST).read_text())
     assert record["format"] == "headwater-excel-import/1"
     assert sorted(record["files"]) == [
+        "exchanges.csv",
         "flows.csv",
         "parameters.yaml",
-        "processes/t-shirt-glo.csv",
-        "processes/t-shirt-glo.yaml",
+        "processes.csv",
     ]  # database.yaml is a person's to edit, so it has no hash
     assert all(len(digest) == 64 for digest in record["files"].values())
     assert record["study"]["name"] == "toy-foreground"

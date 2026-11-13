@@ -151,9 +151,9 @@ def test_the_indicator_is_chosen_as_for_a_study(bg: hw.Background) -> None:
 
 def test_levers_of_a_product_that_scores_zero_name_the_product(toy: Path, load_toy, edit) -> None:
     edit(
-        toy / "background" / "processes" / "incineration-textile-waste.csv",
-        "e02,emission,toy:co2,1.2,kg",
-        "e02,emission,toy:co2,0,kg",
+        toy / "background" / "exchanges.csv",
+        "incineration-textile-waste,e02,emission,toy:co2,1.2,kg",
+        "incineration-textile-waste,e02,emission,toy:co2,0,kg",
     )
     background = load_toy(toy)
 

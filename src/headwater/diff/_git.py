@@ -1,7 +1,10 @@
 """Read a database or a study folder at a git ref, with git's read commands only.
 
 The files of the ref are written to a temporary folder and read from there. Nothing is checked
-out, no worktree is made, and the user's files and index are not touched.
+out, no worktree is made, and the user's files and index are not touched. A database of the
+layout before D48, with `processes/`, is converted in that temporary folder as
+`headwater database convert` converts it, with its checks, so a comparison across the commit that
+converted it shows that no score changed.
 """
 
 import os
@@ -13,7 +16,9 @@ from pathlib import Path, PurePosixPath
 
 from headwater.model import HeadwaterError, InvalidDataError, Problem
 from headwater.study import DatabaseFolder, StudyFolder, read_database, read_study
+from headwater.study._convert import convert
 from headwater.study._files import read_yaml
+from headwater.study._tables import CONVERT, OLD_FOLDER
 from headwater.study._uses import uses_on_disk
 from headwater.study.reader import read_uses
 
@@ -102,9 +107,12 @@ def read_at(path: Path | str, ref: str | None = None) -> FolderAt:
             f"({commit[:12]}), so no database or study was there.",
             Source(ref, commit),
         )
+    source = Source(ref, commit)
     with tempfile.TemporaryDirectory(prefix="headwater-diff-") as temp:
         root = Path(temp) / (resolved.name or "folder")
         _write(top, files, root)
+        if not study:
+            _convert_old(root, Path(path), source)
 
         def sibling(name: str) -> Path | None:
             """The database folder `name` next to the folder, at the same commit."""
@@ -120,12 +128,28 @@ def read_at(path: Path | str, ref: str | None = None) -> FolderAt:
             if PurePosixPath(DATABASE_YAML) not in {path for path, _ in found}:
                 return None
             _write(top, found, target)
+            _convert_old(target, Path(path).parent / name, source)
             return target
 
         if not study:
             return FolderAt(read_database(root, sibling=sibling), Source(ref, commit))
         _write_reached(root, sibling)
         return FolderAt(read_study(root), Source(ref, commit))
+
+
+def _convert_old(folder: Path, path: Path, source: Source) -> None:
+    """Convert a database written from a commit of the layout before D48, in its temporary
+    folder. Raises `DiffError` naming the command when the converter refuses it."""
+    if not (folder / OLD_FOLDER).is_dir():
+        return
+    try:
+        convert(folder)
+    except InvalidDataError as error:
+        raise DiffError(
+            f"{path} at {source.label} has the layout before headwater 0.2.0 (processes/), and "
+            f"it could not be converted to compare: {error}\nConvert it on a checkout of that "
+            f"commit with `{CONVERT} {path}`, or compare from the commit that converted it on."
+        ) from None
 
 
 def _write_reached(root: Path, sibling: Callable[[str], Path | None]) -> None:

@@ -1,6 +1,7 @@
 """The study folder an import writes: what is in it, that it reads back, that nothing is
 overwritten, and that the same workbook gives the same files."""
 
+import csv
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,12 @@ def files(folder: Path) -> list[str]:
     return sorted(p.relative_to(folder).as_posix() for p in folder.rglob("*") if p.is_file())
 
 
+def table(path: Path) -> list[dict[str, str]]:
+    """The rows of a CSV file, each as a mapping of its header to its cells."""
+    with path.open(encoding="utf-8", newline="") as file:
+        return list(csv.DictReader(file))
+
+
 def test_the_toy_tshirt_is_written_as_a_database_folder(
     workbook: Path, toy_release: Release, out: Path
 ) -> None:
@@ -24,26 +31,24 @@ def test_the_toy_tshirt_is_written_as_a_database_folder(
     assert files(out) == [
         ".headwater-import.json",
         "database.yaml",
+        "exchanges.csv",
         "flows.csv",
         "parameters.yaml",
-        "processes/t-shirt-glo.csv",
-        "processes/t-shirt-glo.yaml",
+        "processes.csv",
     ]
-    assert (out / "processes" / "t-shirt-glo.csv").read_text() == (
-        "line,role,flow,amount,unit,supplier,flow_name,comment\n"
-        "e01,reference,toy-foreground:t-shirt-glo,1,unit,,T-shirt,\n"
-        "e02,input,toy:cotton-fabric,fabric_kg,kg,toy:fabric-production,cotton fabric,"
-        "Fabric in the bill of materials\n"
-        "e03,input,toy:electricity,0.5,kWh,toy:electricity-production,electricity,\n"
-        "e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste,"
-        "textile waste,Scraps sent to incineration\n"
+    assert (out / "exchanges.csv").read_text() == (
+        "process,line,role,flow,amount,unit,supplier,flow_name,comment\n"
+        "t-shirt-glo,e01,reference,toy-foreground:t-shirt-glo,1,unit,,T-shirt,\n"
+        "t-shirt-glo,e02,input,toy:cotton-fabric,fabric_kg,kg,toy:fabric-production,"
+        "cotton fabric,Fabric in the bill of materials\n"
+        "t-shirt-glo,e03,input,toy:electricity,0.5,kWh,toy:electricity-production,electricity,\n"
+        "t-shirt-glo,e04,waste_to_treatment,toy:textile-waste,0.05,kg,"
+        "toy:incineration-textile-waste,textile waste,Scraps sent to incineration\n"
     )
-    assert (out / "processes" / "t-shirt-glo.yaml").read_text() == (
-        "# One T-shirt\n"
-        "# Read from inventory!A7 of inventory 1.xlsx.\n"
-        "name: T-shirt\n"
-        "location: GLO\n"
-        "kind: ordinary_transforming_activity\n"
+    assert (out / "processes.csv").read_text() == (
+        "id,name,location,kind,comment\n"
+        "t-shirt-glo,T-shirt,GLO,ordinary_transforming_activity,"
+        "One T-shirt Read from inventory!A7 of inventory 1.xlsx.\n"
     )
     assert (out / "flows.csv").read_text() == (
         "id,name,kind,unit,compartment,cas\ntoy-foreground:t-shirt-glo,T-shirt,product,unit,,\n"
@@ -155,13 +160,14 @@ def test_names_with_colons_quotes_and_codes_that_yaml_reads_as_yes_or_no_come_ba
     assert process.name == 'dye: "red", 50% solution'
     assert process.location == "NO"  # a string, not the boolean YAML reads for NO
     assert process.exchanges[1].comment == "a, b c"  # one line: a row of a file is one line
-    text = (out / "processes" / f"{process.id.split(':')[1]}.yaml").read_text()
-    assert text.startswith("# first line\n# second line\n# Read from a!A3")
+    (row,) = table(out / "processes.csv")
+    assert row["id"] == process.id.split(":")[1]
+    assert row["comment"].startswith("first line second line Read from a!A3")
     assert done.validation is not None
     assert [p.code for p in done.validation.errors] == ["unknown-location"]  # 'NO' is not in mini
 
 
-def test_file_names_are_short_plain_and_never_collide(
+def test_process_ids_are_short_plain_and_never_collide(
     workbooks: Workbooks, mini_release: Release, out: Path
 ) -> None:
     long = "a very long name " * 12
@@ -173,8 +179,7 @@ def test_file_names_are_short_plain_and_never_collide(
         *block("!!!"),
     ]
     import_excel(workbooks.write({"a": rows}), mini_release, out)
-    names = [n for n in files(out) if n.startswith("processes/") and n.endswith(".csv")]
-    stems = [n.removeprefix("processes/").removesuffix(".csv") for n in names]
+    stems = [row["id"] for row in table(out / "processes.csv")]
     assert len(set(stems)) == 4 and all(len(s) <= 100 for s in stems)
     assert "unicode-symbols-glo" in stems
     assert any(s.startswith("item-") and s.endswith("-glo") for s in stems)

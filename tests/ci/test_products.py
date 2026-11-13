@@ -13,12 +13,14 @@ from typing import Any
 
 import pytest
 
+from tests.conftest import add_process
+
 Git = Callable[..., str]
 Commit = Callable[[str], str]
 Report = dict[str, Any]
 
 STUDY = "studies/tshirt/tshirt"
-BAG = f"{STUDY}/processes/bag.csv"
+EXCHANGES = f"{STUDY}/exchanges.csv"
 BASE, HEAD = "a" * 40, "b" * 40
 
 
@@ -29,14 +31,11 @@ def edit(path: Path, old: str, new: str) -> None:
 
 
 def add_bag(repo: Path, kwh: float = 2) -> None:
-    processes = repo / STUDY / "processes"
-    (processes / "bag.yaml").write_text(
-        "name: bag\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "bag.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
+    add_process(
+        repo / STUDY,
+        "bag",
         "e01,reference,tshirt:bag,1,kg,\n"
-        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production\n"
+        f"e02,input,toy:electricity,{kwh},kWh,toy:electricity-production",
     )
     with (repo / STUDY / "flows.csv").open("a") as handle:
         handle.write("tshirt:bag,bag,product,kg,,\n")
@@ -57,7 +56,7 @@ def with_bag(repo: Path, git: Git, commit: Commit) -> None:
 def test_a_change_to_the_bag_shows_the_bag_and_counts_the_t_shirt_as_no_change(
     collect: ModuleType, render: ModuleType, headwater: list[str], repo: Path, commit: Commit
 ) -> None:
-    edit(repo / BAG, "toy:electricity,2,", "toy:electricity,3,")
+    edit(repo / EXCHANGES, "toy:electricity,2,", "toy:electricity,3,")
     commit("heavier bag")
 
     body = render.render(collect.collect_report(repo, headwater, "main", "HEAD"))
@@ -81,7 +80,7 @@ def test_a_change_to_the_bag_shows_the_bag_and_counts_the_t_shirt_as_no_change(
 def test_a_change_to_the_t_shirt_alone_leaves_the_bag_as_one_line(
     collect: ModuleType, render: ModuleType, headwater: list[str], repo: Path, commit: Commit
 ) -> None:
-    edit(repo / STUDY / "processes/tshirt.csv", "toy:electricity,0.5", "toy:electricity,0.6")
+    edit(repo / EXCHANGES, "toy:electricity,0.5", "toy:electricity,0.6")
     commit("more electricity")
 
     body = render.render(collect.collect_report(repo, headwater, "main", "HEAD"))

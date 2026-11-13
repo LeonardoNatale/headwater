@@ -1,0 +1,5 @@
+description: The dye plant emits 3.5 kg CO2 per kg of dye, not 4.
+changes:
+  - process: dyes:reactive-dye
+    line: e03
+    amount: 3.5

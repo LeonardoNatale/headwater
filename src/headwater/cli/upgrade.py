@@ -252,7 +252,7 @@ def _count(n: int, noun: str) -> str:
 
 def _relative(path: Path, found: Plan) -> str:
     """A written file from the folder that holds the databases and studies:
-    `tshirt/processes/tshirt.csv`."""
+    `tshirt/exchanges.csv`."""
     folders = [d.path for d in found.databases] + [s.path for s in found.studies if s.path]
     parent = os.path.commonpath([f.resolve().parent for f in folders])
     return Path(os.path.relpath(path.resolve(), parent)).as_posix()

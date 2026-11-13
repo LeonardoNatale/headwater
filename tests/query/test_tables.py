@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 import headwater as hw
+from tests.conftest import add_lines
 
 TIGHT = 1e-12
 COLUMNS = [
@@ -26,7 +27,11 @@ COLUMNS = [
 @pytest.fixture
 def grid_in_rer(toy: Path, edit, load_toy) -> hw.Background:
     """The toy with electricity made in RER."""
-    edit(toy / "background" / "processes" / "electricity-production.yaml", "GLO", "RER")
+    edit(
+        toy / "background" / "processes.csv",
+        "electricity production,GLO",
+        "electricity production,RER",
+    )
     return load_toy(toy)
 
 
@@ -34,9 +39,11 @@ def grid_in_rer(toy: Path, edit, load_toy) -> hw.Background:
 def loop(toy: Path, edit, load_toy) -> hw.Background:
     """The toy with a loop through another process: each kWh of electricity buys 0.01 kg of
     cotton fabric, which buys 3 kWh of electricity."""
-    path = toy / "background" / "processes" / "electricity-production.csv"
-    text = path.read_text()
-    path.write_text(text + "e04,input,toy:cotton-fabric,0.01,kg,toy:fabric-production\n")
+    add_lines(
+        toy / "background",
+        "electricity-production",
+        "e04,input,toy:cotton-fabric,0.01,kg,toy:fabric-production",
+    )
     return load_toy(toy)
 
 
@@ -149,9 +156,11 @@ def test_a_process_that_buys_its_own_product_has_one_direct(
 ) -> None:
     # Each kWh of electricity uses 0.1 kWh of its own: the diagonal holds it, so the tree and
     # Brightway count the same runs.
-    path = toy / "background" / "processes" / "electricity-production.csv"
-    text = path.read_text()
-    path.write_text(text + "e04,own_use,toy:electricity,0.1,kWh,toy:electricity-production\n")
+    add_lines(
+        toy / "background",
+        "electricity-production",
+        "e04,own_use,toy:electricity,0.1,kWh,toy:electricity-production",
+    )
     looped = load_toy(toy)
     grid = "toy:electricity-production"
 

@@ -13,7 +13,7 @@ Problems = Callable[..., tuple[Problem, ...]]
 
 DATABASE = "tshirt/tshirt"
 PARAMETERS = f"{DATABASE}/parameters.yaml"
-TSHIRT_CSV = f"{DATABASE}/processes/tshirt.csv"
+TSHIRT_CSV = f"{DATABASE}/exchanges.csv"
 
 
 def only(problems: tuple[Problem, ...]) -> Problem:
@@ -279,7 +279,7 @@ def test_an_amount_with_an_unknown_parameter(
     assert problem.item == "tshirt:tshirt line e02"
     assert "'fabric_kgg'" in problem.message
     assert "Did you mean 'fabric_kg'?" in problem.message
-    assert problem.location == "processes/tshirt.csv:3"
+    assert problem.location == "exchanges.csv:3"
 
 
 def test_a_word_in_an_amount_when_the_database_has_no_parameters(
@@ -314,7 +314,7 @@ def test_an_amount_that_is_not_a_formula(
     assert problem.code == "bad-formula"
     assert problem.item == "tshirt:tshirt line e02"
     assert "'0.25 *'" in problem.message
-    assert problem.location == "processes/tshirt.csv:3"
+    assert problem.location == "exchanges.csv:3"
 
 
 def test_an_amount_that_divides_by_zero(
@@ -367,7 +367,7 @@ def test_a_problem_in_parameters_does_not_bury_the_lines_that_use_them(
 def test_a_formula_in_a_folder_that_is_not_a_database_is_not_a_number(
     toy: Path, edit: Callable[..., None], problems_of: Problems
 ) -> None:
-    edit(toy / "background/processes/fabric-production.csv", "3,kWh", "kwh_per_kg,kWh")
+    edit(toy / "background/exchanges.csv", "3,kWh", "kwh_per_kg,kWh")
 
     problem = only(problems_of(toy / "background", read_process_folder))
 

@@ -19,7 +19,7 @@ from typer.testing import CliRunner
 import headwater as hw
 from headwater.cli import app
 from headwater.model import InvalidDataError
-from tests.conftest import open_database, open_study_folder
+from tests.conftest import open_database, open_study_folder, write_tables
 
 TOY = Path(__file__).resolve().parent / "fixtures" / "toy"
 DYED = TOY / "tshirt-dyed"
@@ -138,9 +138,8 @@ def test_a_change_to_a_database_no_product_reaches_is_refused(toy: Path) -> None
     (toy / "tshirt-dyed" / "plain" / "database.yaml").write_text(
         "name: plain\nbackground: toy-background@fixture\nmethods: [toy-climate]\n"
     )
-    for name in ("tshirt.csv", "tshirt.yaml"):
-        path = toy / "tshirt-dyed" / "plain" / "processes" / name
-        path.write_text(path.read_text().replace("tshirt:tshirt", "plain:tshirt"))
+    path = toy / "tshirt-dyed" / "plain" / "exchanges.csv"
+    path.write_text(path.read_text().replace("tshirt:tshirt", "plain:tshirt"))
     flows = toy / "tshirt-dyed" / "plain" / "flows.csv"
     flows.write_text(flows.read_text().replace("tshirt:tshirt", "plain:tshirt"))
 
@@ -168,20 +167,19 @@ def test_a_scenario_changes_only_the_products_that_reach_its_lines(
     """Two products in two databases that do not use each other: a change to the bag's line
     moves the bag, 0.1 to 0.2 kg of fabric, and leaves the T-shirt as it is."""
     bag = toy / "tshirt" / "bag"
-    (bag / "processes").mkdir(parents=True)
+    bag.mkdir(parents=True)
     (bag / "database.yaml").write_text(
         "name: bag\nbackground: toy-background@fixture\nmethods: [toy-climate]\n"
     )
     (bag / "flows.csv").write_text(
         "id,name,kind,unit,compartment,cas\nbag:bag,bag,product,unit,,\n"
     )
-    (bag / "processes" / "bag.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,bag:bag,1,unit,\n"
-        "e02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production\n"
-    )
-    (bag / "processes" / "bag.yaml").write_text(
-        "name: bag\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    write_tables(
+        bag,
+        {
+            "bag": "e01,reference,bag:bag,1,unit,\n"
+            "e02,input,toy:cotton-fabric,0.1,kg,toy:fabric-production"
+        },
     )
     study = hw.Study(
         products={"tshirt:tshirt": 1, "bag:bag": 1},
@@ -331,7 +329,7 @@ def test_a_study_may_acknowledge_a_flow_of_a_database_it_reaches(
 
 def test_a_study_holds_no_processes_and_a_database_no_scenarios(toy: Path) -> None:
     study = toy / "tshirt-dyed" / "tshirt-footprint"
-    shutil.copytree(toy / "tshirt-dyed" / "tshirt" / "processes", study / "processes")
+    shutil.copy(toy / "tshirt-dyed" / "tshirt" / "processes.csv", study / "processes.csv")
     with pytest.raises(InvalidDataError, match="holds no processes"):
         open_study_folder(study)
 

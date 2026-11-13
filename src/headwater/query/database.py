@@ -57,6 +57,7 @@ from headwater.study import (
     owner_of,
     read_database,
 )
+from headwater.study._tables import PROCESSES
 from headwater.study.edit import new_database
 from headwater.study.validate import check_scenarios, flows_without_factor, validate_database
 
@@ -601,14 +602,13 @@ class Database:
             for p in folder.processes:
                 if p.location in codes:
                     continue
-                where = f"processes/{p.id.removeprefix(f'{name}:')}.yaml"
                 problems.append(
                     Problem(
                         "unknown-location",
                         f"process {p.id}",
                         f"location {p.location!r} is not a geography of the background."
                         f"{did_you_mean(p.location, codes)}",
-                        location=where if folder is self.folder else in_used(name, where),
+                        location=PROCESSES if folder is self.folder else in_used(name, PROCESSES),
                     )
                 )
         return problems

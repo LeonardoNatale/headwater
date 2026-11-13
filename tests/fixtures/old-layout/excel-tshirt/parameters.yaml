@@ -1,0 +1,4 @@
+database:
+  fabric_kg:
+    value: 0.25
+    comment: Fabric in one T-shirt

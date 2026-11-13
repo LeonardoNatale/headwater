@@ -192,7 +192,7 @@ def test_waste_variant_is_the_same_database_plus_one_line(toy_dir: Path) -> None
     waste = read_database(toy_dir / "tshirt-waste" / "tshirt")
 
     # Same goal, scope and flows: the files are identical.
-    for name in ("database.yaml", "flows.csv", "processes/tshirt.yaml"):
+    for name in ("database.yaml", "flows.csv", "processes.csv"):
         assert (toy_dir / "tshirt/tshirt" / name).read_text() == (
             toy_dir / "tshirt-waste/tshirt" / name
         ).read_text()

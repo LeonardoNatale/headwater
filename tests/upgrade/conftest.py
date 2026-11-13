@@ -1,7 +1,7 @@
 """Fixtures for the upgrade tests: two versions of a toy background, and a database on the first.
 
-`tests/fixtures/upgrade` holds toy-1 and toy-2, each a folder of process files and its method,
-frozen here into releases with ids `toy:1:<file>` and `toy:2:<file>`. From toy-1 to toy-2:
+`tests/fixtures/upgrade` holds toy-1 and toy-2, each a background folder of two tables and its
+method, frozen here into releases with ids `toy:1:<id>` and `toy:2:<id>`. From toy-1 to toy-2:
 
 - `elec`, electricity production, GLO: 0.5 kg CO2 per kWh, then 0.4. Same id. toy-1's also
   emits N2O, which toy-2 does not have.

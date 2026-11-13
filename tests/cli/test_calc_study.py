@@ -20,6 +20,8 @@ import headwater as hw
 from headwater.query.study import study_input_hash
 from tests.conftest import open_study_folder
 
+from .conftest import copy_process
+
 Invoke = Callable[..., tuple[int, str]]
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
@@ -214,9 +216,7 @@ def test_the_csv_works_out_no_input_hash_it_does_not_print(
 
     monkeypatch.setattr(database, "_input_hash", counted)
     folder = toy / "tshirt-dyed" / "dyes"
-    processes = folder / "processes"
-    (processes / "dye-b.yaml").write_text((processes / "reactive-dye.yaml").read_text())
-    (processes / "dye-b.csv").write_text((processes / "reactive-dye.csv").read_text())
+    copy_process(folder, "reactive-dye", "dye-b")
 
     asked: dict[str, int] = {}
     for output in ("text", "--csv", "--json"):

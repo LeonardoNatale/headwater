@@ -87,7 +87,6 @@ DATABASE_EDITOR = {
 
 PROCESS_EDITOR = {
     "code",
-    "csv",
     "exchange",
     "exchanges",
     "id",
@@ -95,7 +94,6 @@ PROCESS_EDITOR = {
     "remove_exchange",
     "set",
     "set_exchange",
-    "yaml",
 }
 
 OVERRIDE_EDITOR = {"file", "process_id", "reset_exchange", "set_exchange"}

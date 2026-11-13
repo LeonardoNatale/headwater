@@ -6,7 +6,7 @@ from pathlib import Path
 from headwater.diff import Change, Difference, differences
 from headwater.diff._changes import Names
 from headwater.study import DatabaseFolder, read_database
-from tests.conftest import toy_database
+from tests.conftest import add_lines, add_process, toy_database
 
 TOY = Path(__file__).resolve().parent.parent / "fixtures" / "toy"
 
@@ -22,7 +22,7 @@ def study(root: Path, name: str = "tshirt") -> DatabaseFolder:
 
 
 def csv(root: Path) -> Path:
-    return root / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    return root / "tshirt" / "tshirt" / "exchanges.csv"
 
 
 def only(found: tuple[Difference, ...]) -> Difference:
@@ -63,11 +63,12 @@ def test_a_changed_supplier_and_unit_are_two_fields_of_one_difference(toy: Path)
 
 def test_an_added_line_and_a_removed_line(toy: Path) -> None:
     old = study(toy)
-    edit(csv(toy), "e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n", "")
-    with csv(toy).open("a") as handle:
-        handle.write(
-            "e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste\n"
-        )
+    edit(csv(toy), "tshirt,e03,input,toy:electricity,0.5,kWh,toy:electricity-production\n", "")
+    add_lines(
+        toy / "tshirt" / "tshirt",
+        "tshirt",
+        "e04,waste_to_treatment,toy:textile-waste,0.05,kg,toy:incineration-textile-waste",
+    )
 
     found = differences(old, study(toy))
 
@@ -80,14 +81,10 @@ def test_an_added_line_and_a_removed_line(toy: Path) -> None:
 
 def test_a_new_process_is_one_difference_not_one_per_line(toy: Path) -> None:
     old = study(toy)
-    processes = toy / "tshirt" / "tshirt" / "processes"
-    (processes / "packaging.yaml").write_text(
-        "name: packaging\nlocation: GLO\nkind: ordinary_transforming_activity\n"
-    )
-    (processes / "packaging.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:packaging,1,unit,\n"
-        "e02,emission,toy:co2,0.5,kg,\n"
+    add_process(
+        toy / "tshirt" / "tshirt",
+        "packaging",
+        "e01,reference,tshirt:packaging,1,unit,\ne02,emission,toy:co2,0.5,kg,",
     )
     with (toy / "tshirt" / "tshirt" / "flows.csv").open("a") as handle:
         handle.write("tshirt:packaging,packaging,product,unit,,\n")
@@ -100,20 +97,18 @@ def test_a_new_process_is_one_difference_not_one_per_line(toy: Path) -> None:
 
 
 def test_a_removed_process(toy: Path) -> None:
-    processes = toy / "tshirt" / "tshirt" / "processes"
-    (processes / "packaging.yaml").write_text(
-        "name: packaging\nlocation: GLO\nkind: ordinary_transforming_activity\n"
+    folder = toy / "tshirt" / "tshirt"
+    tables = {name: (folder / name).read_text() for name in ("processes.csv", "exchanges.csv")}
+    add_process(
+        folder,
+        "packaging",
+        "e01,reference,tshirt:tshirt-box,1,unit,\ne02,emission,toy:co2,0.5,kg,",
     )
-    (processes / "packaging.csv").write_text(
-        "line,role,flow,amount,unit,supplier\n"
-        "e01,reference,tshirt:tshirt-box,1,unit,\n"
-        "e02,emission,toy:co2,0.5,kg,\n"
-    )
-    with (toy / "tshirt" / "tshirt" / "flows.csv").open("a") as handle:
+    with (folder / "flows.csv").open("a") as handle:
         handle.write("tshirt:tshirt-box,box,product,unit,,\n")
     old = study(toy)
-    (processes / "packaging.yaml").unlink()
-    (processes / "packaging.csv").unlink()
+    for name, text in tables.items():  # the tables without the packaging rows
+        (folder / name).write_text(text)
 
     found = [d for d in differences(old, study(toy)) if d.kind == "process"]
 
@@ -122,7 +117,7 @@ def test_a_removed_process(toy: Path) -> None:
 
 def test_a_changed_process_name_is_a_difference_of_the_process(toy: Path) -> None:
     old = study(toy)
-    edit(toy / "tshirt/tshirt/processes/tshirt.yaml", "name: T-shirt", "name: Polo shirt")
+    edit(toy / "tshirt/tshirt/processes.csv", "tshirt,T-shirt,", "tshirt,Polo shirt,")
 
     found = only(differences(old, study(toy)))
 
@@ -148,7 +143,7 @@ def test_a_parameter_added_and_one_removed(toy: Path) -> None:
     shutil.rmtree(toy / "tshirt" / "tshirt")
     shutil.copytree(TOY / "tshirt-parameter" / "tshirt", toy / "tshirt" / "tshirt")
     old = study(toy)
-    edit(toy / "tshirt/tshirt/processes/tshirt.csv", "fabric_kg", "0.25")
+    edit(toy / "tshirt/tshirt/exchanges.csv", "fabric_kg", "0.25")
     (toy / "tshirt/tshirt/parameters.yaml").write_text(
         "database:\n  electricity_kwh:\n    value: 0.5\n    unit: kWh\n"
     )
@@ -263,7 +258,7 @@ def test_a_distribution_alone_is_a_changed_field_that_moves_no_score(toy: Path) 
     csv(toy).write_text(
         "\n".join(
             [rows[0] + ",distribution,scale,minimum,maximum"]
-            + [r + (",lognormal,0.1,," if r.startswith("e02") else ",,,,") for r in rows[1:]]
+            + [r + (",lognormal,0.1,," if r.startswith("tshirt,e02") else ",,,,") for r in rows[1:]]
         )
         + "\n"
     )
@@ -293,10 +288,10 @@ def test_a_parameters_distribution_alone_is_a_changed_field(toy: Path) -> None:
 
 
 def with_comments(path: Path, comments: dict[str, str]) -> None:
-    """The process file with a `comment` column, holding `comments` by line id."""
-    rows = [",".join(r.split(",")[:6]) for r in path.read_text().splitlines()]
+    """exchanges.csv with a `comment` column, holding `comments` by line id."""
+    rows = [",".join(r.split(",")[:7]) for r in path.read_text().splitlines()]
     out = [rows[0] + ",comment"]
-    out += [r + "," + comments.get(r.split(",", 1)[0], "") for r in rows[1:]]
+    out += [r + "," + comments.get(r.split(",")[1], "") for r in rows[1:]]
     path.write_text("\n".join(out) + "\n")
 
 
@@ -413,8 +408,11 @@ def test_two_suppliers_with_the_same_name_are_told_apart_by_their_ids(toy: Path)
 
 def test_an_added_line_is_described_with_its_flow_and_supplier_in_words(toy: Path) -> None:
     old = study(toy)
-    with csv(toy).open("a") as handle:
-        handle.write("e04,input,toy:electricity,0.1,kWh,toy:electricity-production\n")
+    add_lines(
+        toy / "tshirt" / "tshirt",
+        "tshirt",
+        "e04,input,toy:electricity,0.1,kWh,toy:electricity-production",
+    )
 
     found = only(differences(old, study(toy)))
 

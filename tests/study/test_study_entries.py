@@ -24,7 +24,8 @@ def only(problems: tuple[Problem, ...]) -> Problem:
     ("name", "kind", "meant"),
     [
         ("override", "dir", "overrides"),
-        ("process", "dir", "processes"),
+        ("process.csv", "file", "processes.csv"),
+        ("exchange.csv", "file", "exchanges.csv"),
         ("parameter.yaml", "file", "parameters.yaml"),
         ("parameters.yml", "file", "parameters.yaml"),
         ("database.yml", "file", "database.yaml"),
@@ -81,7 +82,8 @@ def test_a_database_with_a_scenarios_entry_is_refused(
     ("name", "kind"),
     [
         ("overrides", "file"),
-        ("processes", "file"),
+        ("processes.csv", "dir"),
+        ("exchanges.csv", "dir"),
         ("parameters.yaml", "dir"),
         ("cut_offs.csv", "dir"),
         ("flows.csv", "dir"),

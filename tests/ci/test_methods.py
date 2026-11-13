@@ -55,7 +55,7 @@ def imported(repo: Path, git: Git, commit: Commit, tmp_path: Path) -> Path:
     assert "methods: [toy-impacts]\n" in (folder / "database.yaml").read_text()
     commit("the T-shirt, imported from Excel")
     git("switch", "--quiet", "--create", "more-power")
-    csv_file = folder / "processes" / "t-shirt-glo.csv"
+    csv_file = folder / "exchanges.csv"
     text = csv_file.read_text()
     assert ",0.5,kWh," in text
     csv_file.write_text(text.replace(",0.5,kWh,", ",0.6,kWh,"))
@@ -95,7 +95,7 @@ def test_a_folder_fills_only_a_method_the_release_does_not_hold(
     collect: ModuleType, headwater: list[str], imported: Path, tmp_path: Path, commit: Commit
 ) -> None:
     repo = imported.parents[1]
-    tshirt = repo / "studies" / "tshirt" / "tshirt" / "processes" / "tshirt.csv"
+    tshirt = repo / "studies" / "tshirt" / "tshirt" / "exchanges.csv"
     tshirt.write_text(tshirt.read_text().replace(",0.25,", ",0.22,"))
     commit("lighter T-shirt too")
     # two folders with the id of the method the release holds, one with other factors: neither

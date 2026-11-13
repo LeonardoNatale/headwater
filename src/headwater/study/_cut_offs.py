@@ -178,7 +178,7 @@ def _entry(
         problem(
             "cut-off-supplier",
             f"has the supplier {exchange.supplier_id!r}, so it is not left out. Clear the "
-            "supplier in the process file, or remove this row.",
+            "supplier in exchanges.csv, or remove this row.",
         )
         return None
     if row.get("flow") != exchange.flow_id:
