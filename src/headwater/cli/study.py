@@ -12,8 +12,13 @@ from typing import Annotated, Any
 import typer
 
 import headwater as hw
+from headwater.cli._analysis import FolderArgument as AnalysisFolder
+from headwater.cli._analysis import ProductOption as AnalysisProduct
+from headwater.cli._analysis import ScenarioOption as AnalysisScenario
+from headwater.cli._analysis import analyse, document, header, result_data, sensitivity_data
 from headwater.cli._common import (
     IndicatorsOption,
+    JsonOption,
     MethodFolderOption,
     MethodOption,
     NamespaceOption,
@@ -24,7 +29,6 @@ from headwater.cli._common import (
     check_folder,
     database_header,
     fail,
-    indicator_line,
     load_background,
     pick_indicators,
     pinned_record,
@@ -32,6 +36,7 @@ from headwater.cli._common import (
     sensitivity_line,
     validation_data,
 )
+from headwater.cli._json import echo
 from headwater.model import (
     HeadwaterError,
     InvalidDataError,
@@ -41,24 +46,11 @@ from headwater.model import (
 )
 from headwater.query._internals import internals
 
-DatabaseArgument = Annotated[
-    Path, typer.Argument(help="A database folder, which holds database.yaml.")
-]
-
 FolderArgument = Annotated[
     Path,
     typer.Argument(
         help="A database folder, which holds database.yaml, or a study folder, which holds "
         "study.yaml."
-    ),
-]
-
-ProductOption = Annotated[
-    str | None,
-    typer.Option(
-        "--product",
-        help="The product of the database to analyse, by the id of the process that makes it. "
-        "Needed when the database has more than one.",
     ),
 ]
 
@@ -239,7 +231,7 @@ def calc_command(
             )
             typer.echo(text)
             return
-        _known_scenario(opened, scenario)
+        known_scenario(opened, scenario)
         chosen = _chosen_products(opened, product)
         if len(chosen) > 1 and (iterations is not None or scenario is not None):
             raise typer.BadParameter(
@@ -687,7 +679,7 @@ def _commit(commit: str | None, changed: bool) -> str:
 
 
 def contributions_command(
-    database: DatabaseArgument,
+    folder: AnalysisFolder,
     release: ReleaseOption = None,
     method: MethodOption = None,
     namespace: NamespaceOption = None,
@@ -713,46 +705,87 @@ def contributions_command(
     ] = 5,
     nw_set: SetOption = None,
     method_folder: MethodFolderOption = None,
-    product: ProductOption = None,
+    product: AnalysisProduct = None,
+    scenario: AnalysisScenario = None,
+    as_json: JsonOption = False,
 ) -> None:
     """Contribution analysis of a score: what it buys, level by level, and the lines that move
     it most.
 
-    The tree adds up at every node: score = direct + purchases + rest.
+    The tree adds up at every node: score = direct + purchases + rest. A study has one tree per
+    product, its amount of it.
 
     The lines that move it most are the top of `headwater sensitivity`: the elasticity of a line
     is the % change of the score per 1% change of the line.
     """
     from headwater.calc import CalculationError
 
-    try:
-        opened = open_database(database, "contributions")
-        process_id = one_product(opened, product)
-        background = load_background(
-            opened.folder.database,
-            release=release,
-            method=method,
-            namespace=namespace,
-            sets=nw_set,
-            method_folders=method_folder,
+    analysed = analyse(
+        folder,
+        command="contributions",
+        release=release,
+        method=method,
+        namespace=namespace,
+        indicator=indicator,
+        nw_set=nw_set,
+        method_folder=method_folder,
+        product=product,
+        scenario=scenario,
+    )
+    lines = header(analysed)
+    found: list[dict[str, Any]] = []
+    for result in analysed.results:
+        tree = result.contributions(min_share=min_share, max_depth=depth)
+        lines += ["", str(tree)]
+        top: tuple[hw.Sensitivity, ...] | None = None
+        refused = None
+        if sensitivity > 0:
+            try:
+                top = result.sensitivity(top=sensitivity)
+            except CalculationError as error:
+                refused = str(error)
+                lines += ["", f"No sensitivity: {error}"]
+            else:
+                lines += ["", "Sensitivity, largest elasticity first:"]
+                lines += [sensitivity_line(line) for line in top]
+        found.append(
+            result_data(
+                result,
+                tree=contribution_data(tree, tree.score),
+                sensitivity=None if top is None else sensitivity_data(top),
+                no_sensitivity=refused,
+            )
         )
-        [chosen] = pick_indicators(background, indicator, one=True)
-        result = opened.calc(background, process_id, indicator=chosen)
-    except HeadwaterError as error:
-        fail(error)
-    lines = database_header(opened, database, background)
-    lines += [indicator_line(background, result), ""]
-    lines.append(str(result.contributions(min_share=min_share, max_depth=depth)))
-    if sensitivity > 0:
-        lines.append("")
-        try:
-            found = result.sensitivity(top=sensitivity)
-        except CalculationError as error:
-            lines.append(f"No sensitivity: {error}")
-        else:
-            lines.append("Sensitivity, largest elasticity first:")
-            lines += [sensitivity_line(line) for line in found]
-    typer.echo("\n".join(lines))
+    if as_json:
+        echo(document(analysed, CONTRIBUTIONS_FORMAT, found))
+    else:
+        typer.echo("\n".join(lines))
+
+
+CONTRIBUTIONS_FORMAT = "headwater-contributions/1"
+"""The `format` of `contributions --json`. Within version 1 keys may be added, none is renamed
+or removed."""
+
+
+def contribution_data(node: hw.Contribution, total: float) -> dict[str, Any]:
+    """A contribution tree as data: each process with its share of the whole score (null for a
+    score of exactly 0) and the purchases it keeps, largest first."""
+    return {
+        "process_id": node.process_id,
+        "name": node.name,
+        "location": node.location,
+        "flow_id": node.flow_id,
+        "amount": node.amount,
+        "unit": node.unit,
+        "per_unit": node.per_unit,
+        "score": node.score,
+        "share": node.score / total if total != 0 else None,
+        "direct": node.direct,
+        "rest": node.rest,
+        "copy_of": node.copy_of,
+        "database": node.database,
+        "children": [contribution_data(child, total) for child in node.children],
+    }
 
 
 def _not_characterised(flows: Sequence[hw.NotCharacterised]) -> list[str]:
@@ -805,12 +838,24 @@ def _sets(results: Sequence[hw.Result]) -> list[str]:
     return lines
 
 
-def _known_scenario(database: hw.Database, scenario: str | None) -> None:
+def known_scenario(database: hw.Database, scenario: str | None) -> None:
     """A usage error for a scenario asked of a database: scenarios are a study's."""
     if scenario is not None:
         raise typer.BadParameter(
             f"database {database.name} holds no scenarios: a scenario is a study's (D46). Give the "
             "folder of a study whose products are in this database.",
+            param_hint="--scenario",
+        )
+
+
+def study_scenario(study: hw.Study, scenario: str | None) -> None:
+    """A usage error for a scenario the study does not have, naming those it has."""
+    held = [s.name for s in study.folder.scenarios]
+    if scenario is not None and scenario not in held:
+        have = f"Its scenarios: {', '.join(held)}" if held else "It has no scenarios."
+        raise typer.BadParameter(
+            f"study {study.name} has no scenario {scenario!r}.{did_you_mean(scenario, held)} "
+            f"{have}",
             param_hint="--scenario",
         )
 
@@ -869,20 +914,6 @@ def _pinned(background: hw.Background) -> str:
     return f"folder {inner.folder.path}"
 
 
-def open_database(path: Path, command: str) -> hw.Database:
-    """The database in the folder `path`. Leaves with exit code 2 for a study: `command` takes
-    a database."""
-    opened = hw.open(path)
-    if isinstance(opened, hw.Study):
-        fail(
-            f"{path} holds a study (study.yaml). `headwater {command}` takes a database folder, "
-            "one of those its products are in; `headwater calc` and `headwater validate` take "
-            "a study.",
-            code=2,
-        )
-    return opened
-
-
 def _calc_study(
     study: hw.Study,
     path: Path,
@@ -896,14 +927,7 @@ def _calc_study(
 ) -> str:
     """What `headwater calc` prints for a study: each product, its amount, and its scores, then
     the provenance of the first. `output` `json` or `csv` prints `study_calc_data` instead."""
-    held = [s.name for s in study.folder.scenarios]
-    if scenario is not None and scenario not in held:
-        have = f"Its scenarios: {', '.join(held)}" if held else "It has no scenarios."
-        raise typer.BadParameter(
-            f"study {study.name} has no scenario {scenario!r}.{did_you_mean(scenario, held)} "
-            f"{have}",
-            param_hint="--scenario",
-        )
+    study_scenario(study, scenario)
     indicators = pick_indicators(background, indicator, one=False)
     names = {i.id: i.name for i in background.indicators}
     units = {i.id: i.unit or "" for i in background.indicators}

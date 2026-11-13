@@ -571,13 +571,17 @@ def test_a_product_on_one_side_only_is_null_on_the_other(
     ]
 
 
-def test_the_json_for_an_error_is_not_printed_to_standard_output(
+def test_an_error_under_json_is_one_error_document_on_standard_output(
     repo: Path, toy_args: list[str], invoke_stdout: Invoke
 ) -> None:
     code, output = invoke_stdout("diff", "no-such-branch", "tshirt/tshirt", *toy_args, "--json")
 
     assert code == 2
-    assert output == ""
+    error = json.loads(output)  # D49: the message also goes to standard error
+    assert error["format"] == "headwater-error/1"
+    assert (error["command"], error["exit_code"]) == ("diff", 2)
+    [problem] = error["errors"]
+    assert problem["code"] == "diff" and "no-such-branch" in problem["message"]
 
 
 def test_the_indicator_option_limits_the_results(
@@ -843,9 +847,10 @@ def test_a_new_database_that_cannot_be_calculated_exits_2_with_its_message(
     _, both = invoke("diff", "HEAD~1", "studies/polo", *product, *toy_args, "--json")
 
     assert code == 2
-    assert stdout == ""
-    assert "working tree" in both.splitlines()[0]
-    assert "the matrix cannot be solved" in both
+    [problem] = json.loads(stdout)["errors"]  # D49: one error document, the text on stderr
+    assert problem["code"] == "calculation"
+    assert "the matrix cannot be solved" in problem["message"]
+    assert "working tree" in both.split("{")[0]
 
 
 def second_method(toy: Path) -> Path:

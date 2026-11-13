@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, Any
 
 import typer
 
-from headwater.cli._common import count, fail, open_release
+from headwater.cli._common import JsonOption, count, fail, open_release, problem_data
+from headwater.cli._json import echo
 from headwater.cli.brightway import import_brightway_command
 from headwater.cli.convert import convert_command
 from headwater.cli.uses import uses_command
@@ -26,6 +27,10 @@ database_app = typer.Typer(
 
 _SHOWN = 20
 """Validation problems listed one by one."""
+
+IMPORT_FORMAT = "headwater-database-import/1"
+"""The `format` of `database import-excel --json` and `import-brightway --json`. Within version 1
+keys may be added, none is renamed or removed."""
 
 
 @database_app.command("import-excel")
@@ -66,6 +71,7 @@ def import_excel_command(
         str | None,
         typer.Option("--name", help="The database's name. Default: the workbook's database."),
     ] = None,
+    as_json: JsonOption = False,
 ) -> None:
     """Convert a Brightway Excel inventory into a database folder, and report what did not map.
 
@@ -92,9 +98,66 @@ def import_excel_command(
         needed = folders_not_held(linked, method)
     except (HeadwaterError, OSError) as error:
         fail(error, code=2)
-    print_import(done, needed)
+    show_import(done, needed, as_json)
+
+
+def show_import(done: ExcelImport, needed: Sequence[Path], as_json: bool) -> None:
+    """Print the import as text or as JSON, and leave with exit code 1 when something needs a
+    decision."""
+    if as_json:
+        echo(import_data(done, needed))
+    else:
+        print_import(done, needed)
     if not done.clean:
         raise typer.Exit(code=1)
+
+
+def import_data(done: ExcelImport, method_folders: Sequence[Path] = ()) -> dict[str, Any]:
+    """An import as data: where it wrote the database, the counts of its lines, every line that
+    needs a decision or a review, and what validation found."""
+    from dataclasses import asdict
+
+    from headwater.io.excel.report import Status
+
+    report = done.report
+    validation = done.validation
+    return {
+        "format": IMPORT_FORMAT,
+        "folder": str(done.folder),
+        "name": report.name,
+        "replaced": done.replaced,
+        "clean": done.clean,
+        "source": report.workbook,
+        "source_database": report.source_database,
+        "release": report.release,
+        "activities": report.activities,
+        "exchange_rows": report.exchange_rows,
+        "lines": {status.value: report.count(status) for status in Status},
+        "mapped_by": dict(report.mapped_by),
+        "to_decide": [
+            asdict(o) for o in report.outcomes if o.status is not Status.mapped or o.by_name
+        ],
+        "skipped_activities": [asdict(o) for o in report.skipped_activities],
+        "parameters": {
+            "rows": report.parameter_rows,
+            "copied": report.parameters_copied,
+            "not_copied": [asdict(p) for p in report.parameters_failed],
+        },
+        "databases": [asdict(d) for d in report.databases],
+        "uses": list(report.uses),
+        "unused_mapping": list(report.unused_mapping),
+        "notes": [asdict(n) for n in report.notes],
+        "validation": (
+            None
+            if validation is None
+            else {
+                "errors": [problem_data(p) for p in validation.errors],
+                "warnings": [problem_data(p) for p in validation.warnings],
+            }
+        ),
+        "validation_skipped": done.validation_skipped,
+        "method_folders": [str(f) for f in method_folders],
+    }
 
 
 def folders_not_held(release: Release, method: Sequence[str] | None) -> list[Path]:

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Annotated, Any, NoReturn
 import typer
 
 import headwater as hw
+from headwater.cli import _json
 from headwater.model import (
     Database,
     HeadwaterError,
@@ -97,6 +98,14 @@ MethodFolderOption = Annotated[
     ),
 ]
 
+JsonOption = Annotated[
+    bool,
+    typer.Option(
+        "--json", help="Print one JSON document, for scripts and AI agents, instead of text."
+    ),
+]
+"""`--json`, on every command but `skill show` (D49)."""
+
 METHOD_FOLDERS_VARIABLE = "HEADWATER_METHOD_FOLDERS"
 """The environment variable that lists method folders, as `--method-folder` would."""
 
@@ -109,9 +118,26 @@ FOLDER_LAYOUT = (
 
 
 def fail(error: BaseException | str, code: int = 1) -> NoReturn:
-    """Print an error and leave with `code`. Nothing goes to standard output."""
+    """Print an error on standard error and leave with `code`. With `--json`, standard output
+    also holds the error as a `headwater-error/1` document (D49); without, nothing."""
     typer.echo(str(error), err=True)
+    if _json.asked.get().json:
+        _json.echo(_json.error_document(code, error_problems(error, code)))
     raise typer.Exit(code=code)
+
+
+def error_problems(error: BaseException | str, code: int) -> list[dict[str, Any]]:
+    """`error` as problems in the shape of `validate --json`: the problems of an
+    `InvalidDataError`, else one problem whose code is the error's class in kebab case
+    (`calculation`, `singular-matrix`), `error` for a plain `HeadwaterError`, and for a message
+    `usage` when `code` is 2."""
+    command = _json.asked.get().command or "headwater"
+    if isinstance(error, InvalidDataError):
+        return [problem_data(p) for p in error.problems]
+    if isinstance(error, str):
+        return [_json.problem("usage" if code == 2 else "error", command, error)]
+    kind = "error" if type(error) is HeadwaterError else _json.kebab(type(error).__name__)
+    return [_json.problem(kind, command, str(error))]
 
 
 def open_release(text: str, what: str = "release") -> Release:
@@ -480,8 +506,8 @@ def validation_data(
         "background": named,
         "method": _method_data(background),
         "methods": None if background is None else list(background.method.ids),
-        "errors": [_problem_data(p) for p in report.errors],
-        "warnings": [_problem_data(p) for p in report.warnings],
+        "errors": [problem_data(p) for p in report.errors],
+        "warnings": [problem_data(p) for p in report.warnings],
     }
 
 
@@ -493,14 +519,9 @@ def _method_data(background: hw.Background | None) -> dict[str, str] | None:
     return {"id": background.method.id, "version": background.method.version}
 
 
-def _problem_data(problem: Problem) -> dict[str, Any]:
-    return {
-        "code": problem.code,
-        "item": problem.item,
-        "message": problem.message,
-        "location": problem.location,
-        "text": str(problem),
-    }
+def problem_data(problem: Problem) -> dict[str, Any]:
+    """A problem as `validate --json` writes it, and every `--json` failure (D49)."""
+    return _json.problem(problem.code, problem.item, problem.message, problem.location)
 
 
 def print_validation(
