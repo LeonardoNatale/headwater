@@ -82,7 +82,7 @@ notebooks = [
     "nbmake",
     "pandas",
 ]
-# Brightway, for notebooks 04 and 05 only, at the versions of bench/README.md. peewee is pinned
+# Brightway, for notebooks 05 and 06 only, at the versions of bench/README.md. peewee is pinned
 # because bw2data 4.5.4 does not limit it, and the newest peewee breaks its import.
 brightway = [
     "bw2data==4.5.4",
