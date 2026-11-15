@@ -3,7 +3,7 @@ background, and calculate each product asked for, for one indicator.
 
 A database gives one product: its only one, or the one `--product` names. A study gives each of
 its products, its amount of it, in the scenario `--scenario` names, or the one `--product` names.
-Example: `headwater contributions studies/tshirt-footprint` explains 1 T-shirt of `tshirt-dyed`,
+Example: `headwater contributions project/tshirt-footprint` explains 1 T-shirt of `tshirt-dyed`,
 1.242646, and with `--scenario cleaner-dye` the same T-shirt at 1.237646.
 """
 

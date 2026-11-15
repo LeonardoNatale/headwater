@@ -1,7 +1,7 @@
 """What `--json` prints (D49): one JSON document on standard output, and a failure as a document
 too, `headwater-error/1`, whose problems have the shape of `validate --json`.
 
-Example: `headwater contributions studies/none --json` exits 1 and prints
+Example: `headwater contributions project/none --json` exits 1 and prints
 `{"format": "headwater-error/1", "command": "contributions", "exit_code": 1, "errors": [...]}`,
 each error with `code`, `item`, `message`, `location` and `text`. The message also goes to
 standard error, as without `--json`.

@@ -23,7 +23,7 @@ pip install headwater
 headwater demo headwater-demo
 cd headwater-demo
 headwater release pull releases/toy-background@6864b7dbb65d
-headwater calc studies/tshirt-footprint
+headwater calc project/tshirt-footprint
 ```
 
 `headwater demo` copies a toy background, frozen as a release, four small databases and a study into `headwater-demo`. `release pull` checks the release and copies it into your cache, `~/.headwater` or `$HEADWATER_HOME`. `calc` scores the study, one dyed T-shirt: 1.24265 kg CO₂-eq, with the data versions and the solver checks behind it.
@@ -34,7 +34,7 @@ The same in Python, in that folder:
 import headwater as hw
 
 background = hw.load("toy-background@6864b7dbb65d")
-[result] = hw.open("studies/tshirt-footprint").calc(background)
+[result] = hw.open("project/tshirt-footprint").calc(background)
 print(f"{result.score:.6f}")  # 1.242646
 ```
 
@@ -52,7 +52,7 @@ headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
 
-Then ask Claude "what drives the footprint of studies/tshirt-footprint?". It runs `headwater contributions studies/tshirt-footprint --json` and answers from the output. The links in `.claude/skills` and `.agents/skills` serve Claude Code, Codex, Copilot and Cursor, and follow upgrades of headwater. `uv tool run library-skills --claude` makes the same links, for every library of a project that ships a skill. `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
+Then ask Claude "what drives the footprint of project/tshirt-footprint?". It runs `headwater contributions project/tshirt-footprint --json` and answers from the output. The links in `.claude/skills` and `.agents/skills` serve Claude Code, Codex, Copilot and Cursor, and follow upgrades of headwater. `uv tool run library-skills --claude` makes the same links, for every library of a project that ships a skill. `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
 
 ## One example
 

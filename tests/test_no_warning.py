@@ -14,7 +14,7 @@ import headwater as hw
 from tests.conftest import open_study_folder
 
 ROOT = Path(__file__).resolve().parent.parent
-STUDY = ROOT / "src" / "headwater" / "demo" / "studies" / "tshirt-footprint"
+STUDY = ROOT / "src" / "headwater" / "demo" / "project" / "tshirt-footprint"
 
 
 def _build_script() -> ModuleType:

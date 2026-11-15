@@ -103,7 +103,7 @@ def demo(tmp_path_factory: pytest.TempPathFactory) -> Iterator[Path]:
     git(folder, "init", "-q")
     git(folder, "add", "-A")
     git(folder, "commit", "-qm", "demo")
-    lines = folder / "studies" / "tshirt-dyed" / "exchanges.csv"
+    lines = folder / "project" / "tshirt-dyed" / "exchanges.csv"
     text = lines.read_text()
     assert "tshirt,e02,input,toy:cotton-fabric,0.25," in text
     lines.write_text(text.replace("cotton-fabric,0.25,", "cotton-fabric,0.3,"))
@@ -184,7 +184,7 @@ def test_the_contributions_of_the_study_are_those_of_its_database(
     demo: Path, ran: dict[str, tuple[int, str, str]]
 ) -> None:
     study = json.loads(ran["contributions"][1])
-    code, out, err = run("contributions", "studies/tshirt-dyed", "--json")
+    code, out, err = run("contributions", "project/tshirt-dyed", "--json")
     database = json.loads(out)
 
     assert code == 0, err
@@ -196,7 +196,7 @@ def test_the_contributions_of_the_study_are_those_of_its_database(
 
 
 def test_a_usage_error_under_json_is_an_error_document(demo: Path) -> None:
-    code, out, err = run("calc", "studies/tshirt-footprint", "--indicator", "nope", "--json")
+    code, out, err = run("calc", "project/tshirt-footprint", "--indicator", "nope", "--json")
 
     assert code == 2
     data = json.loads(out)
@@ -208,7 +208,7 @@ def test_a_usage_error_under_json_is_an_error_document(demo: Path) -> None:
 
 
 def test_without_json_a_failure_prints_nothing_to_standard_output(demo: Path) -> None:
-    code, out, err = run("calc", "studies/no-such-folder")
+    code, out, err = run("calc", "project/no-such-folder")
 
     assert code == 1
     assert out == ""

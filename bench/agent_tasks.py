@@ -60,35 +60,35 @@ class Task:
 TASKS = (
     Task(
         "score",
-        "What is the climate change score of the study studies/tshirt-footprint? "
+        "What is the climate change score of the study project/tshirt-footprint? "
         "Give the number with its unit.",
         (1.242646,),
     ),
     Task(
         "top line",
         "Which line of which process contributes most to the score of the study "
-        "studies/tshirt-footprint? Name the process, the line id and its share of the score.",
+        "project/tshirt-footprint? Name the process, the line id and its share of the score.",
         (),
         ("e02", "fabric"),
     ),
     Task(
         "edit",
         "In this folder, change the T-shirt's cotton fabric from 0.25 kg to 0.3 kg, then give the "
-        "new climate change score of the study studies/tshirt-footprint.",
+        "new climate change score of the study project/tshirt-footprint.",
         (1.428076,),
         check_edit=True,
     ),
     Task(
         "diff",
         "Something in this folder changed since the last git commit. How did the score of the "
-        "study studies/tshirt-footprint change, from what to what, and which line caused it?",
+        "study project/tshirt-footprint change, from what to what, and which line caused it?",
         (1.242646, 1.428076),
         ("e02",),
         edited=True,
     ),
     Task(
         "scenario",
-        "What is the climate change score of the study studies/tshirt-footprint in its scenario "
+        "What is the climate change score of the study project/tshirt-footprint in its scenario "
         "cleaner-dye?",
         (1.237646,),
     ),
@@ -270,11 +270,11 @@ def _judge(task: Task, answer: str, folder: Path, env: dict[str, str]) -> tuple[
     if absent:
         return False, f"no {', '.join(absent)} in the answer"
     if task.check_edit:
-        rows = (folder / "studies" / "tshirt-dyed" / "exchanges.csv").read_text()
+        rows = (folder / "project" / "tshirt-dyed" / "exchanges.csv").read_text()
         if "tshirt,e02,input,toy:cotton-fabric,0.3,kg," not in rows:
             return False, "line e02 is not 0.3 kg in exchanges.csv"
         done = subprocess.run(
-            ["headwater", "validate", "studies/tshirt-footprint", "--json"],
+            ["headwater", "validate", "project/tshirt-footprint", "--json"],
             cwd=folder,
             env=env,
             capture_output=True,
@@ -296,7 +296,7 @@ def _has_number(text: str, expected: float) -> bool:
 
 
 def _set_fabric(folder: Path, amount: str) -> None:
-    path = folder / "studies" / "tshirt-dyed" / "exchanges.csv"
+    path = folder / "project" / "tshirt-dyed" / "exchanges.csv"
     text = path.read_text()
     old = "tshirt,e02,input,toy:cotton-fabric,0.25,kg,"
     assert old in text

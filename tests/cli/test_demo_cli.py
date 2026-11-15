@@ -32,7 +32,7 @@ def test_demo_copies_the_release_the_databases_and_the_study(
 
     assert code == 0, output
     assert files(target) == files(DEMO)
-    assert sorted(p.name for p in (target / "studies").iterdir()) == [
+    assert sorted(p.name for p in (target / "project").iterdir()) == [
         "dyes",
         "tshirt",
         "tshirt-dyed",
@@ -50,7 +50,7 @@ def test_the_copied_demo_scores_the_study(invoke: Invoke, tmp_path: Path) -> Non
     release.verify()
 
     background = hw.load(release.path)
-    [result] = open_study_folder(tmp_path / "demo" / "studies" / "tshirt-footprint").calc(
+    [result] = open_study_folder(tmp_path / "demo" / "project" / "tshirt-footprint").calc(
         background
     )
 
@@ -61,7 +61,7 @@ def test_demo_fills_an_empty_folder(invoke: Invoke, tmp_path: Path) -> None:
     code, output = invoke("demo", tmp_path)
 
     assert code == 0, output
-    assert (tmp_path / "studies" / "tshirt-footprint" / "study.yaml").is_file()
+    assert (tmp_path / "project" / "tshirt-footprint" / "study.yaml").is_file()
 
 
 def test_demo_fills_a_new_git_repository(invoke: Invoke, tmp_path: Path) -> None:
@@ -71,7 +71,7 @@ def test_demo_fills_a_new_git_repository(invoke: Invoke, tmp_path: Path) -> None
 
     assert code == 0, output
     assert (tmp_path / ".git").is_dir()
-    assert (tmp_path / "studies" / "tshirt-footprint" / "study.yaml").is_file()
+    assert (tmp_path / "project" / "tshirt-footprint" / "study.yaml").is_file()
 
 
 def test_demo_refuses_a_folder_that_holds_files(invoke: Invoke, tmp_path: Path) -> None:

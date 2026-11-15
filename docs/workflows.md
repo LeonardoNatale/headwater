@@ -11,7 +11,7 @@ pip install headwater
 headwater demo headwater-demo
 cd headwater-demo
 headwater release pull releases/toy-background@6864b7dbb65d
-headwater calc studies/tshirt-footprint
+headwater calc project/tshirt-footprint
 ```
 
 `headwater demo` copies the toy background as a release, four small databases and a study, which ship in the package. The study scores 1.242646 kg CO2-eq. Python 3.13 or later.
@@ -172,7 +172,7 @@ A process with the name of its product is not named twice: `T-shirt (tshirt:tshi
 
 For a study, `--json` has the same keys, with `kind` `"study"`, `name` the study's and `scenario` the one `--scenario` names. Each product also has its `amount` in the study, `per` is that amount (`0.5 kg`), each score is for that amount, `input_hash` is the study's for that product, and `cancels` is a list for every product, since each is calculated in full. In `provenance`, `uses` lists the databases the study reaches, `condition`, `database_condition` and `residual` are the largest of its products, `not_characterised` holds the flows of every product, and `study` (`name`, `saved`, `commit` and `changed`) takes the place of `database`. `--csv` has the columns of a database's. On the toy, `headwater calc tshirt-footprint --json` scores 1 T-shirt 1.242646, and 1.237646 with `--scenario cleaner-dye`.
 
-**`headwater contributions <database or study> [--product ID] [--scenario NAME] [--depth N] [--min-share X] [--sensitivity N] [--json]`** prints the contribution tree of one product, the database's one product or the one `--product` names by the id of its process (a database with several needs it, exit code 2 otherwise), of [calculation.md](calculation.md#python-api), with the same defaults, then the top lines of the sensitivity analysis, 5 by default. `--sensitivity 0` leaves them out. A score of exactly 0 has a tree and no sensitivity, and says why. A study has one tree per product, its amount of it, in the scenario `--scenario` names; `--product` keeps one of its products. Example, on the demo: `headwater contributions studies/tshirt-footprint` gives the tree of 1 T-shirt of `tshirt-dyed`, 1.24265, the same as `studies/tshirt-dyed`, and with `--scenario cleaner-dye`, 1.23765. `--json` prints `format` `headwater-contributions/1`: the folder (`path`, `kind`, `name`), `background`, `method`, `indicator`, `scenario`, then `results`, one per product, each with `product` (`id`, `amount`), `score`, `unit`, `tree` (each node with `process_id`, `name`, `amount`, `unit`, `score`, `share` of the whole score, `direct`, `rest` and `children`), `sensitivity` (the lines, as `sensitivity --json` gives them, or null with the reason in `no_sensitivity`) and `provenance`.
+**`headwater contributions <database or study> [--product ID] [--scenario NAME] [--depth N] [--min-share X] [--sensitivity N] [--json]`** prints the contribution tree of one product, the database's one product or the one `--product` names by the id of its process (a database with several needs it, exit code 2 otherwise), of [calculation.md](calculation.md#python-api), with the same defaults, then the top lines of the sensitivity analysis, 5 by default. `--sensitivity 0` leaves them out. A score of exactly 0 has a tree and no sensitivity, and says why. A study has one tree per product, its amount of it, in the scenario `--scenario` names; `--product` keeps one of its products. Example, on the demo: `headwater contributions project/tshirt-footprint` gives the tree of 1 T-shirt of `tshirt-dyed`, 1.24265, the same as `project/tshirt-dyed`, and with `--scenario cleaner-dye`, 1.23765. `--json` prints `format` `headwater-contributions/1`: the folder (`path`, `kind`, `name`), `background`, `method`, `indicator`, `scenario`, then `results`, one per product, each with `product` (`id`, `amount`), `score`, `unit`, `tree` (each node with `process_id`, `name`, `amount`, `unit`, `score`, `share` of the whole score, `direct`, `rest` and `children`), `sensitivity` (the lines, as `sensitivity --json` gives them, or null with the reason in `no_sensitivity`) and `provenance`.
 
 **`headwater where <database or study> [--product ID] [--scenario NAME] [--top N] [--json]`** prints, after the same header as `contributions`, which processes emit the score and in which locations, as `result.where()` does in [calculation.md](calculation.md#python-api): the 10 largest of each by default, and a `rest` line for the others. A study has one split per product. `--json` prints `format` `headwater-where/1`, with the keys of `contributions --json` and, in each result, `where`: `processes` and `locations`, each with its `score` and `share`, and the `rest` of each.
 
@@ -219,10 +219,10 @@ The rules and their order are those of `bg.find` in [calculation.md](calculation
 **`headwater database uses DATABASE... [--ref REF] [--json]`** lists the databases that use each database and the studies whose products reach it, directly or not, and the way each one goes. Only the `database.yaml` and `study.yaml` files of the folders next to the database are read, on disk or at `REF`. The database need not exist: a database removed can still have users. With `tshirt-dyed` using `dyes`, `dyes` using `chemicals`, and the study `tshirt-footprint` scoring `tshirt-dyed:tshirt`:
 
 ```
-studies/chemicals is reached by:
-  studies/dyes (database, uses chemicals)
-  studies/tshirt-dyed (database, uses dyes, which uses chemicals)
-  studies/tshirt-footprint (study, products in tshirt-dyed, which uses dyes, which uses chemicals)
+project/chemicals is reached by:
+  project/dyes (database, uses chemicals)
+  project/tshirt-dyed (database, uses dyes, which uses chemicals)
+  project/tshirt-footprint (study, products in tshirt-dyed, which uses dyes, which uses chemicals)
 ```
 
 Databases come first, then studies. A file that does not read is listed as such, and reaches nothing. `--json` prints one object, `format` `headwater-uses/2`: `ref`, and `databases`, one per database given, each with `path` (the path as given), `users` (each with `path`, the folder of the user, `kind`, `database` or `study`, and `through`, the databases it goes through, from the one its own `uses` names, or the one its products are in, down to the database: `["dyes", "chemicals"]`) and `errors` (each with `path`, `file` and `message`). Within version 2 keys may be added; none is renamed or removed. The exit code is 0, and 2 for an unknown ref.
@@ -230,7 +230,7 @@ Databases come first, then studies. A file that does not read is listed as such,
 **`headwater diff REF [REF2] FOLDER`** reads a database or a study at `REF` and at `REF2` (default: the working tree, uncommitted changes included) and calculates both on one background. It reads the files from git, so your checkout, index and branches are not touched. For each indicator it prints the old and new score, the change and the % change, for every product of a database, or each product of a study for its amount (see below). Then it lists the lines that differ, ranked by their effect on the score:
 
 ```
-Database studies/tshirt: origin/main (1a2b3c4d5e6f) → HEAD (9f8e7d6c5b4a)
+Database project/tshirt: origin/main (1a2b3c4d5e6f) → HEAD (9f8e7d6c5b4a)
 Background: toy-background@3f9a1c2d4e5f, method toy-climate 1
 
 T-shirt (tshirt:tshirt)
@@ -341,8 +341,8 @@ headwater database convert studies
 ```
 
 ```
-converted studies/dyes: 1 process and 3 lines, from 2 files in processes/ to processes.csv and exchanges.csv
-converted studies/tshirt: 1 process and 3 lines, from 2 files in processes/ to processes.csv and exchanges.csv
+converted project/dyes: 1 process and 3 lines, from 2 files in processes/ to processes.csv and exchanges.csv
+converted project/tshirt: 1 process and 3 lines, from 2 files in processes/ to processes.csv and exchanges.csv
 ```
 
 - FOLDER is a database, a background folder, or a folder that holds them, one level down, as `studies` above. Studies hold no processes and are left as they are.
@@ -357,10 +357,10 @@ Brightway inventories in Excel (`.xlsx`) convert into a database folder, so nobo
 
 ```bash
 headwater database import-excel inventory.xlsx --release toy-background@3f9a1c2d4e5f \
-    --out studies/tshirt --method methods/toy-climate [--mapping mapping.csv] [--name tshirt]
+    --out project/tshirt --method methods/toy-climate [--mapping mapping.csv] [--name tshirt]
 ```
 
-`--method` is given once per method to use several together, as for `calc`: `--method EF-3.1 --method IPCC-2021` writes `methods: [EF-3.1, IPCC-2021]` in database.yaml. A method folder is written by its id, `methods: [EF-3.1]`. With no `--method`, the import validates with the release's one method and writes no `methods`. When the release does not hold that id, the commands that read the database need the folder ([Command line](#command-line)), and the import's last line says so with the command to run: `headwater validate studies/tshirt --method-folder methods/EF-3.1`.
+`--method` is given once per method to use several together, as for `calc`: `--method EF-3.1 --method IPCC-2021` writes `methods: [EF-3.1, IPCC-2021]` in database.yaml. A method folder is written by its id, `methods: [EF-3.1]`. With no `--method`, the import validates with the release's one method and writes no `methods`. When the release does not hold that id, the commands that read the database need the folder ([Command line](#command-line)), and the import's last line says so with the command to run: `headwater validate project/tshirt --method-folder methods/EF-3.1`.
 
 **Example.** The line `market for steel | steel | RER`, 2 `kilogram`, becomes the line `input`, 2 `kg`, supplier `ecoinvent:3.12:cutoff:<ids>`. One activity becomes one row of `processes.csv`, with the activity's comment and the cell it was read from in its `comment` column, and its lines rows of `exchanges.csv`. Its id is `<database>:<name>-<location>`, such as `tshirt:t-shirt-glo`, or `<database>:<product>-<location>` when several activities share a name and location, such as the steps of one process ([design.md](design.md#excel-import) has the rule), and the database gets `flows.csv`, `parameters.yaml` and a `database.yaml`.
 
@@ -399,7 +399,7 @@ database,Textile Chemicals,,,,textile-chemicals,leo,2026-10-12,shared database
 
 A row with fewer or more cells than the header is an error, and so is a cell that holds a line break (Alt+Enter in Excel). The message names the file and the line: `file mapping.csv: a value spans several lines. One row is one line, so a quote is probably missing or extra. [mapping.csv:3]`. A file with a `date` column in place of `when` is refused: `unknown column 'date'. It is now called 'when'.`
 
-A `technosphere` row sends the line with that name, product and location (as the workbook writes them) to a release process. A `biosphere` row does the same for a flow of nature. A `database` row says what a database of the workbook is: `release`, `own`, or a database of yours, by the name of its folder next to the database written (`textile-chemicals` for `--out studies/widget`, so `studies/textile-chemicals`). When that folder holds a database, its lines link to its processes by exact name, reference product and location, as lines of the release do, and the database is added to `uses:`. A database in it that is not named like its folder, or that does not pin the release as the database written does (`name@` and 12 characters of the hash), is refused before anything is written. When it does not yet, its lines are `waiting`: written with no supplier, and listed, and `uses:` does not name it, so the database still reads. Import again once the folder is there. A pinned form such as `textile-chemicals@v3` is refused, with the folder name to write. A row that no line needed is listed.
+A `technosphere` row sends the line with that name, product and location (as the workbook writes them) to a release process. A `biosphere` row does the same for a flow of nature. A `database` row says what a database of the workbook is: `release`, `own`, or a database of yours, by the name of its folder next to the database written (`textile-chemicals` for `--out project/widget`, so `project/textile-chemicals`). When that folder holds a database, its lines link to its processes by exact name, reference product and location, as lines of the release do, and the database is added to `uses:`. A database in it that is not named like its folder, or that does not pin the release as the database written does (`name@` and 12 characters of the hash), is refused before anything is written. When it does not yet, its lines are `waiting`: written with no supplier, and listed, and `uses:` does not name it, so the database still reads. Import again once the folder is there. A pinned form such as `textile-chemicals@v3` is refused, with the folder name to write. A row that no line needed is listed.
 
 **database.yaml** says what a workbook says about the database: its `name`, the release its lines link to (`background`), the databases next to it that it buys from (`uses`), and `methods` when `--method` names them. There is nothing to fill in: a database holds no goal or functional unit, and every activity is a product, scored per unit of what it makes. Columns headwater does not use are counted in the report, not kept.
 
@@ -422,14 +422,14 @@ A database of a Brightway project converts into a headwater database folder in o
 
 ```bash
 headwater database import-brightway toy tshirt --release toy-background@3f9a1c2d4e5f \
-    --out studies/tshirt --method methods/toy-climate [--brightway-dir <folder>] [--mapping mapping.csv] [--name tshirt]
+    --out project/tshirt --method methods/toy-climate [--brightway-dir <folder>] [--mapping mapping.csv] [--name tshirt]
 ```
 
 `--brightway-dir` is the folder that holds Brightway's projects, the one bw2data calls `BRIGHTWAY2_DIR`. Without it the command reads `BRIGHTWAY2_DIR`, then the folder bw2data uses by default (`~/Library/Application Support/Brightway3` on a Mac).
 
 **Example.** In the project `toy`, the database `tshirt` has the activity `T-shirt`, GLO, whose exchange 15 comes from `('toy-background', 'electricity')`. That node is `electricity production`, product `electricity`, in GLO. The exchange becomes the line `input`, 0.5 `kWh`, supplier `toy:electricity-production`, the process of the release with that name, product and location. The database scores 1.25205, as it does in Brightway.
 
-**How a line is linked.** Each exchange holds the key of the node it comes from, `(database, code)`. The import reads that node, and links the line with the node's own name, reference product, location, unit and categories, by the rules of the Excel import ([Importing from Excel](#importing-from-excel)): a node of the database imported is one of its activities, a node of a database whose name starts like the release's source (`ecoinvent-3.12-cutoff`) is a process of the release, and a flow of nature matches by name and categories. A node of another database of the project, such as `dyes`, is a process of the database of that name in the folder next to `--out` (`studies/dyes`), and the database uses it. Import `dyes` there first: until then its lines wait, as in the Excel import. A background with another name, `ei_3.12` say, takes a row of the mapping file: `database,ei_3.12,,,,release,<who>,<when>`.
+**How a line is linked.** Each exchange holds the key of the node it comes from, `(database, code)`. The import reads that node, and links the line with the node's own name, reference product, location, unit and categories, by the rules of the Excel import ([Importing from Excel](#importing-from-excel)): a node of the database imported is one of its activities, a node of a database whose name starts like the release's source (`ecoinvent-3.12-cutoff`) is a process of the release, and a flow of nature matches by name and categories. A node of another database of the project, such as `dyes`, is a process of the database of that name in the folder next to `--out` (`project/dyes`), and the database uses it. Import `dyes` there first: until then its lines wait, as in the Excel import. A background with another name, `ei_3.12` say, takes a row of the mapping file: `database,ei_3.12,,,,release,<who>,<when>`.
 
 A line to an activity of the database itself links to the activity whose key it holds, even when another one has the same name, reference product and location. Example: in the toy's database `twins`, `cut-a` and `cut-b` are both `fabric cutting`, cut fabric, GLO, with 1 and 1.2 kg of fabric per kg. T-shirt A buys from `cut-a` and T-shirt B from `cut-b`, and they score 1.19205 and 1.37748, as in Brightway. Activities are read in the order of their codes, so the second of two with the same name, location and reference product is `-2` on every import, whatever order Brightway wrote them in: `twins:cut-fabric-glo` and `twins:cut-fabric-glo-2`, named after the cut fabric they make, since their names repeat. A line to another database of the project is linked by name, reference product and location, so two activities alike there are ambiguous, as in the Excel import.
 
@@ -442,7 +442,7 @@ A line to an activity of the database itself links to the activity whose key it 
 `headwater upgrade` moves databases and studies from the release they pin to another, writes the change in place, and shows what moved. On a branch, so the pull request shows it:
 
 ```bash
-headwater upgrade studies/tshirt --to toy-2@bd46d2b98059 --mapping upgrades/toy-1-toy-2.csv
+headwater upgrade project/tshirt --to toy-2@bd46d2b98059 --mapping upgrades/toy-1-toy-2.csv
 ```
 
 ```
@@ -502,7 +502,7 @@ Not mapped: 1 supplier, 1 line
 **Studies.** A study given moves with the databases its products are in. Its scenarios move too: a change to a line of the old release names the successor and its line, found by role and flow as for an override, and a change to a parameter of a process of the old release names the successor. Example: the scenario `clean-grid` of the study `tshirt-footprint` sets line e02 of `toy:1:elec`, its CO2, to 0.3; after the upgrade it sets line a2 of `toy:2:elec`. A study of release products, which pins the release itself, moves its products and its pin: 0.25 kg of `toy:1:fabric-a`, pinned to toy-1, becomes 0.25 kg of `toy:2:fabric-b`, pinned to toy-2.
 
 ```
-headwater upgrade studies/tshirt-footprint studies/fabric --to toy-2@bd46d2b98059 --mapping upgrades/toy-1-toy-2.csv
+headwater upgrade project/tshirt-footprint project/fabric --to toy-2@bd46d2b98059 --mapping upgrades/toy-1-toy-2.csv
 ...
 Written: fabric/study.yaml, tshirt-footprint/scenarios/clean-grid.yaml, tshirt/database.yaml, tshirt/exchanges.csv
 ...
@@ -528,7 +528,7 @@ headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
 
-Asked "what drives the footprint of studies/tshirt-footprint?", Claude then runs `headwater contributions studies/tshirt-footprint --json` and answers from its output: 1.24265 kg CO2-eq, the cotton fabric first.
+Asked "what drives the footprint of project/tshirt-footprint?", Claude then runs `headwater contributions project/tshirt-footprint --json` and answers from its output: 1.24265 kg CO2-eq, the cotton fabric first.
 
 **Where the skill is.** In the package, at `headwater/.agents/skills/headwater/SKILL.md`, as the [Library Skills](https://github.com/tiangolo/library-skills) convention asks, the place FastAPI, Streamlit and Shiny use. So `uv tool run library-skills --claude` (`uvx library-skills --claude` with a recent uv), run in a project that depends on headwater, finds it with the skills of the project's other libraries, and links each into `.agents/skills/` and `.claude/skills/`. The skill is one file of the installed package, so it matches the installed version, and its links point at that version's tag of the docs.
 
@@ -571,7 +571,7 @@ Databases and studies are text files in git, so people work like on code.
 **Example.** Two people work on the T-shirt database. One lowers the fabric from 0.25 to 0.22 kg, the other replaces the electricity supplier, each on a branch. Each pull request shows the changed lines, and CI comments:
 
 ```
-Database studies/tshirt: origin/main (1a2b3c4d5e6f) → HEAD (9f8e7d6c5b4a)
+Database project/tshirt: origin/main (1a2b3c4d5e6f) → HEAD (9f8e7d6c5b4a)
 Background: toy-background@3f9a1c2d4e5f, method toy-climate 1
 
 T-shirt (tshirt:tshirt)
@@ -581,7 +581,7 @@ Lines that differ, ranked by their effect on Climate change (kg CO2-eq):
   -0.111258  tshirt:tshirt line e02 (cotton fabric): amount 0.25 → 0.22 kg
 ```
 
-That is the output of `headwater diff origin/main HEAD studies/tshirt`.
+That is the output of `headwater diff origin/main HEAD project/tshirt`.
 
 Processes that many databases buy are a database too, in a folder next to them. A dyed T-shirt says `uses: [dyes]` and buys from `dyes:reactive-dye` ([design.md](design.md#databases-it-uses)). There is no version to pin: git versions both, so a pull request that changes a line of `dyes` shows its effect on every database that uses it, and on every study whose products reach it, in the same comment. Freezing a database into a release that other repositories pin comes later (M4).
 
@@ -600,7 +600,7 @@ A pull request that changes a database or a study gets one comment that shows wh
 
 Base `main` (`1a2b3c4d5e6f`), head `merge of #12` (`9f8e7d6c5b4a`). Each database and study is calculated on the release it pins.
 
-### Database `studies/dyes`
+### Database `project/dyes`
 
 Background `toy-background@6864b7dbb65d`, method `toy-climate 1`.
 
@@ -614,7 +614,7 @@ A line's column is the change that line alone makes.
 |---|---|---:|---:|---:|---:|---:|
 | reactive dye production \| reactive dye | Climate change (kg CO2-eq) | 5.0596 | 4.5596 | -0.5 | -9.9% | -0.5 |
 
-### Database `studies/tshirt`
+### Database `project/tshirt`
 
 Uses `dyes`, which changed.
 
@@ -630,7 +630,7 @@ A line's column is the change that line alone makes.
 |---|---|---:|---:|---:|---:|---:|
 | T-shirt | Climate change (kg CO2-eq) | 1.24265 | 1.23765 | -0.005 | -0.4% | -0.005 |
 
-### Study `studies/tshirt-footprint`
+### Study `project/tshirt-footprint`
 
 Its products reach `tshirt`, which uses `dyes`, which changed.
 
@@ -649,7 +649,7 @@ A line's column is the change that line alone makes.
 
 Each line that differs is listed once, in the order of the files, with what changed, a supplier named by its name and location. The scores that changed follow, in the method's order, each line with a column, as in `headwater diff`: at most 5, chosen by the largest share of any score's change, then one for the other lines together, and one for the interaction when a score needs it. The first 5 scores that changed are open, the others folded below, then the scores that did not change. Comments that changed are listed apart, once each. A database scored with EF 3.1, with a supplier swap and an amount change, shows 2 lines that differ and the first 5 of its 25 scores, climate change among them, with 20 folded, then the 2 comments if they changed too.
 
-**A database of several products** has a block for each product with a score that moved, or that only one side has, the first block open, and a line for the rest (`4 other products, no change.`). Each block has the columns of the lines that moved that product. **A new database** is one line: `New database: 40 products, not scored. headwater calc studies/knitting scores them.`
+**A database of several products** has a block for each product with a score that moved, or that only one side has, the first block open, and a line for the rest (`4 other products, no change.`). Each block has the columns of the lines that moved that product. **A new database** is one line: `New database: 40 products, not scored. headwater calc project/knitting scores them.`
 
 **A study** lists each of its products in the order of `products:`, named with its amount, `2 × T-shirt`: a block for each product that moved, and one line for each that did not (`0.5 × reactive dye production | reactive dye: no change.`). None is counted away: a study has few products. A changed amount is listed with the lines, `product tshirt:tshirt (T-shirt): amount 1 → 2`, with its column. A changed scenario file is listed under `Other changes`: the comment scores no scenario. A new study is scored for its products.
 

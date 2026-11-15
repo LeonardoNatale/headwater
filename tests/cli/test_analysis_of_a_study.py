@@ -12,8 +12,8 @@ from headwater.cli import app
 from tests.cli.conftest import ANSI
 
 REL = 1e-9  # AGENTS.md: toy fixtures
-STUDY = "studies/tshirt-footprint"
-DATABASE = "studies/tshirt-dyed"
+STUDY = "project/tshirt-footprint"
+DATABASE = "project/tshirt-dyed"
 
 
 def run(*args: str) -> tuple[int, str, str]:

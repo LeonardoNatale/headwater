@@ -17,24 +17,24 @@ headwater --version
 headwater demo headwater-demo
 cd headwater-demo
 headwater release pull releases/toy-background@6864b7dbb65d
-headwater calc studies/tshirt-footprint --json
+headwater calc project/tshirt-footprint --json
 ```
 
 The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This is the skill of headwater 0.3.0. If `headwater --version` prints another version, the skill is an old copy: run `headwater skill install --force`.
 
 ## What the files are
 
-- A database is a folder with `database.yaml` (its name, the release it pins in `background:`, its `methods`), `processes.csv` (one row per process), `exchanges.csv` (one row per line: `process,line,role,flow,amount,unit,supplier`) and `flows.csv`. Example: `studies/tshirt-dyed`.
-- A study is a folder with `study.yaml`, which names products of the databases next to it and their amounts, and optional `scenarios/`. Example: `studies/tshirt-footprint`.
+- A database is a folder with `database.yaml` (its name, the release it pins in `background:`, its `methods`), `processes.csv` (one row per process), `exchanges.csv` (one row per line: `process,line,role,flow,amount,unit,supplier`) and `flows.csv`. Example: `project/tshirt-dyed`.
+- A study is a folder with `study.yaml`, which names products of the databases next to it and their amounts, and optional `scenarios/`. Example: `project/tshirt-footprint`.
 - A release is a frozen background with its methods, named `name@hash`, kept in a cache (`HEADWATER_HOME`). `headwater release pull` puts one there.
 - A process id is `<database>:<process>`, such as `tshirt-dyed:tshirt`, or a background process such as `toy:electricity-production`. A line is its process and its line id: `tshirt-dyed:tshirt line e02`.
 
 ## Score a database or a study
 
 ```bash
-headwater calc studies/tshirt-footprint --json
-headwater calc studies/tshirt-footprint --scenario cleaner-dye --json
-headwater calc studies/tshirt-dyed --product tshirt-dyed:tshirt --json
+headwater calc project/tshirt-footprint --json
+headwater calc project/tshirt-footprint --scenario cleaner-dye --json
+headwater calc project/tshirt-dyed --product tshirt-dyed:tshirt --json
 ```
 
 Read `results[].score`, with `results[].indicator.unit`. A study scores each of its products for its amount. A database scores one unit of each product, or those `--product` names. `--indicator` picks indicators of a method that has several.
@@ -45,17 +45,17 @@ Read `results[].score`, with `results[].indicator.unit`. A study scores each of 
 - `headwater where <folder> --json`: which processes emit the score, anywhere upstream, and in which locations.
 - `headwater sensitivity <folder> --top 10 --json`: the lines a person can change, largest elasticity first. The elasticity is the % change of the score per 1% change of the line. `sensitivity` is the change of the score per one more unit of the line.
 
-Each takes a database or a study, `--product`, and for a study `--scenario`. Example: on the demo, `headwater contributions studies/tshirt-footprint --json` gives 1.24265 kg CO2-eq, and the cotton fabric, line e02 of `tshirt-dyed:tshirt`, is 74.6% of it.
+Each takes a database or a study, `--product`, and for a study `--scenario`. Example: on the demo, `headwater contributions project/tshirt-footprint --json` gives 1.24265 kg CO2-eq, and the cotton fabric, line e02 of `tshirt-dyed:tshirt`, is 74.6% of it.
 
 ## Change a line, then validate
 
 A database's lines are the rows of its `exchanges.csv`. To change an amount, edit its row, then validate and calculate again. Example: 0.3 kg of fabric instead of 0.25.
 
 ```bash
-# studies/tshirt-dyed/exchanges.csv, the row of line e02:
+# project/tshirt-dyed/exchanges.csv, the row of line e02:
 # tshirt,e02,input,toy:cotton-fabric,0.3,kg,toy:fabric-production
-headwater validate studies/tshirt-footprint --json
-headwater calc studies/tshirt-footprint --json
+headwater validate project/tshirt-footprint --json
+headwater calc project/tshirt-footprint --json
 ```
 
 From Python, the editor writes the same files and checks the whole database before it saves:
@@ -64,7 +64,7 @@ From Python, the editor writes the same files and checks the whole database befo
 import headwater as hw
 
 bg = hw.load("toy-background@6864b7dbb65d")
-editor = hw.open("studies/tshirt-dyed").edit(bg)
+editor = hw.open("project/tshirt-dyed").edit(bg)
 editor.process("tshirt").set_exchange("e02", amount=0.3)
 editor.save()
 ```
@@ -73,7 +73,7 @@ Validate after every edit. With `--json`, `valid` is false when there are `error
 
 ## Compare two versions
 
-In git, `headwater diff HEAD studies/tshirt-footprint --json` scores the folder at a ref and in the working tree, and ranks the lines that changed by their effect on each score. `headwater diff main my-branch studies/tshirt-footprint --json` compares two refs. Commit before an edit, so there is something to compare with. `headwater database uses studies/dyes --json` lists the databases and studies a change to `dyes` reaches.
+In git, `headwater diff HEAD project/tshirt-footprint --json` scores the folder at a ref and in the working tree, and ranks the lines that changed by their effect on each score. `headwater diff main my-branch project/tshirt-footprint --json` compares two refs. Commit before an edit, so there is something to compare with. `headwater database uses project/dyes --json` lists the databases and studies a change to `dyes` reaches.
 
 ## Find a background process
 
@@ -87,8 +87,8 @@ headwater find electricity --release toy-background@6864b7dbb65d --json
 
 ## Import and convert
 
-- A Brightway-format Excel workbook: `headwater database import-excel book.xlsx --release name@hash --out studies/name --json`.
-- A database of a Brightway project: `headwater database import-brightway <project> <database> --release name@hash --out studies/name --json`.
+- A Brightway-format Excel workbook: `headwater database import-excel book.xlsx --release name@hash --out project/name --json`.
+- A database of a Brightway project: `headwater database import-brightway <project> <database> --release name@hash --out project/name --json`.
 - A folder from before 0.2.0, with `processes/` and one file per process: `headwater database convert <folder> --json`.
 - A source into a release: `headwater release import <source> --json`. An impact method: `headwater method import`. Moving databases to a newer release: `headwater upgrade`.
 
