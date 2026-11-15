@@ -7,6 +7,7 @@ Install with `pip install headwater`, try it with `headwater demo headwater-demo
 ## Docs
 
 - [README](https://github.com/LeonardoNatale/headwater/blob/main/README.md): what headwater is, the quick start, and using it with an AI agent
+- [How it works](https://github.com/LeonardoNatale/headwater/blob/main/docs/how-it-works.md): the three ideas behind headwater, on one toy T-shirt
 - [Workflows](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md): setup, every command and its options, JSON output and exit codes, git and CI
 - [Calculation](https://github.com/LeonardoNatale/headwater/blob/main/docs/calculation.md): how scores are computed and explained, and the Python API
 - [Design](https://github.com/LeonardoNatale/headwater/blob/main/docs/design.md): principles, data model and file formats
@@ -15,10 +16,10 @@ Install with `pip install headwater`, try it with `headwater demo headwater-demo
 
 ## Notebooks
 
-- [Notebooks](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/README.md): getting started, a first footprint, writing a database, ecoinvent, and coming from Brightway
+- [Notebooks](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/README.md): a first footprint, writing a database, a case study on invented data, ecoinvent, and coming from Brightway
 
 ## Optional
 
-- [Glossary](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/glossary.md): LCA and math terms in plain words
+- [Glossary](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/glossary.md): headwater, LCA and math terms in plain words, each with an example
 - [Benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md): every measured number, with its script
 - [Roadmap](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md): what is built next
