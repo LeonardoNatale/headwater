@@ -24,7 +24,7 @@ headwater release pull releases/toy-background@6864b7dbb65d
 headwater calc project/tshirt-footprint
 ```
 
-`headwater demo` copies a toy background, frozen as a release, four small databases and a study into `headwater-demo`. `release pull` checks the release and copies it into your cache, `~/.headwater` or `$HEADWATER_HOME`. `calc` scores the study, one dyed T-shirt: 1.24265 kg CO₂-eq, with the data versions and the solver checks behind it.
+`headwater demo` copies a toy background, frozen as a release, four small databases and a study into `headwater-demo`. Each database names the release it was written for, `background: toy-background@6864b7dbb65d` in its `database.yaml`, and headwater looks that name up in your release cache: the folder `HEADWATER_HOME` names, `~/.headwater` by default. `release pull` checks the release's hash and copies it there, once. Every database and study on your machine then uses it, and the hash means the same data gives the same numbers on any machine. `calc` scores the study, one dyed T-shirt: 1.24265 kg CO₂-eq, with the data versions and the solver checks behind it.
 
 The same in Python, in that folder:
 

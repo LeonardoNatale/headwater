@@ -11,7 +11,7 @@ Six notebooks that teach headwater by running it, for someone who knows LCA and 
 | [05-coming-from-brightway](05-coming-from-brightway.ipynb) | The same tasks in Brightway and in headwater, side by side, and what differs | toy T-shirt | the `brightway` group | kept, refreshed by hand |
 | [06-brightway-and-headwater-on-ecoinvent](06-brightway-and-headwater-on-ecoinvent.ipynb) | Notebook 05 on ecoinvent 3.12, with every task timed in both tools | ecoinvent 3.12 cut-off | an ecoinvent licence, the `brightway` group | removed before commit |
 
-Notebooks 01 and 02 copy the demo that `pip install headwater` ships, with `headwater demo`, as the quick start of the [README](../README.md) does. Notebook 03 reads its data from [case-study/](case-study/README.md), next to it. Notebooks 01 to 03 work in a temporary folder and a temporary `HEADWATER_HOME`, so they change nothing in the repository or in your cache.
+Notebooks 01 and 02 copy the demo that `pip install headwater` ships, with `headwater demo`, as the quick start of the [README](../README.md) does. Notebook 03 reads its data from [case-study/](case-study/README.md), next to it. Notebooks 01 to 03 work in a temporary folder and a temporary `HEADWATER_HOME`, so they change nothing in the repository or in your release cache.
 
 ## Run them in VS Code
 

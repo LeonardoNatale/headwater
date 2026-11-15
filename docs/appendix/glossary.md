@@ -8,6 +8,7 @@ The words headwater uses, in plain words, each with one example. Most examples u
 |---|---|---|
 | Background | The shared database your own processes buy from, with the score of every product solved once when it is loaded. Brightway has no separate word: it is a database. | ecoinvent 3.12 cut-off; the demo's three toy processes |
 | Release | A background frozen once: a folder of Parquet files named by the hash of its content, which never changes. Imported with `headwater release import`, shared with `headwater release pull`. | `toy-background@6864b7dbb65d` |
+| Release cache | The folder where headwater keeps the releases you imported or pulled: `releases/` in the folder `HEADWATER_HOME` names, `~/.headwater` by default. A pin is looked up there. `headwater release pull` puts a release in it, once per machine. | `~/.headwater/releases/toy-background@6864b7dbb65d` |
 | Pin | The `background: name@hash` line of a `database.yaml`: the release the database was written for. It is refused on any other. | `background: toy-background@6864b7dbb65d` |
 | Database | A folder of the processes you model yourself, in git: `database.yaml`, `processes.csv`, `exchanges.csv` and `flows.csv`, plus optional files. Every process of a database is a product. Brightway's foreground database. | the demo's `project/tshirt` |
 | Study | A folder next to databases, with a `study.yaml`, that asks a question of them: which products, how much of each, with which methods, and its scenarios. It holds no processes. | the demo's `project/tshirt-footprint`: 1 dyed T-shirt, 1.242646 |

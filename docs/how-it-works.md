@@ -23,7 +23,7 @@ Every product of the background has a score: the emissions of one unit of it, wi
 
 In a real background the suppliers form loops. Electricity needs steel, and steel needs electricity. So the scores are the solution of a system of linear equations, one equation per product. headwater solves that system when you load a background, once, for every product at once, and checks how accurate the answer is. On ecoinvent 3.12 that is about 26,500 scores per indicator.
 
-A background is imported once per version into a **release**: a folder of Parquet files named by the hash of its content, such as `toy-background@6864b7dbb65d`. A release never changes. Your databases name the release they were written for, so a number can always be calculated again on the same data. For ecoinvent, one person runs `headwater release import` once, and everyone else pulls the release and loads it by name:
+A background is imported once per version into a **release**: a folder of Parquet files named by the hash of its content, such as `toy-background@6864b7dbb65d`. A release never changes. Your databases name the release they were written for, so a number can always be calculated again on the same data. headwater finds a release by that name in your release cache, the folder `HEADWATER_HOME` names, `~/.headwater` by default. For ecoinvent, one person runs `headwater release import` once, and everyone else pulls the release into their cache, once per machine, and loads it by name:
 
 ```python
 import headwater as hw
