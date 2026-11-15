@@ -44,7 +44,7 @@ Next: `headwater --help`, the folder's README.md, and [Setup](https://github.com
 
 ## Using headwater with an AI agent
 
-headwater ships a skill: a short guide that Claude Code, or another AI agent, reads before it uses headwater. Install it once in your project:
+headwater ships a skill: a short guide that Claude Code, or another AI agent, reads before it uses headwater. It sits in the package as the [Library Skills](https://github.com/tiangolo/library-skills) convention asks, as FastAPI's does. Link it into your project once:
 
 ```bash
 pip install headwater
@@ -52,7 +52,7 @@ headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
 
-Then ask Claude "what drives the footprint of studies/tshirt-footprint?". It runs `headwater contributions studies/tshirt-footprint --json` and answers from the output. `headwater skill install --agents-md` also writes a short section into `AGENTS.md`, for Codex, Cursor and others, and `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
+Then ask Claude "what drives the footprint of studies/tshirt-footprint?". It runs `headwater contributions studies/tshirt-footprint --json` and answers from the output. The links in `.claude/skills` and `.agents/skills` serve Claude Code, Codex, Copilot and Cursor, and follow upgrades of headwater. `uv tool run library-skills --claude` makes the same links, for every library of a project that ships a skill. `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
 
 ## One example
 

@@ -520,7 +520,7 @@ A scenario line with no single match in the successor stops the upgrade, and the
 
 ## Using headwater with an AI agent
 
-An AI agent such as Claude Code drives headwater through its command line. headwater ships a skill, the short guide an agent reads before it starts, and the user installs it once in a project (D49):
+An AI agent such as Claude Code drives headwater through its command line. headwater ships a skill, the short guide an agent reads before it starts, and the user links it into a project once (D49):
 
 ```bash
 pip install headwater
@@ -530,9 +530,11 @@ headwater skill install
 
 Asked "what drives the footprint of studies/tshirt-footprint?", Claude then runs `headwater contributions studies/tshirt-footprint --json` and answers from its output: 1.24265 kg CO2-eq, the cotton fabric first.
 
-**`headwater skill install [--user] [--agents-md] [--force] [--json]`** writes the skill, `SKILL.md` in the Agent Skills format, to `.claude/skills/headwater/` in the current folder, where Claude Code finds it in its next session, or to `~/.claude/skills/headwater/` with `--user`, for every project. Beside it, `.headwater.json` records the version and the sha256 of what was written. A second run says the skill is up to date, or replaces one that an older headwater wrote and nobody changed. A SKILL.md that differs from what headwater wrote is refused, exit code 1, naming the file; `--force` replaces it. `--agents-md` also adds a short section to `AGENTS.md` in the current folder, which Codex, Cursor, Copilot and other agents read: what headwater is, the rules of the skill, and `headwater skill show` for the rest. The section sits between the lines `<!-- headwater:start -->` and `<!-- headwater:end -->`; a second run replaces it and leaves the rest of the file as it was. A file with one marker and not the other, or two sections, is refused, exit code 1. `--agents-md` with `--user` is refused, exit code 2: AGENTS.md belongs to a project. `--json` prints `format` `headwater-skill-install/1`: `version`, `skill` (`path`, `action`: `written`, `up to date`, `updated` or `replaced`, and `from_version`) and `agents_md` (`path` and `action`: `added`, `replaced` or `up to date`, or null).
+**Where the skill is.** In the package, at `headwater/.agents/skills/headwater/SKILL.md`, as the [Library Skills](https://github.com/tiangolo/library-skills) convention asks, the place FastAPI, Streamlit and Shiny use. So `uv tool run library-skills --claude` (`uvx library-skills --claude` with a recent uv), run in a project that depends on headwater, finds it with the skills of the project's other libraries, and links each into `.agents/skills/` and `.claude/skills/`. The skill is one file of the installed package, so it matches the installed version, and its links point at that version's tag of the docs.
 
-**`headwater skill show [--agents-md]`** prints the skill, or with `--agents-md` the section of AGENTS.md, for any other tool. The skill is one file in the package, so it matches the installed version, and its links point at that version's tag of the docs.
+**`headwater skill install [--user] [--copy] [--force] [--json]`** makes the same two links for headwater alone, with no other tool and no `pyproject.toml`: `.claude/skills/headwater`, which Claude Code reads, and `.agents/skills/headwater`, which Codex, Copilot and Cursor read, each a relative link to the skill folder of the installed package. Example, in a venv at `.venv`: `.claude/skills/headwater -> ../../.venv/lib/python3.13/site-packages/headwater/.agents/skills/headwater`. A link follows upgrades: after `pip install -U headwater` the agent reads the new skill. `--user` makes the links under `~/.claude/skills` and `~/.agents/skills`, for every project. A second run says each link is up to date, and replaces a link to another place, such as an older venv. A folder that is not a link and whose files differ from the skill, which a person may have written, is refused, exit code 1, naming it, and nothing is changed; `--force` replaces it. `--copy` copies the skill instead, where links cannot be made, as on some Windows machines; a copy does not follow upgrades, so run `headwater skill install --copy --force` after one. `--json` prints `format` `headwater-skill-install/1`: `version`, `skill` (the folder in the package) and `targets`, each with `path`, `kind` (`link` or `copy`) and `action` (`linked`, `copied`, `up to date`, `updated` or `replaced`).
+
+**`headwater skill show`** prints SKILL.md, for a tool that reads no skills folder.
 
 **`--json` on every command.** Each prints one document whose `format` names it; the rules are in [Command line](#command-line). The formats:
 
@@ -555,7 +557,7 @@ Asked "what drives the footprint of studies/tshirt-footprint?", Claude then runs
 | `database uses` | `headwater-uses/2` | `databases` |
 | `database convert` | `headwater-convert/1` | `converted` |
 | `demo` | `headwater-demo/1` | `folder`, `release`, `then` |
-| `skill install` | `headwater-skill-install/1` | `skill`, `agents_md` |
+| `skill install` | `headwater-skill-install/1` | `skill`, `targets` |
 | any, on a failure | `headwater-error/1` | `command`, `exit_code`, `errors` |
 
 **An example in every `--help`.** The last line of each command's help is a command that runs, on the demo for most. The examples of `release import`, `method import`, `method import-set`, `database import-excel`, `import-brightway`, `convert` and `upgrade` name a toy file of the repository's `tests/fixtures`, and a test copies it into a copy of the demo and runs the line.

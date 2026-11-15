@@ -20,7 +20,7 @@ headwater release pull releases/toy-background@6864b7dbb65d
 headwater calc studies/tshirt-footprint --json
 ```
 
-The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This skill is for headwater 0.3.0: if `headwater --version` prints another version, run `headwater skill install` again.
+The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This is the skill of headwater 0.3.0. If `headwater --version` prints another version, the skill is an old copy: run `headwater skill install --force`.
 
 ## What the files are
 

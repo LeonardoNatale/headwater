@@ -96,7 +96,7 @@ def test_the_ai_agent_commands_run_like_the_quick_start_and_install_the_skill(
 
     assert done.returncode == 0, done.stdout + done.stderr
     installed = tmp_path / "headwater-demo" / ".claude" / "skills" / "headwater" / "SKILL.md"
-    packaged = ROOT / "src" / "headwater" / "skill" / "SKILL.md"
+    packaged = ROOT / "src" / "headwater" / ".agents" / "skills" / "headwater" / "SKILL.md"
     assert installed.read_bytes() == packaged.read_bytes()
     found = json.loads(done.stdout[done.stdout.index("{") :])
     [result] = found["results"]

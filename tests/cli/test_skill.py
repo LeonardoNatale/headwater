@@ -1,7 +1,9 @@
-"""`headwater skill install` and `skill show`, and the skill itself: valid front matter, commands
-that exist, links to files of the repository at the version's tag (D49)."""
+"""`headwater skill install` and `skill show`, and the skill itself: where the Library Skills
+convention puts it, valid front matter, commands that exist, links to files of the repository at
+the version's tag (D49)."""
 
 import json
+import os
 import re
 import shlex
 from importlib.metadata import version
@@ -13,13 +15,13 @@ from typer.testing import CliRunner
 
 from headwater.cli import COMMANDS, app, load
 from headwater.cli._json import GROUPS
-from headwater.cli.skill import END, START, agents_section, packaged
+from headwater.cli.skill import packaged
 from tests.cli.conftest import ANSI
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILL = ROOT / "src" / "headwater" / "skill" / "SKILL.md"
+SKILL = ROOT / "src" / "headwater" / ".agents" / "skills" / "headwater" / "SKILL.md"
 REPOSITORY = "https://github.com/LeonardoNatale/headwater"
-INSTALLED = Path(".claude") / "skills" / "headwater"
+TARGETS = (Path(".claude") / "skills" / "headwater", Path(".agents") / "skills" / "headwater")
 
 
 def run(*args: str) -> tuple[int, str]:
@@ -53,6 +55,14 @@ def test_the_package_holds_one_skill_and_it_is_the_file_of_the_repository() -> N
     assert packaged() == SKILL.read_bytes()
     copies = [p for p in ROOT.rglob("SKILL.md") if ".venv" not in p.parts and "dist" not in p.parts]
     assert [p.relative_to(ROOT) for p in copies] == [SKILL.relative_to(ROOT)]
+
+
+def test_the_skill_is_where_library_skills_looks_for_it() -> None:
+    """`<package>/.agents/skills/<name>/SKILL.md`, the name of the folder the skill's own, as in
+    FastAPI's wheel: `fastapi/.agents/skills/fastapi/SKILL.md`."""
+    assert SKILL.parent.name == front_matter()["name"]
+    assert SKILL.parent.parent.parent.name == ".agents"
+    assert SKILL.parent.parent.parent.parent == ROOT / "src" / "headwater"
 
 
 def test_the_front_matter_is_that_of_an_agent_skill() -> None:
@@ -105,15 +115,6 @@ def test_every_headwater_command_the_skill_names_exists_with_its_options() -> No
             assert option in help_text, f"{span}: {name} has no {option}"
 
 
-def test_the_agents_section_takes_the_rules_from_the_skill() -> None:
-    section = agents_section()
-    rules = SKILL.read_text(encoding="utf-8").split("## Rules\n", 1)[1].split("\n## ", 1)[0]
-
-    assert section.startswith(START + "\n") and section.endswith(END + "\n")
-    assert rules.strip() in section
-    assert "headwater skill show" in section
-
-
 def test_show_prints_the_skill_byte_for_byte() -> None:
     result = CliRunner().invoke(app, ["skill", "show"], catch_exceptions=False)
 
@@ -124,131 +125,97 @@ def test_show_prints_the_skill_byte_for_byte() -> None:
 # --- install ------------------------------------------------------------------------------------
 
 
-def test_install_writes_the_packaged_skill_byte_for_byte(project: Path) -> None:
+def test_install_links_the_skill_of_the_installed_package_for_claude_and_other_agents(
+    project: Path,
+) -> None:
     code, output = run("skill", "install")
 
     assert code == 0, output
-    assert (project / INSTALLED / "SKILL.md").read_bytes() == SKILL.read_bytes()
-    record = json.loads((project / INSTALLED / ".headwater.json").read_text())
-    assert record["version"] == version("headwater")
-    assert "Wrote the headwater skill" in output
+    for target in TARGETS:
+        link = project / target
+        assert link.is_symlink(), target
+        assert not Path(os.readlink(link)).is_absolute(), "a relative link, as library-skills makes"
+        assert link.resolve() == SKILL.parent.resolve()
+        assert (link / "SKILL.md").read_bytes() == SKILL.read_bytes()
+    assert "a link to the skill of headwater" in output
 
 
 def test_a_second_install_changes_nothing(project: Path) -> None:
     run("skill", "install")
-    files = [p for p in (project / ".claude").rglob("*") if p.is_file()]
-    before = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in files}
+    before = {t: os.readlink(project / t) for t in TARGETS}
 
     code, output = run("skill", "install", "--json")
 
     assert code == 0
-    assert json.loads(output)["skill"]["action"] == "up to date"
-    after = {p: (p.read_bytes(), p.stat().st_mtime_ns) for p in files}
-    assert after == before
-    assert [p for p in (project / ".claude").rglob("*") if p.is_file()] == files
+    found = json.loads(output)
+    assert found["format"] == "headwater-skill-install/1"
+    assert [t["action"] for t in found["targets"]] == ["up to date", "up to date"]
+    assert {t: os.readlink(project / t) for t in TARGETS} == before
 
 
-def test_a_skill_a_person_changed_is_refused_naming_it_unless_force(project: Path) -> None:
-    run("skill", "install")
-    installed = project / INSTALLED / "SKILL.md"
-    installed.write_text(installed.read_text() + "\nMy own rule.\n")
-    changed = installed.read_bytes()
+def test_a_link_to_another_place_is_updated(project: Path, tmp_path: Path) -> None:
+    old = tmp_path / "old-venv" / "headwater" / ".agents" / "skills" / "headwater"
+    link = project / TARGETS[0]
+    link.parent.mkdir(parents=True)
+    link.symlink_to(old, target_is_directory=True)  # an older venv, gone since
+
+    code, output = run("skill", "install", "--json")
+
+    assert code == 0, output
+    assert json.loads(output)["targets"][0]["action"] == "updated"
+    assert link.resolve() == SKILL.parent.resolve()
+
+
+def test_a_folder_a_person_wrote_is_refused_naming_it_unless_force(project: Path) -> None:
+    mine = project / TARGETS[1]
+    mine.mkdir(parents=True)
+    (mine / "SKILL.md").write_text("---\nname: headwater\ndescription: my own notes\n---\n")
 
     code, output = run("skill", "install", "--json")
 
     assert code == 1
-    assert installed.read_bytes() == changed
+    assert (mine / "SKILL.md").read_text().endswith("my own notes\n---\n")
+    assert not (project / TARGETS[0]).exists(), "nothing is changed when one place is refused"
     document = json.loads(output[output.index("{") :])
     [problem] = document["errors"]
-    assert problem["code"] == "skill-changed" and problem["item"].endswith("SKILL.md")
+    assert problem["code"] == "skill-folder" and problem["item"] == str(TARGETS[1])
     assert "--force" in problem["message"]
 
     code, output = run("skill", "install", "--force")
 
     assert code == 0, output
-    assert installed.read_bytes() == SKILL.read_bytes()
+    assert mine.is_symlink() and mine.resolve() == SKILL.parent.resolve()
 
 
-def test_a_skill_an_older_headwater_wrote_is_updated(project: Path) -> None:
-    import hashlib
-
-    folder = project / INSTALLED
+def test_a_folder_that_holds_the_skill_as_it_is_becomes_a_link(project: Path) -> None:
+    folder = project / TARGETS[0]
     folder.mkdir(parents=True)
-    old = b"---\nname: headwater\ndescription: an older skill\n---\n"
-    (folder / "SKILL.md").write_bytes(old)
-    record = {"version": "0.2.9", "sha256": hashlib.sha256(old).hexdigest()}
-    (folder / ".headwater.json").write_text(json.dumps(record))
+    (folder / "SKILL.md").write_bytes(SKILL.read_bytes())
 
-    code, output = run("skill", "install", "--json")
+    code, output = run("skill", "install")
 
     assert code == 0, output
-    skill = json.loads(output)["skill"]
-    assert (skill["action"], skill["from_version"]) == ("updated", "0.2.9")
-    assert (folder / "SKILL.md").read_bytes() == SKILL.read_bytes()
+    assert folder.is_symlink()
 
 
-def test_user_installs_under_home(project: Path, tmp_path: Path) -> None:
+def test_copy_copies_the_skill_byte_for_byte(project: Path) -> None:
+    code, output = run("skill", "install", "--copy", "--json")
+
+    assert code == 0, output
+    assert [t["kind"] for t in json.loads(output)["targets"]] == ["copy", "copy"]
+    for target in TARGETS:
+        assert not (project / target).is_symlink()
+        assert (project / target / "SKILL.md").read_bytes() == SKILL.read_bytes()
+
+    code, output = run("skill", "install", "--copy", "--json")
+
+    assert [t["action"] for t in json.loads(output)["targets"]] == ["up to date", "up to date"]
+
+
+def test_user_links_under_home(project: Path, tmp_path: Path) -> None:
     code, output = run("skill", "install", "--user")
 
     assert code == 0, output
-    assert (tmp_path / "home" / INSTALLED / "SKILL.md").read_bytes() == SKILL.read_bytes()
-    assert not (project / ".claude").exists()
-
-
-def test_user_with_agents_md_is_refused(project: Path) -> None:
-    code, output = run("skill", "install", "--user", "--agents-md")
-
-    assert code == 2
-    assert "AGENTS.md" in output
-    assert list(project.iterdir()) == []
-
-
-def test_agents_md_adds_one_section_then_replaces_it_and_keeps_the_rest(project: Path) -> None:
-    agents = project / "AGENTS.md"
-    agents.write_text("# My project\n\nOur own rules.\n")
-
-    code, output = run("skill", "install", "--agents-md")
-
-    assert code == 0, output
-    first = agents.read_text()
-    assert first.startswith("# My project\n\nOur own rules.\n\n" + START)
-    assert first.count(START) == 1 and first.count(END) == 1
-    assert (project / INSTALLED / "SKILL.md").is_file()
-
-    stale = first.replace("### Rules", "### Old rules") + "\n## After\n\nKept too.\n"
-    agents.write_text(stale)
-
-    code, output = run("skill", "install", "--agents-md", "--json")
-
-    assert code == 0, output
-    assert json.loads(output)["agents_md"]["action"] == "replaced"
-    assert agents.read_text() == first + "\n## After\n\nKept too.\n"
-
-    code, output = run("skill", "install", "--agents-md", "--json")
-
-    assert json.loads(output)["agents_md"]["action"] == "up to date"
-
-
-def test_agents_md_is_created_when_there_is_none(project: Path) -> None:
-    code, _ = run("skill", "install", "--agents-md")
-
-    assert code == 0
-    assert (project / "AGENTS.md").read_text() == agents_section()
-
-
-@pytest.mark.parametrize(
-    "text",
-    [
-        f"# Mine\n{START}\nhalf a section\n",
-        f"{START}\n{END}\n{START}\n{END}\n",
-        f"{END}\n{START}\n",
-    ],
-)
-def test_agents_md_with_broken_markers_is_refused_naming_it(project: Path, text: str) -> None:
-    (project / "AGENTS.md").write_text(text)
-
-    code, output = run("skill", "install", "--agents-md")
-
-    assert code == 1
-    assert "AGENTS.md" in output and "markers" in output
-    assert (project / "AGENTS.md").read_text() == text
+    for target in TARGETS:
+        assert (tmp_path / "home" / target).resolve() == SKILL.parent.resolve()
+    assert not (project / ".claude").exists() and not (project / ".agents").exists()
