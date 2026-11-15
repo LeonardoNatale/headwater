@@ -1,0 +1,5 @@
+description: The fabric is woven from recycled PET instead of virgin PET.
+changes:
+  - process: backpack:sewing-vn
+    line: e02
+    supplier: invented:polyester-fabric-recycled

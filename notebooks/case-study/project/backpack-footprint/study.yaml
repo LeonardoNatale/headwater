@@ -1,0 +1,8 @@
+name: backpack-footprint
+goal: Footprint of one backpack, to compare a factory move and recycled polyester. Every number is invented.
+functional_unit: 1 backpack, delivered to the warehouse in Europe and disposed of
+products:
+  - {process: backpack:backpack, amount: 1}
+boundary: cradle-to-grave
+methods: [invented-climate]
+cut_off: {criteria: [mass], max_cumulative: 0.01}

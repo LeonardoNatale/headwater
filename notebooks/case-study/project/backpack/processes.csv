@@ -1,0 +1,4 @@
+id,name,location,kind
+backpack,"backpack, delivered and disposed of",GLO,ordinary_transforming_activity
+sewing-vn,"backpack sewing, factory in Vietnam",VN,ordinary_transforming_activity
+sewing-pt,"backpack sewing, factory in Portugal",PT,ordinary_transforming_activity

@@ -1,0 +1,7 @@
+id: invented-climate
+version: "1"
+flow_list: invented
+indicators:
+  - id: climate-change
+    name: Climate change
+    unit: kg CO2-eq

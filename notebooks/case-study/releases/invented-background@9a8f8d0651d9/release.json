@@ -1,0 +1,75 @@
+{
+  "format": "headwater-release/2",
+  "kind": "source",
+  "name": "invented-background",
+  "source": "invented",
+  "version": "1",
+  "system_model": "cutoff",
+  "licence": "CC0-1.0",
+  "flow_list": "invented",
+  "methods": [
+    {
+      "id": "invented-climate",
+      "version": "1",
+      "variant": null,
+      "flow_list": "invented",
+      "indicators": [
+        {
+          "id": "climate-change",
+          "name": "Climate change",
+          "unit": "kg CO2-eq"
+        }
+      ],
+      "hash": "81e893687b9f66d53cf0cebfe32795542d8257f8109bb83667c13f34ff462b6b"
+    }
+  ],
+  "parent": null,
+  "recipe": null,
+  "provenance": null,
+  "tables": {
+    "exchanges.parquet": {
+      "rows": 61,
+      "content_sha256": "12449d63b79c26ea3887e29e0c98b1728d23db280789e21057dd063871251035"
+    },
+    "flow_properties.parquet": {
+      "rows": 0,
+      "content_sha256": "a63d31b63ce7cd9fbf77d2468ecf388e3f4076615cdb204ee96e61f7a9b0d6c6"
+    },
+    "flows.parquet": {
+      "rows": 19,
+      "content_sha256": "d6e2bad5738fe9688401ba177a628b8dce20b9ba5db2f7be5b68e14ece017ea6"
+    },
+    "geographies.parquet": {
+      "rows": 0,
+      "content_sha256": "d25591e4ffbd5fdc9380e830190ebf85c4acf530c8cb27983974b3b2f1a9f063"
+    },
+    "issues.parquet": {
+      "rows": 0,
+      "content_sha256": "3a0edb2afb9894683960df73cfafaefbf46c8621f4ffcbfdf9eec7384c1cd358"
+    },
+    "methods/invented-climate/factors.parquet": {
+      "rows": 3,
+      "content_sha256": "a25f634b96d4c1681565e8f5e3bd3ad9c6c8433011953b26adebdf5334877f28"
+    },
+    "processes.parquet": {
+      "rows": 20,
+      "content_sha256": "01e3be816d365635419a0abd8ce9a189f26475b8a44ef5d1c3e336185d58cc1b"
+    },
+    "units.parquet": {
+      "rows": 5,
+      "content_sha256": "e556d9f9ff7c04d5cd6883de76781b1e10fcaead5dd52bafe2a9e2a867db8f93"
+    }
+  },
+  "hash": "9a8f8d0651d9a93e8e55bf64f1cf7fa9c1a9982b8c690fd680ac899b56db4057",
+  "engine_version": "0.3.0",
+  "files": {
+    "exchanges.parquet": "5a285d90458a373476f7358e6e31cc3dbc613875864f97fe37de60d215276f74",
+    "flow_properties.parquet": "2105a41b39736e87f0bb4cfbc3aa375c3abb2d9b1df3728766780c7fa2f870ee",
+    "flows.parquet": "eafd153ad4ebe27f94490fa46db76bab844f3245fbbcaf68a58d780fe68660a4",
+    "geographies.parquet": "42d605373005a62c679f8773e977d1cfed01e217623647600b970117185d7703",
+    "issues.parquet": "9280fb149989557c0354d5093e87f8f2bda3a51c4b4c10ae7a187692399d7f59",
+    "methods/invented-climate/factors.parquet": "c494da75817a62f66faf899e3e7d860ee8ea6b61f19916063d323ed301e328a8",
+    "processes.parquet": "c4045d3f0a5a14bd1f4e42e15ace96128d6e1595f47bbba175ac3b2fcee458a8",
+    "units.parquet": "6f33be4ff74c243e85fe82e3543525ba85f242d35a706f3ff9cc82a8e9e2752a"
+  }
+}

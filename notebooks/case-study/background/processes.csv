@@ -1,0 +1,21 @@
+id,name,location,kind
+electricity-vn,electricity production,VN,ordinary_transforming_activity
+electricity-pt,electricity production,PT,ordinary_transforming_activity
+heat-natural-gas,heat production from natural gas,GLO,ordinary_transforming_activity
+pet-granulate,PET granulate production,GLO,ordinary_transforming_activity
+pet-granulate-recycled,"PET granulate production, recycled from bottles",GLO,ordinary_transforming_activity
+polyester-fabric,polyester fabric production,VN,ordinary_transforming_activity
+polyester-fabric-recycled,"polyester fabric production, recycled",VN,ordinary_transforming_activity
+nylon-granulate,nylon 6.6 granulate production,GLO,ordinary_transforming_activity
+nylon-webbing,nylon webbing production,VN,ordinary_transforming_activity
+zinc-alloy,zinc alloy production,GLO,ordinary_transforming_activity
+zip,zip production,VN,ordinary_transforming_activity
+pp-granulate,polypropylene granulate production,GLO,ordinary_transforming_activity
+buckle,plastic buckle production,VN,ordinary_transforming_activity
+pu-foam,polyurethane foam production,GLO,ordinary_transforming_activity
+cardboard,cardboard box production,GLO,ordinary_transforming_activity
+ldpe-film,LDPE film production,GLO,ordinary_transforming_activity
+transport-ship,"transport, container ship",GLO,ordinary_transforming_activity
+transport-truck,"transport, lorry",GLO,ordinary_transforming_activity
+incineration,incineration of textile waste,GLO,ordinary_transforming_activity
+landfill,landfill of textile waste,GLO,ordinary_transforming_activity

@@ -1,0 +1,11 @@
+description: The backpack is sewn in Portugal. No sea freight, and 2,500 km by lorry instead of 600.
+changes:
+  - process: backpack:backpack
+    line: e02
+    supplier: backpack:sewing-pt
+  - process: backpack:backpack
+    line: e03
+    amount: 0
+  - process: backpack:backpack
+    line: e04
+    amount: 2.5
