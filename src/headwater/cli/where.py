@@ -1,6 +1,8 @@
 """`headwater where`: which processes emit the score of a database or a study, and in which
 locations."""
 
+from __future__ import annotations
+
 from typing import Any
 
 import typer
