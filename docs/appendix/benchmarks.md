@@ -820,6 +820,8 @@ Script: `agent_tasks.py`. Raw output: [bench/results/agent_tasks_sonnet_results.
 
 A task passes when the last answer holds every expected number, with at least 4 decimals and within the rounding of the decimals written (1.24265 or 1.2426 for 1.242646, not 1.24), and the expected words. The edit also needs line e02 at 0.3 kg in `studies/tshirt-dyed/exchanges.csv` and a study that validates.
 
+These results were measured on headwater 0.3.0 before the demo folder was renamed from `studies/` to `project/`, so the tasks and the table below name `studies/`; the script now names `project/`.
+
 | Task | Expected | Sonnet, without the skill | Sonnet, with | Haiku, without | Haiku, with |
 |---|---|---|---|---|---|
 | The score of `studies/tshirt-footprint` | 1.242646 | pass, from the README | pass | pass, from the README | pass |
