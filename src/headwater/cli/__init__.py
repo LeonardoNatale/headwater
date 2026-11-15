@@ -224,6 +224,8 @@ class LazyGroup(TyperGroup):
                     )
                 )
             raise
+        finally:
+            _json.asked.set(_json.NOTHING_ASKED)  # a command called from Python asks nothing
 
 
 app = typer.Typer(

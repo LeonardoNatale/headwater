@@ -52,7 +52,7 @@ headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
 
-Then ask Claude "what drives the footprint of studies/tshirt-footprint?". It runs `headwater contributions studies/tshirt-footprint --json` and answers from the output. `headwater skill install --agents-md` also writes a short section into `AGENTS.md`, for Codex, Cursor and others, and `headwater skill show` prints the skill. Every command takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
+Then ask Claude "what drives the footprint of studies/tshirt-footprint?". It runs `headwater contributions studies/tshirt-footprint --json` and answers from the output. `headwater skill install --agents-md` also writes a short section into `AGENTS.md`, for Codex, Cursor and others, and `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
 
 ## One example
 

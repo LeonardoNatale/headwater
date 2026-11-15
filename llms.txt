@@ -2,7 +2,7 @@
 
 > headwater is an open-source Python library and command line for life cycle assessment (LCA): it scores databases and studies kept as plain files in git, on frozen background releases, with the provenance of every number.
 
-Install with `pip install headwater`, try it with `headwater demo headwater-demo`, and give an AI agent its skill with `headwater skill install`. Every command takes `--json`.
+Install with `pip install headwater`, try it with `headwater demo headwater-demo`, and give an AI agent its skill with `headwater skill install`. Every command but `skill show` takes `--json`.
 
 ## Docs
 
