@@ -2,6 +2,7 @@
 kind and their size, so a person sees where the cache is and what it holds."""
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -65,3 +66,12 @@ def test_a_folder_that_is_not_a_release_is_listed_with_the_reason(home: Path) ->
     [listed] = json.loads(out)["releases"]
     assert listed["folder"] == "broken@000000000000"
     assert "release" not in listed and listed["error"]
+
+
+def test_a_release_folder_under_another_name_is_listed_with_the_reason(home: Path) -> None:
+    shutil.copytree(DEMO / "releases" / TOY, home / "releases" / "renamed@000000000000")
+
+    [listed] = json.loads(run("list", "--json")[1])["releases"]
+
+    assert listed["folder"] == "renamed@000000000000"
+    assert "another name" in listed["error"]

@@ -17,7 +17,8 @@ from headwater.io.inventory import Inventory
 from headwater.io.source import InventoryOptions, SourceKind
 from headwater.link import read_supplier_mapping
 from headwater.model import HeadwaterError, IssueStatus, Role
-from headwater.release import Release, pull, releases_dir
+from headwater.release import pull, releases_dir
+from headwater.release.read import load_manifest
 
 release_app = typer.Typer(help="Import, pull and cache releases.", no_args_is_help=True)
 
@@ -145,7 +146,8 @@ def list_command(as_json: JsonOption = False) -> None:
     """List the releases in the cache: `releases/` in HEADWATER_HOME, ~/.headwater by default.
 
     Each release is given by the name@hash a database pins, with its kind and its size on disk.
-    A folder that does not open as a release is listed with the reason.
+    Only each release.json is read: the files' hashes are checked when a release is pulled or
+    loaded. A folder that does not read as a release is listed with the reason.
     """
     folder = releases_dir()
     entries = (
@@ -170,14 +172,18 @@ def _listed(path: Path) -> dict[str, Any]:
     """One folder of the cache: the release it holds, its kind and its size in bytes."""
     size = sum(f.stat().st_size for f in path.rglob("*") if f.is_file())
     try:
-        release = Release.open(path)
+        manifest = load_manifest(path)
     except HeadwaterError as error:
         return {"folder": path.name, "path": str(path), "bytes": size, "error": str(error)}
+    pin = f"{manifest.name}@{manifest.hash[:12]}"
+    if path.name != pin:
+        error = f"the folder of release {pin} has another name"
+        return {"folder": path.name, "path": str(path), "bytes": size, "error": error}
     return {
         "folder": path.name,
-        "release": f"{release.name}@{release.hash[:12]}",
-        "hash": release.hash,
-        "kind": release.manifest.kind.value,
+        "release": pin,
+        "hash": manifest.hash,
+        "kind": manifest.kind.value,
         "path": str(path),
         "bytes": size,
     }
