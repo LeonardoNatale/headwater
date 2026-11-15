@@ -102,7 +102,7 @@ Exit codes: 0 done; 1 the data has a problem (validation errors, a line not mapp
 
 ## Rules
 
-- A number comes from a command's output, never from memory or from working it out by hand. Give it with its unit.
+- A number comes from a command's output, never from memory, from a README or from working it out by hand. Give it with its unit and 5 significant figures, as the text output prints it: 1.24265 kg CO2-eq, not 1.24. `--json` holds the full float64, such as 1.4280760000000003: round it, do not cut it short.
 - Never invent an id, a flow or a release. Use `headwater find` for background processes, and read `processes.csv` and `flows.csv` for a database's own.
 - An error names what to fix. Read its `code` and `message`, fix that, and run the command again.
 - Validate after every edit, before you report a score.
