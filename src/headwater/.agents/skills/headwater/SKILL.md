@@ -26,7 +26,7 @@ The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and 
 
 - A database is a folder with `database.yaml` (its name, the release it pins in `background:`, its `methods`), `processes.csv` (one row per process), `exchanges.csv` (one row per line: `process,line,role,flow,amount,unit,supplier`) and `flows.csv`. Example: `project/tshirt-dyed`.
 - A study is a folder with `study.yaml`, which names products of the databases next to it and their amounts, and optional `scenarios/`. Example: `project/tshirt-footprint`.
-- A release is a frozen background with its methods, named `name@hash`, kept in a cache (`HEADWATER_HOME`). `headwater release pull` puts one there.
+- A release is a frozen background with its methods, named `name@hash`, kept in a cache (`releases/` in `HEADWATER_HOME`, `~/.headwater` by default). `headwater release pull` puts one there, and `headwater release list --json` lists what the cache holds.
 - A process id is `<database>:<process>`, such as `tshirt-dyed:tshirt`, or a background process such as `toy:electricity-production`. A line is its process and its line id: `tshirt-dyed:tshirt line e02`.
 
 ## Score a database or a study

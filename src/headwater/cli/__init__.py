@@ -135,6 +135,9 @@ EXAMPLES: dict[str, Example] = {
         "copied to olca-toy",
     ),
     "release pull": Example("headwater release pull releases/toy-background@6864b7dbb65d", DEMO),
+    "release list": Example(
+        "headwater release list --json", f"{DEMO}, after `headwater release pull`"
+    ),
     "method import": Example(
         'headwater method import olca-toy --method "toy climate v1" --flow-list '
         "toy-1.0@37b242df3416 --json",
