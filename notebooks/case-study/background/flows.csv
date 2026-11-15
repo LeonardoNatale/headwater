@@ -1,0 +1,20 @@
+id,name,kind,unit,compartment,cas
+invented:electricity,electricity,product,kWh,,
+invented:heat,heat from natural gas,product,MJ,,
+invented:pet-granulate,PET granulate,product,kg,,
+invented:polyester-fabric,polyester fabric,product,kg,,
+invented:nylon-granulate,nylon 6.6 granulate,product,kg,,
+invented:nylon-webbing,nylon webbing,product,kg,,
+invented:zinc-alloy,zinc alloy,product,kg,,
+invented:zip,zip,product,unit,,
+invented:pp-granulate,polypropylene granulate,product,kg,,
+invented:buckle,plastic buckle,product,unit,,
+invented:pu-foam,polyurethane foam,product,kg,,
+invented:cardboard,cardboard box,product,kg,,
+invented:ldpe-film,LDPE film,product,kg,,
+invented:sea-freight,"transport, sea freight",product,tkm,,
+invented:road-freight,"transport, lorry",product,tkm,,
+invented:textile-waste,textile waste,waste,kg,,
+invented:co2,"Carbon dioxide, fossil",elementary,kg,air,124-38-9
+invented:ch4,"Methane, fossil",elementary,kg,air,74-82-8
+invented:n2o,Dinitrogen monoxide,elementary,kg,air,10024-97-2

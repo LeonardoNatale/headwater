@@ -79,7 +79,7 @@ def test_the_ai_agent_commands_run_like_the_quick_start_and_install_the_skill(
     runs it from the built wheel in a clean venv, so the wheel holds the skill (D49)."""
     [shell] = blocks(section("Using headwater with an AI agent"), "bash")
     lines = [line for line in shell.splitlines() if not line.startswith("pip install")]
-    asked = "headwater contributions studies/tshirt-footprint --json"
+    asked = "headwater contributions project/tshirt-footprint --json"
     assert f"`{asked}`" in section("Using headwater with an AI agent")
     pull = "headwater release pull releases/toy-background@6864b7dbb65d"
     script = "\n".join(["set -euo pipefail", *lines, pull + " >/dev/null", asked + "\n"])

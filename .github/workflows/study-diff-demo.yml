@@ -1,7 +1,8 @@
 name: Study diff demo
 
-# The demo studies in src/headwater/demo are a studies repository in miniature. A pull request
-# that changes one gets the results comment, through the reusable workflow, on the toy release.
+# The demo databases and study in src/headwater/demo/project are a repository in miniature. A
+# pull request that changes one gets the results comment, through the reusable workflow, on the
+# toy release.
 
 on:
   pull_request:

@@ -36,7 +36,7 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run pyright
       - run: uv run pytest
-      # Notebooks 03 and 05 need licensed data, and 04 and 05 need Brightway, which CI does not
+      # Notebooks 04 and 06 need licensed data, and 05 and 06 need Brightway, which CI does not
       # install: they are skipped.
       - name: Run the teaching notebooks
         run: uv run --locked --group notebooks pytest --nbmake notebooks

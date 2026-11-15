@@ -11,8 +11,8 @@ The second form writes nothing: it runs the notebooks and fails when what they p
 the files hold, so the outputs cannot go stale. It also fails when a notebook on licensed data
 holds an output. CI runs it. `--clear-licensed` removes the outputs of the licensed notebooks.
 
-Notebook 04 runs Brightway, from the `brightway` dependency group. Without it, both forms leave
-04 out and say so, as CI does; naming 04 without it is an error.
+Notebook 05 runs Brightway, from the `brightway` dependency group. Without it, both forms leave
+05 out and say so, as CI does; naming 05 without it is an error.
 
 Both forms remove what changes from run to run (the time of each cell, the Python patch version
 and how a cell's text is split into chunks), so a refresh shows only real changes.
@@ -27,17 +27,17 @@ from nbclient import NotebookClient
 from nbformat import NotebookNode
 
 TOY_NOTEBOOKS = [
-    "00-getting-started.ipynb",
     "01-first-footprint.ipynb",
     "02-writing-a-database.ipynb",
-    "04-coming-from-brightway.ipynb",
+    "03-case-study.ipynb",
+    "05-coming-from-brightway.ipynb",
 ]
 LICENSED_NOTEBOOKS = [
-    "03-working-with-ecoinvent.ipynb",
-    "05-brightway-and-headwater-on-ecoinvent.ipynb",
+    "04-working-with-ecoinvent.ipynb",
+    "06-brightway-and-headwater-on-ecoinvent.ipynb",
 ]
 """Notebooks on ecoinvent: their outputs hold licensed values, so they are committed without."""
-NEEDS_BRIGHTWAY = {"04-coming-from-brightway.ipynb"}
+NEEDS_BRIGHTWAY = {"05-coming-from-brightway.ipynb"}
 """Toy notebooks that run Brightway: checked and refreshed only where it is installed."""
 
 
@@ -111,7 +111,7 @@ def main() -> None:
     if importlib.util.find_spec("bw2data") is None:
         if set(named) & NEEDS_BRIGHTWAY:
             sys.exit(
-                "Notebook 04 needs Brightway: uv sync --group notebooks --group brightway, "
+                "Notebook 05 needs Brightway: uv sync --group notebooks --group brightway, "
                 "then run this again."
             )
         left_out = [name for name in names if name in NEEDS_BRIGHTWAY]

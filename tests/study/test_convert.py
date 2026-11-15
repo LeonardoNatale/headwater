@@ -200,10 +200,10 @@ def test_the_diff_across_the_conversion_commit_finds_no_change(
 def test_the_demo_is_in_the_two_tables(tmp_path: Path) -> None:
     done = runner.invoke(app, ["demo", str(tmp_path / "demo")])
     assert done.exit_code == 0, done.output
-    studies = tmp_path / "demo" / "studies"
-    assert not list(studies.rglob("processes"))
-    databases = sorted(p.parent.name for p in studies.glob("*/database.yaml"))
+    project = tmp_path / "demo" / "project"
+    assert not list(project.rglob("processes"))
+    databases = sorted(p.parent.name for p in project.glob("*/database.yaml"))
     assert databases == ["dyes", "tshirt", "tshirt-dyed", "tshirt-local-electricity"]
     for name in databases:
-        assert (studies / name / "processes.csv").is_file()
-        assert (studies / name / "exchanges.csv").is_file()
+        assert (project / name / "processes.csv").is_file()
+        assert (project / name / "exchanges.csv").is_file()

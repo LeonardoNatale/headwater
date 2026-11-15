@@ -26,7 +26,7 @@ def demo_command(
 
     The data is a toy, so it needs no licence: a T-shirt of cotton fabric, electricity and dye, on
     a background of three processes. Then, in FOLDER, `headwater release pull` puts the release in
-    the cache and `headwater calc studies/tshirt-footprint` scores the study. The folder's
+    the cache and `headwater calc project/tshirt-footprint` scores the study. The folder's
     README.md says what each part is.
     """
     if folder.exists() and not folder.is_dir():
@@ -39,7 +39,7 @@ def demo_command(
     [release] = (p.name for p in (folder / "releases").iterdir())
     then = [
         f"headwater release pull {Path('releases') / release}",
-        "headwater calc studies/tshirt-footprint",
+        "headwater calc project/tshirt-footprint",
     ]
     if as_json:
         echo({"format": FORMAT, "folder": str(folder), "release": release, "then": then})

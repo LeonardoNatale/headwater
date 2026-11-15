@@ -1,9 +1,9 @@
 """pytest settings for the notebooks.
 
-Notebooks 03 and 05 read a licensed ecoinvent 3.12 copy and its LCIA workbook, so they run only
-when ECOINVENT_DIR and ECOINVENT_LCIA are set, as for the integration tests. Notebooks 04 and 05
+Notebooks 04 and 06 read a licensed ecoinvent 3.12 copy and its LCIA workbook, so they run only
+when ECOINVENT_DIR and ECOINVENT_LCIA are set, as for the integration tests. Notebooks 05 and 06
 run Brightway, so they run only when the `brightway` dependency group is installed. CI has no
-licensed data and skips 03 and 05.
+licensed data and skips 04 and 06.
 """
 
 import importlib.util
@@ -12,12 +12,12 @@ import os
 import pytest
 
 NEEDS_ECOINVENT = {
-    "03-working-with-ecoinvent.ipynb",
-    "05-brightway-and-headwater-on-ecoinvent.ipynb",
+    "04-working-with-ecoinvent.ipynb",
+    "06-brightway-and-headwater-on-ecoinvent.ipynb",
 }
 NEEDS_BRIGHTWAY = {
-    "04-coming-from-brightway.ipynb",
-    "05-brightway-and-headwater-on-ecoinvent.ipynb",
+    "05-coming-from-brightway.ipynb",
+    "06-brightway-and-headwater-on-ecoinvent.ipynb",
 }
 
 

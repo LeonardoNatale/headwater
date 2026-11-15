@@ -41,8 +41,8 @@ def uses_command(
     directly or not, and the way each goes.
 
     A database uses the folders next to it that its `uses:` names, and a study's products are
-    in the databases next to it named by the prefix of their ids, so the users of `studies/dyes`
-    are among the folders of `studies/`. Only their database.yaml and study.yaml files are read.
+    in the databases next to it named by the prefix of their ids, so the users of `project/dyes`
+    are among the folders of `project/`. Only their database.yaml and study.yaml files are read.
     Example: with `tshirt` using `dyes`, and the study `tshirt-footprint` scoring `tshirt:tshirt`,
     `dyes` is reached by `tshirt`, which uses it, and by `tshirt-footprint`, through `tshirt`.
     """

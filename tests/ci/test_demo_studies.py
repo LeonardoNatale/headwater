@@ -17,8 +17,8 @@ from tests.conftest import only_process, open_database
 DEMO = Path(__file__).resolve().parents[2] / "src" / "headwater" / "demo"
 RELEASE = next((DEMO / "releases").glob("toy-background@*"))
 REL = 1e-9
-DATABASES = sorted(p.parent for p in (DEMO / "studies").glob("*/database.yaml"))
-STUDIES = sorted(p.parent for p in (DEMO / "studies").glob("*/study.yaml"))
+DATABASES = sorted(p.parent for p in (DEMO / "project").glob("*/database.yaml"))
+STUDIES = sorted(p.parent for p in (DEMO / "project").glob("*/study.yaml"))
 
 
 def _build_script() -> ModuleType:
@@ -37,7 +37,7 @@ def test_the_committed_release_is_what_the_build_script_writes(tmp_path: Path) -
     assert rebuilt.path.name == RELEASE.name, (
         "The toy background or the release format changed. Run "
         "`uv run python tests/ci/build_demo_release.py`, replace the folder in "
-        "src/headwater/demo/releases/, and pin the studies to the new name."
+        "src/headwater/demo/releases/, and pin the databases to the new name."
     )
     committed = Release.open(RELEASE)
     committed.verify()
@@ -71,7 +71,7 @@ def test_each_demo_database_pins_the_committed_release(database: Path) -> None:
     ],
 )
 def test_the_demo_databases_have_the_hand_checked_scores(study: str, score: float) -> None:
-    opened = open_database(DEMO / "studies" / study)
+    opened = open_database(DEMO / "project" / study)
     [method] = opened.folder.database.methods
     background = hw.load(str(opened.folder.database.background), method=method)
 
@@ -81,7 +81,7 @@ def test_the_demo_databases_have_the_hand_checked_scores(study: str, score: floa
 
 
 def test_the_demo_study_scores_its_t_shirt_and_its_scenario() -> None:
-    study = hw.open(DEMO / "studies" / "tshirt-footprint")
+    study = hw.open(DEMO / "project" / "tshirt-footprint")
     assert isinstance(study, hw.Study)
     background = hw.load(RELEASE.name, method="toy-climate")
 
@@ -101,7 +101,7 @@ def test_the_demo_comment_lists_the_databases_then_the_study(
 ) -> None:
     """A pull request that lowers the dye's CO2 from 4 to 3.5 kg per kg, as the README says."""
     repo = tmp_path / "demo"
-    shutil.copytree(DEMO / "studies", repo / "studies")
+    shutil.copytree(DEMO / "project", repo / "project")
 
     def run(*args: str) -> None:
         subprocess.run(
@@ -123,7 +123,7 @@ def test_the_demo_comment_lists_the_databases_then_the_study(
     run("init", "--quiet", "--initial-branch", "main")
     run("add", "--all")
     run("commit", "--quiet", "-m", "the demo")
-    dye = repo / "studies" / "dyes" / "exchanges.csv"
+    dye = repo / "project" / "dyes" / "exchanges.csv"
     dye.write_text(dye.read_text().replace("toy:co2,4,", "toy:co2,3.5,"))
     run("commit", "--quiet", "--all", "-m", "a cleaner dye")
     monkeypatch.chdir(repo)
@@ -132,8 +132,8 @@ def test_the_demo_comment_lists_the_databases_then_the_study(
 
     heads = [line for line in body.splitlines() if line.startswith("### ")]
     assert heads == [
-        "### Database `studies/dyes`",
-        "### Database `studies/tshirt-dyed`",
-        "### Study `studies/tshirt-footprint`",
+        "### Database `project/dyes`",
+        "### Database `project/tshirt-dyed`",
+        "### Study `project/tshirt-footprint`",
     ]
     assert "| 1 × T-shirt | Climate change (kg CO2-eq) | 1.24265 | 1.23765 |" in body

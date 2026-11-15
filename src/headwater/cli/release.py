@@ -1,4 +1,5 @@
-"""`headwater release`: import a source into a release, and pull a release into the cache."""
+"""`headwater release`: import a source into a release, pull a release into the cache, and list
+the cache."""
 
 import time
 from collections import Counter
@@ -16,7 +17,8 @@ from headwater.io.inventory import Inventory
 from headwater.io.source import InventoryOptions, SourceKind
 from headwater.link import read_supplier_mapping
 from headwater.model import HeadwaterError, IssueStatus, Role
-from headwater.release import pull
+from headwater.release import pull, releases_dir
+from headwater.release.read import load_manifest
 
 release_app = typer.Typer(help="Import, pull and cache releases.", no_args_is_help=True)
 
@@ -33,6 +35,10 @@ or removed."""
 
 PULL_FORMAT = "headwater-release-pull/1"
 """The `format` of `release pull --json`. Within version 1 keys may be added, none is renamed or
+removed."""
+
+LIST_FORMAT = "headwater-release-list/1"
+"""The `format` of `release list --json`. Within version 1 keys may be added, none is renamed or
 removed."""
 
 
@@ -133,6 +139,62 @@ def pull_command(
         echo({"format": PULL_FORMAT, **pulled})
         return
     typer.echo(f"Pulled release {release.path.name} into {release.path.parent}")
+
+
+@release_app.command("list")
+def list_command(as_json: JsonOption = False) -> None:
+    """List the releases in the cache: `releases/` in HEADWATER_HOME, ~/.headwater by default.
+
+    Each release is given by the name@hash a database pins, with its kind and its size on disk.
+    Only each release.json is read: the files' hashes are checked when a release is pulled or
+    loaded. A folder that does not read as a release is listed with the reason.
+    """
+    folder = releases_dir()
+    entries = (
+        sorted(p for p in folder.iterdir() if not p.name.startswith(".")) if folder.is_dir() else []
+    )
+    found = [_listed(path) for path in entries if path.is_dir()]
+    if as_json:
+        echo({"format": LIST_FORMAT, "folder": str(folder), "releases": found})
+        return
+    if not found:
+        typer.echo(f"No releases in {folder}. Pull one with: headwater release pull <folder>")
+        return
+    typer.echo(f"Releases in {folder}:")
+    for entry in found:
+        if "error" in entry:
+            typer.echo(f"  {entry['folder']}  cannot be read: {entry['error']}")
+        else:
+            typer.echo(f"  {entry['release']}  {entry['kind']}  {_size(entry['bytes'])}")
+
+
+def _listed(path: Path) -> dict[str, Any]:
+    """One folder of the cache: the release it holds, its kind and its size in bytes."""
+    size = sum(f.stat().st_size for f in path.rglob("*") if f.is_file())
+    try:
+        manifest = load_manifest(path)
+    except HeadwaterError as error:
+        return {"folder": path.name, "path": str(path), "bytes": size, "error": str(error)}
+    pin = f"{manifest.name}@{manifest.hash[:12]}"
+    if path.name != pin:
+        error = f"the folder of release {pin} has another name"
+        return {"folder": path.name, "path": str(path), "bytes": size, "error": error}
+    return {
+        "folder": path.name,
+        "release": pin,
+        "hash": manifest.hash,
+        "kind": manifest.kind.value,
+        "path": str(path),
+        "bytes": size,
+    }
+
+
+def _size(size: int) -> str:
+    """A size for people: 1.2 MB, 340 kB."""
+    for unit, scale in (("GB", 1e9), ("MB", 1e6), ("kB", 1e3)):
+        if size >= scale:
+            return f"{size / scale:.1f} {unit}"
+    return f"{size} B"
 
 
 def _summary(inventory: Inventory, path: Path, took: float) -> dict[str, Any]:

@@ -110,17 +110,17 @@ DEMO = "in the folder of `headwater demo`"
 """Where most examples run."""
 
 EXAMPLES: dict[str, Example] = {
-    "validate": Example("headwater validate studies/tshirt-footprint --json", DEMO),
-    "calc": Example("headwater calc studies/tshirt-footprint --json", DEMO),
-    "contributions": Example("headwater contributions studies/tshirt-footprint --json", DEMO),
-    "sensitivity": Example("headwater sensitivity studies/tshirt-footprint --top 3 --json", DEMO),
-    "where": Example("headwater where studies/tshirt-footprint --json", DEMO),
-    "schema": Example("headwater schema studies --json", DEMO),
+    "validate": Example("headwater validate project/tshirt-footprint --json", DEMO),
+    "calc": Example("headwater calc project/tshirt-footprint --json", DEMO),
+    "contributions": Example("headwater contributions project/tshirt-footprint --json", DEMO),
+    "sensitivity": Example("headwater sensitivity project/tshirt-footprint --top 3 --json", DEMO),
+    "where": Example("headwater where project/tshirt-footprint --json", DEMO),
+    "schema": Example("headwater schema project --json", DEMO),
     "find": Example(
         "headwater find electricity --release toy-background@6864b7dbb65d --json", DEMO
     ),
     "diff": Example(
-        "headwater diff HEAD studies/tshirt-footprint --json",
+        "headwater diff HEAD project/tshirt-footprint --json",
         f"{DEMO}, committed to git, after an edit",
     ),
     "upgrade": Example(
@@ -135,6 +135,9 @@ EXAMPLES: dict[str, Example] = {
         "copied to olca-toy",
     ),
     "release pull": Example("headwater release pull releases/toy-background@6864b7dbb65d", DEMO),
+    "release list": Example(
+        "headwater release list --json", f"{DEMO}, after `headwater release pull`"
+    ),
     "method import": Example(
         'headwater method import olca-toy --method "toy climate v1" --flow-list '
         "toy-1.0@37b242df3416 --json",
@@ -148,16 +151,16 @@ EXAMPLES: dict[str, Example] = {
     ),
     "database import-excel": Example(
         "headwater database import-excel tshirt.xlsx --release toy-background@6864b7dbb65d "
-        "--out studies/tshirt-excel --json",
+        "--out project/tshirt-excel --json",
         f"{DEMO}, with tshirt.xlsx the sheet of the repository's tests/fixtures/excel/tshirt.csv",
     ),
     "database import-brightway": Example(
         "headwater database import-brightway toy tshirt --brightway-dir brightway --release "
-        "toy-background@6864b7dbb65d --out studies/tshirt-bw --json",
+        "toy-background@6864b7dbb65d --out project/tshirt-bw --json",
         f"{DEMO}, with the toy Brightway project of the repository's tests/fixtures/brightway "
         "copied to brightway",
     ),
-    "database uses": Example("headwater database uses studies/dyes --json", DEMO),
+    "database uses": Example("headwater database uses project/dyes --json", DEMO),
     "database convert": Example(
         "headwater database convert old-tshirt-dyed --json",
         "on the folder of the repository's tests/fixtures/old-layout/tshirt-dyed, copied to "

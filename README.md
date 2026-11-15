@@ -1,10 +1,8 @@
 # headwater
 
-A Python library for life cycle assessment (LCA).
+A Python library and command line for life cycle assessment (LCA). A background database such as ecoinvent is imported once, with the score of every product already solved. Your own data is a few CSV tables in git, and a footprint takes milliseconds, with no server and no database to install.
 
-Background databases like ecoinvent are imported once per version into immutable Parquet files, with every product's impact scores already solved. Studies are plain text files in git. Calculations run inside your Python process with DuckDB and SciPy. There is no server and no database to install.
-
-**Status: alpha.** File formats and the Python API may change before 1.0. headwater imports ecoinvent 3.12, cut-off and APOS, and other sources (ecoSpold1, SimaPro CSV, openLCA JSON-LD) into frozen releases, and pulls them from a folder or a bucket URL. Databases, two CSV tables (`processes.csv` and `exchanges.csv`) beside a `database.yaml`, written by hand or converted from a Brightway Excel workbook or a database of a Brightway project, and the studies that ask a question of them, calculate, explain, give single scores and Monte Carlo ranges, upgrade to a new release and show their changes as a diff on pull requests. Not there yet: publishing a database as a release, and EF 3.1 single scores with JRC's factors ([roadmap](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md)).
+**Status: alpha.** File formats and the Python API may change before 1.0 ([roadmap](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md)).
 
 ## Install
 
@@ -23,10 +21,10 @@ pip install headwater
 headwater demo headwater-demo
 cd headwater-demo
 headwater release pull releases/toy-background@6864b7dbb65d
-headwater calc studies/tshirt-footprint
+headwater calc project/tshirt-footprint
 ```
 
-`headwater demo` copies a toy background, frozen as a release, four small databases and a study into `headwater-demo`. `release pull` checks the release and copies it into your cache, `~/.headwater` or `$HEADWATER_HOME`. `calc` scores the study, one dyed T-shirt: 1.24265 kg CO₂-eq, with the data versions and the solver checks behind it.
+`headwater demo` copies a toy background, frozen as a release, four small databases and a study into `headwater-demo`. Each database names the release it was written for, `background: toy-background@6864b7dbb65d` in its `database.yaml`, and headwater looks that name up in your release cache: the folder `HEADWATER_HOME` names, `~/.headwater` by default. `release pull` checks the release's hash and copies it there, once. Every database and study on your machine then uses it, and the hash means the same data gives the same numbers on any machine. `calc` scores the study, one dyed T-shirt: 1.24265 kg CO₂-eq, with the data versions and the solver checks behind it.
 
 The same in Python, in that folder:
 
@@ -34,13 +32,22 @@ The same in Python, in that folder:
 import headwater as hw
 
 background = hw.load("toy-background@6864b7dbb65d")
-[result] = hw.open("studies/tshirt-footprint").calc(background)
+[result] = hw.open("project/tshirt-footprint").calc(background)
 print(f"{result.score:.6f}")  # 1.242646
 ```
 
-A database made with headwater 0.1.0 holds `processes/`: convert it once with `headwater database convert <folder>` ([workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#converting-the-layout-before-020)).
+`headwater --help` lists every command, each with an example on the demo.
 
-Next: `headwater --help`, the folder's README.md, and [Setup](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#setup) to import ecoinvent.
+## Learn
+
+- [How headwater works](https://github.com/LeonardoNatale/headwater/blob/main/docs/how-it-works.md): the three ideas behind it, on one T-shirt. Two pages.
+- [Glossary](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/glossary.md): every term, with an example.
+- Three notebooks, to read on GitHub with their outputs, or to run in a clone of the repository ([how](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/README.md)):
+  - [01-first-footprint](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/01-first-footprint.ipynb): the demo's T-shirt, step by step: load, calculate, what it is made of, where it is emitted, which lines matter most.
+  - [02-writing-a-database](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/02-writing-a-database.ipynb): a database written file by file, a study with scenarios, and the mistakes headwater catches.
+  - [03-case-study](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/03-case-study.ipynb): a backpack on invented data, from its footprint to two scenarios, a Monte Carlo range and a design change in git.
+
+More notebooks cover ecoinvent 3.12 and the same tasks in Brightway.
 
 ## Using headwater with an AI agent
 
@@ -52,11 +59,18 @@ headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
 
-Then ask Claude "what drives the footprint of studies/tshirt-footprint?". It runs `headwater contributions studies/tshirt-footprint --json` and answers from the output. The links in `.claude/skills` and `.agents/skills` serve Claude Code, Codex, Copilot and Cursor, and follow upgrades of headwater. `uv tool run library-skills --claude` makes the same links, for every library of a project that ships a skill. `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
+Then ask Claude "what drives the footprint of project/tshirt-footprint?". It runs `headwater contributions project/tshirt-footprint --json` and answers from the output. The links in `.claude/skills` and `.agents/skills` serve Claude Code, Codex, Copilot and Cursor, and follow upgrades of headwater. `uv tool run library-skills --claude` makes the same links, for every library of a project that ships a skill. `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
 
-## One example
+## Why headwater
 
-A toy T-shirt factory buys 0.25 kg of cotton fabric and 0.5 kWh of electricity per T-shirt. The background database already knows the score of each thing it buys:
+- **An error, never a wrong number.** Unlinked inputs, unknown units and numerically unsafe results stop the work with a list of what is wrong. A flow the method does not count is listed on the result, never dropped.
+- **Every number explained.** What a product buys, where its emissions happen, which lines move it most, and why it changed between two commits.
+- **Every number reproducible.** A result records the release, the method, the solver settings and the accuracy check behind it.
+- **Fast once loaded.** On a synthetic background the size of ecoinvent, a study scores in 42 ms ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#study-queries-on-a-release)) and 50,000 SKUs in 55 ms ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#calculation-from-a-release)).
+
+We studied Brightway, the leading open-source Python LCA framework, before we built headwater: [docs/findings.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/findings.md) says what we found.
+
+One example. A toy T-shirt factory buys 0.25 kg of cotton fabric and 0.5 kWh of electricity per T-shirt. The background already knows the score of each thing it buys:
 
 | Bought | Amount | Stored score (kg CO₂-eq per unit) | Contribution |
 |---|---|---|---|
@@ -64,62 +78,20 @@ A toy T-shirt factory buys 0.25 kg of cotton fabric and 0.5 kWh of electricity p
 | electricity | 0.5 kWh | 0.5298 | 0.26490 |
 | **T-shirt** | | | **1.19205** |
 
-Change the fabric to 0.30 kg and the answer is 1.37748, with no work on the background. The same idea scales to ecoinvent (23,522 products) and to tens of thousands of SKUs. [docs/calculation.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/calculation.md) explains the math on this example.
-
-## Goal
-
-- **Correct numbers, or an error.** Unlinked inputs, unknown units and numerically unsafe results stop the work with a list of what is wrong. A flow the method does not cover is listed on the result. In a database's own processes it is an error until a row of the database's `no_factor.csv` says why it counts 0. Nothing is dropped silently.
-- **Explainable numbers.** For any result: what it buys, where emissions physically happen, and which inputs matter most.
-- **Reproducible numbers.** Every result records the exact data versions, method, code commit and solver settings that produced it.
-- **Easy setup.** `pip install headwater`, a folder, and git. Background data is imported once and reused, never re-imported per project.
-- **Fast enough to stop thinking about speed.** Editing a database, scoring a portfolio of SKUs and exploring scenarios happen in milliseconds once the background is loaded.
-- **A general library.** Nothing in it is specific to one company. Organisation-specific code (storage, exports, reporting rules) lives in separate packages.
-
-## What we found
-
-We studied Brightway, the leading open-source Python LCA framework, by reading its code, reproducing its failures and timing it on ecoinvent 3.10. Its calculation core is sound. Its data layer is where things go wrong: integer ids that change on every rewrite, writes that delete and reinsert, data spread over seven kinds of files, and failures that return a wrong number instead of an error. We also checked our own design against LCA practice (ecoinvent conventions, ISO 14044/14067, PEF, GHG Protocol) and corrected it. Details and evidence: [docs/findings.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/findings.md). All measurements: [docs/appendix/benchmarks.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md).
-
-## What we build
-
-```
-headwater            the library: data model, importers, validation, releases,
-                     calculation, database files, CLI and Python API
-headwater-<org>      optional, private, per organisation: storage access,
-                     exports to internal systems, reporting rules
-```
-
-## Stack
-
-| Part | Choice |
-|---|---|
-| Language | Python 3.13+ (developed on 3.14) |
-| Background data | Parquet files (zstd), immutable, named by content hash |
-| Query engine | DuckDB, in-process, in memory |
-| Calculation | NumPy and SciPy sparse (SuperLU), solver pluggable |
-| Studies and history | YAML and CSV files in git |
-| Records and validation | Pydantic |
-| Parsing ecoSpold2 | lxml |
-| Tooling | uv, ruff, pyright, pytest |
-
-No Postgres and no server in v1. Reasons in [docs/design.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/design.md#stack).
+Change the fabric to 0.30 kg and the answer is 1.37748, with no work on the background. [docs/calculation.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/calculation.md) explains the math on this example.
 
 ## Docs
 
-| Read | When |
-|---|---|
-| [AGENTS.md](https://github.com/LeonardoNatale/headwater/blob/main/AGENTS.md) | Before writing any code. Rules that are not negotiable. |
-| [docs/findings.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/findings.md) | You want to know why the design is the way it is. |
-| [docs/design.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/design.md) | Principles, architecture, data model, file formats. |
-| [docs/calculation.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/calculation.md) | How results are computed, explained and updated. |
-| [docs/workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md) | Setup, commands, collaboration with git, CI. |
-| [notebooks/](https://github.com/LeonardoNatale/headwater/tree/main/notebooks) | You want to learn by running code, in a clone of the repository: getting started, a first footprint, writing a database, ecoinvent 3.12, and the same tasks in Brightway and headwater side by side. |
-| [docs/roadmap.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md) | What to build in which order, and the test that closes each step. |
-| [docs/decisions.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/decisions.md) | What is settled, and what is still open. |
-| [docs/appendix/benchmarks.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md) | Every measured number, with its scope and script. |
-| [docs/appendix/glossary.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/glossary.md) | LCA and math terms in plain words. |
-| [docs/appendix/sources.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/sources.md) | Links. |
-| [bench/](https://github.com/LeonardoNatale/headwater/tree/main/bench) | The scripts behind the measurements. |
+- [docs/workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md): setup with ecoinvent, every command, working with git, the results diff in CI.
+- [docs/design.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/design.md): principles, data model and file formats.
+- [docs/calculation.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/calculation.md): how results are computed, explained and updated, and the Python API.
+
+A database made with headwater 0.1.0 holds `processes/`: convert it once with `headwater database convert <folder>` ([workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#converting-the-layout-before-020)).
+
+## Contributing
+
+Working in a clone, the rules for code, the roadmap and the decisions: [CONTRIBUTING.md](https://github.com/LeonardoNatale/headwater/blob/main/CONTRIBUTING.md).
 
 ## Licence
 
-Apache-2.0: [LICENSE](https://github.com/LeonardoNatale/headwater/blob/main/LICENSE). The demo and the test fixtures are toy data. No licensed data is in the package or the repository.
+Apache-2.0: [LICENSE](https://github.com/LeonardoNatale/headwater/blob/main/LICENSE). The demo, the case study and the test fixtures are toy or invented data. No licensed data is in the package or the repository.
