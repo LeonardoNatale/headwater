@@ -811,3 +811,27 @@ Script: `cli_startup.py`. Raw output: [bench/results/cli_startup_results.json](.
 - `find` loads PyArrow, Pydantic and NumPy and no SciPy, DuckDB or `pyarrow.dataset`. A release table is read with `pq.ParquetFile`, because `pq.read_table` opens a dataset.
 - headwater never imports pandas. PyArrow imports it itself when it is installed: in `pyarrow.dataset`, and at the first `pa.array` of a Python list. `--help` and `find` reach neither. `calc` still reaches the second, so with pandas installed it loads pandas; without it, it does not.
 - `calc` is the solver's own import and work: NumPy, SciPy, and DuckDB for the checks of an in-memory release. The "before" runs were made at load 5 to 6 (14 at the end of the run with pandas), the "after" runs at load 12 to 14.
+
+## AI agent tasks
+
+Script: `agent_tasks.py`. Raw output: [bench/results/agent_tasks_sonnet_results.json](../../bench/results/agent_tasks_sonnet_results.json) and [bench/results/agent_tasks_haiku_results.json](../../bench/results/agent_tasks_haiku_results.json), and the first runs, with the skill copied and before its rule on rounding: [sonnet](../../bench/results/agent_tasks_sonnet_first_results.json), [haiku](../../bench/results/agent_tasks_haiku_first_results.json).
+
+**Scope:** one Apple Silicon Mac (M2 Pro), macOS 26.6.2, 15 November 2026. headwater 0.3.0 from its built wheel, in a new Python 3.13 venv; with the skill, `headwater skill install` linked it into `.claude/skills` and `.agents/skills`. Claude Code 2.1.263, `claude -p`, with the models `claude-sonnet-5` (`--model sonnet`) and `claude-haiku-4-5-20251001` (`--model haiku`). The toy demo only, no licensed data. Each session runs in a fresh copy of the demo, its release pulled and the folder committed to git, with the tools Bash, Read, Edit, Write, Glob and Grep, four sessions at a time, so the times include that load. `--setting-sources project` and `--strict-mcp-config` keep out the CLAUDE.md, settings, plugins and MCP servers of the machine; the first event of every session was checked for that, and for the skill in the runs that installed it. One run of each task and variant, so a single pass or fail can change from one run to the next.
+
+A task passes when the last answer holds every expected number, with at least 4 decimals and within the rounding of the decimals written (1.24265 or 1.2426 for 1.242646, not 1.24), and the expected words. The edit also needs line e02 at 0.3 kg in `studies/tshirt-dyed/exchanges.csv` and a study that validates.
+
+| Task | Expected | Sonnet, without the skill | Sonnet, with | Haiku, without | Haiku, with |
+|---|---|---|---|---|---|
+| The score of `studies/tshirt-footprint` | 1.242646 | pass, from the README | pass | pass, from the README | pass |
+| The line that contributes most | e02, fabric | pass | pass | pass | pass |
+| Fabric 0.25 → 0.3 kg, the new score | 1.428076, file edited, valid | **fail**: edited `studies/tshirt`, which the study does not use, and gave 1.24265 | pass | pass | pass |
+| The diff against the last commit | 1.242646 → 1.428076, e02 | pass | pass | pass | pass |
+| The score in the scenario `cleaner-dye` | 1.237646 | pass, from the README | pass | pass, from the README | pass |
+| **Passed** | | **4 of 5** | **5 of 5** | **5 of 5** | **5 of 5** |
+| Turns, all five tasks | | 48 | 28 | 62 | 25 |
+| Time, all five tasks | | 145 s | 57 s | 131 s | 76 s |
+| Cost reported by Claude Code | | $0.78 | $0.54 | $0.43 | $0.22 |
+| Sessions that used `--json` | | 0 of 5 | 5 of 5 | 0 of 5 | 5 of 5 |
+
+- "From the README" means the answer says it took the number from the demo's README.md, which lists the toy's scores, rather than from a command. Sonnet ran no headwater command for those two tasks. With the skill, every session ran headwater and none quoted the README.
+- The first runs, with the skill copied into `.claude/skills` and before its rule on rounding: Sonnet passed 5 of 5 each way. Haiku passed 5 of 5 without the skill and 3 of 5 with it: it read the full float64 of `--json`, 1.4280760000000003, and cut it to 1.428, and 1.24 → 1.43 for the diff. (That run's check counted 2 of 5: it also refused 1.2426460000000001, a bug of the check, fixed since.) The skill now says to give 5 significant figures.

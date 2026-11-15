@@ -3,11 +3,13 @@
 import time
 from collections import Counter
 from pathlib import Path
-from typing import Annotated, Any, NoReturn
+from typing import Annotated, Any
 
 import pyarrow.compute as pc
 import typer
 
+from headwater.cli._common import JsonOption, fail
+from headwater.cli._json import echo
 from headwater.io.exclude import read_exclude
 from headwater.io.formats import describe, inventory_from
 from headwater.io.inventory import Inventory
@@ -24,6 +26,14 @@ _SHOWN = 20
 """Warnings listed one by one before the rest are counted."""
 
 _FORMATS = describe(SourceKind.inventory)
+
+IMPORT_FORMAT = "headwater-release-import/1"
+"""The `format` of `release import --json`. Within version 1 keys may be added, none is renamed
+or removed."""
+
+PULL_FORMAT = "headwater-release-pull/1"
+"""The `format` of `release pull --json`. Within version 1 keys may be added, none is renamed or
+removed."""
 
 
 @release_app.command("import")
@@ -75,6 +85,7 @@ def import_command(
             "why it is a data gap, with who and when."
         ),
     ] = None,
+    as_json: JsonOption = False,
 ) -> None:
     """Import a source into a release in HEADWATER_HOME."""
     start = time.perf_counter()
@@ -88,10 +99,16 @@ def import_command(
         )
         mapping = read_supplier_mapping(supplier_mapping) if supplier_mapping else None
         inventory = inventory_from(path, options, format=format, suppliers=mapping)
-        _report(inventory, path, time.perf_counter() - start)
+        found = _summary(inventory, path, time.perf_counter() - start)
+        if not as_json:
+            _report(found)
         release = inventory.freeze(name=name)
     except HeadwaterError as error:
-        _fail(error)
+        fail(error)
+    if as_json:
+        written = {"release": f"{release.name}@{release.hash}", "path": str(release.path)}
+        echo({"format": IMPORT_FORMAT, **written, **found})
+        return
     typer.echo(f"Wrote release {release.path.name} to {release.path.parent}")
 
 
@@ -104,52 +121,78 @@ def pull_command(
             "<name>@<hash>."
         ),
     ],
+    as_json: JsonOption = False,
 ) -> None:
     """Check a release folder or URL and copy it into the cache in HEADWATER_HOME."""
     try:
         release = pull(source)
     except HeadwaterError as error:
-        _fail(error)
+        fail(error)
+    if as_json:
+        pulled = {"release": f"{release.name}@{release.hash}", "path": str(release.path)}
+        echo({"format": PULL_FORMAT, **pulled})
+        return
     typer.echo(f"Pulled release {release.path.name} into {release.path.parent}")
 
 
-def _report(inventory: Inventory, path: Path, took: float) -> None:
+def _summary(inventory: Inventory, path: Path, took: float) -> dict[str, Any]:
+    """What was read, as data: the counts, the lines by role, each data gap and each warning."""
     lines = inventory.exchange_table
     info = inventory.info
     values: Any = compute.value_counts(lines.column("role"))
     counts: list[dict[str, Any]] = values.to_pylist()
     roles = Counter({Role(c["values"]): c["counts"] for c in counts})
-    what = " ".join(p for p in (info.source, info.version, info.system_model) if p)
-    typer.echo(
-        f"Read {inventory.process_table.num_rows:,} processes of {what} from {path} in "
-        f"{took:.1f} s: {len(inventory.flows):,} flows, {lines.num_rows:,} lines."
-    )
-    typer.echo(
-        "Lines by role: " + ", ".join(f"{r.value} {roles[r]:,}" for r in Role if roles[r]) + "."
-    )
     gaps = [i for i in inventory.issues if i.status is IssueStatus.data_gap]
+    processes = {
+        r["id"]: r for r in inventory.process_table.select(["id", "name", "location"]).to_pylist()
+    }
+    flows = {f.id: f for f in inventory.flows}
+    return {
+        "source_path": str(path),
+        "source": info.source,
+        "version": info.version,
+        "system_model": info.system_model,
+        "seconds": took,
+        "processes": inventory.process_table.num_rows,
+        "flows": len(inventory.flows),
+        "lines": lines.num_rows,
+        "roles": {r.value: roles[r] for r in Role if roles[r]},
+        "data_gaps": [
+            {
+                "process_id": issue.process_id,
+                "name": processes[issue.process_id]["name"],
+                "location": processes[issue.process_id]["location"],
+                "line_id": issue.line_id,
+                "flow_id": issue.flow_id,
+                "flow_name": flows[issue.flow_id].name,
+                "reason": issue.reason,
+            }
+            for issue in gaps
+        ],
+        "warnings": [str(w) for w in inventory.warnings],
+    }
+
+
+def _report(found: dict[str, Any]) -> None:
+    what = " ".join(p for p in (found["source"], found["version"], found["system_model"]) if p)
+    typer.echo(
+        f"Read {found['processes']:,} processes of {what} from {found['source_path']} in "
+        f"{found['seconds']:.1f} s: {found['flows']:,} flows, {found['lines']:,} lines."
+    )
+    typer.echo("Lines by role: " + ", ".join(f"{r} {n:,}" for r, n in found["roles"].items()) + ".")
+    gaps = found["data_gaps"]
     if gaps:
-        processes = {
-            r["id"]: r
-            for r in inventory.process_table.select(["id", "name", "location"]).to_pylist()
-        }
-        flows = {f.id: f for f in inventory.flows}
         typer.echo(f"{len(gaps)} data gap{'s' if len(gaps) > 1 else ''}:")
-        for issue in gaps:
-            process = processes[issue.process_id]
+        for gap in gaps:
             typer.echo(
-                f"- {process['name']}, {process['location']} ({issue.process_id}) line "
-                f"{issue.line_id}, {flows[issue.flow_id].name}: {issue.reason}"
+                f"- {gap['name']}, {gap['location']} ({gap['process_id']}) line "
+                f"{gap['line_id']}, {gap['flow_name']}: {gap['reason']}"
             )
-    if inventory.warnings:
-        count = len(inventory.warnings)
+    warnings = found["warnings"]
+    if warnings:
+        count = len(warnings)
         typer.echo(f"{count} warning{'s' if count > 1 else ''}:")
-        for warning in inventory.warnings[:_SHOWN]:
+        for warning in warnings[:_SHOWN]:
             typer.echo(f"- {warning}")
         if count > _SHOWN:
             typer.echo(f"- and {count - _SHOWN} more")
-
-
-def _fail(error: HeadwaterError) -> NoReturn:
-    typer.echo(str(error), err=True)
-    raise typer.Exit(code=1)

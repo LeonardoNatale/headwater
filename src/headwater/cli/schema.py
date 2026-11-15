@@ -5,7 +5,12 @@ from typing import Annotated
 
 import typer
 
-from headwater.cli._common import fail
+from headwater.cli._common import JsonOption, fail
+from headwater.cli._json import echo
+
+FORMAT = "headwater-schema/1"
+"""The `format` of `schema --json`. Within version 1 keys may be added, none is renamed or
+removed."""
 
 
 def schema_command(
@@ -15,6 +20,7 @@ def schema_command(
             help="The folder that holds databases and studies side by side. Default: here."
         ),
     ] = Path("."),
+    as_json: JsonOption = False,
 ) -> None:
     """Write JSON schemas for database.yaml, study.yaml and scenario files into FOLDER/.schemas.
 
@@ -29,6 +35,16 @@ def schema_command(
         fail(f"{folder} is not a folder", code=2)
     written = write_schemas(folder)
     ids = process_ids_in(folder)
+    if as_json:
+        echo(
+            {
+                "format": FORMAT,
+                "folder": str(folder),
+                "written": [str(p) for p in written],
+                "process_ids": len(ids),
+            }
+        )
+        return
     typer.echo(
         f"Wrote {', '.join(p.name for p in written)} into {folder / '.schemas'}, with "
         f"{len(ids)} process {'id' if len(ids) == 1 else 'ids'} of the databases in {folder}."

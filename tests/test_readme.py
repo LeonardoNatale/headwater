@@ -4,6 +4,7 @@ The quick start runs with the `headwater` and `python` next to this test's Pytho
 from the built wheel in a clean venv: `HEADWATER_QUICK_START_BIN` names that venv's `bin` folder.
 """
 
+import json
 import os
 import re
 import subprocess
@@ -69,3 +70,35 @@ def test_the_quick_start_runs_as_written_and_scores_the_demo_study(tmp_path: Pat
     printed = float(done.stdout.strip().splitlines()[-1])
     assert printed == pytest.approx(SCORE, rel=1e-9)
     assert f"# {SCORE}" in python, "the quick start shows the number it prints"
+
+
+def test_the_ai_agent_commands_run_like_the_quick_start_and_install_the_skill(
+    tmp_path: Path,
+) -> None:
+    """The section "Using headwater with an AI agent", then the command it says Claude runs. CI
+    runs it from the built wheel in a clean venv, so the wheel holds the skill (D49)."""
+    [shell] = blocks(section("Using headwater with an AI agent"), "bash")
+    lines = [line for line in shell.splitlines() if not line.startswith("pip install")]
+    asked = "headwater contributions studies/tshirt-footprint --json"
+    assert f"`{asked}`" in section("Using headwater with an AI agent")
+    pull = "headwater release pull releases/toy-background@6864b7dbb65d"
+    script = "\n".join(["set -euo pipefail", *lines, pull + " >/dev/null", asked + "\n"])
+    bin_folder = os.environ.get("HEADWATER_QUICK_START_BIN") or str(Path(sys.executable).parent)
+    env = {
+        **os.environ,
+        "PATH": f"{bin_folder}{os.pathsep}{os.environ['PATH']}",
+        "HEADWATER_HOME": str(tmp_path / "home"),
+    }
+
+    done = subprocess.run(
+        ["bash", "-c", script], cwd=tmp_path, env=env, capture_output=True, text=True
+    )
+
+    assert done.returncode == 0, done.stdout + done.stderr
+    installed = tmp_path / "headwater-demo" / ".claude" / "skills" / "headwater" / "SKILL.md"
+    packaged = ROOT / "src" / "headwater" / ".agents" / "skills" / "headwater" / "SKILL.md"
+    assert installed.read_bytes() == packaged.read_bytes()
+    found = json.loads(done.stdout[done.stdout.index("{") :])
+    [result] = found["results"]
+    assert result["score"] == pytest.approx(SCORE, rel=1e-9)
+    assert result["tree"]["children"][0]["name"] == "cotton fabric production"

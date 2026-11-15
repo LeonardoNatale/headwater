@@ -127,7 +127,7 @@ def test_the_release_is_named_in_full(
     }
 
 
-def test_a_background_that_cannot_be_loaded_prints_nothing_to_standard_output(
+def test_a_background_that_cannot_be_loaded_prints_an_error_document(
     toy: Path, home: Path, invoke: Invoke, invoke_stdout: Invoke
 ) -> None:
     edit(study(toy) / "database.yaml", "toy-background@fixture", "toy-background@0123456789ab")
@@ -136,8 +136,10 @@ def test_a_background_that_cannot_be_loaded_prints_nothing_to_standard_output(
     _, both = invoke("validate", study(toy), "--json")
 
     assert code == 1
-    assert stdout == ""
-    assert "headwater release pull" in both
+    error = json.loads(stdout)  # D49: not a validation, which would need a background
+    assert error["format"] == "headwater-error/1"
+    assert {p["code"] for p in error["errors"]} == {"release-not-found"}
+    assert "headwater release pull" in both.split("{")[0]
 
 
 def test_the_text_is_unchanged_without_the_flag(

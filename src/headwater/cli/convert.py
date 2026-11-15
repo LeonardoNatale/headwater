@@ -5,8 +5,13 @@ from typing import Annotated
 
 import typer
 
-from headwater.cli._common import count, fail
+from headwater.cli._common import JsonOption, count, fail
+from headwater.cli._json import echo
 from headwater.model import HeadwaterError
+
+FORMAT = "headwater-convert/1"
+"""The `format` of `database convert --json`. Within version 1 keys may be added, none is renamed
+or removed."""
 
 
 def convert_command(
@@ -17,6 +22,7 @@ def convert_command(
             "level down.",
         ),
     ],
+    as_json: JsonOption = False,
 ) -> None:
     """Convert processes/, one YAML and one CSV per process, into processes.csv and exchanges.csv
     (D48), once.
@@ -35,6 +41,13 @@ def convert_command(
         done = convert(folder)
     except (HeadwaterError, OSError) as error:
         fail(error, code=2)
+    if as_json:
+        converted = [
+            {"path": str(c.path), "processes": c.processes, "lines": c.lines, "files": c.files}
+            for c in done
+        ]
+        echo({"format": FORMAT, "converted": converted})
+        return
     for one in done:
         typer.echo(
             f"converted {one.path}: {one.processes} "

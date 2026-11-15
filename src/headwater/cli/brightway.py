@@ -8,7 +8,7 @@ from typing import Annotated
 
 import typer
 
-from headwater.cli._common import fail, open_release
+from headwater.cli._common import JsonOption, fail, open_release
 from headwater.model import HeadwaterError
 
 
@@ -59,6 +59,7 @@ def import_brightway_command(
         str | None,
         typer.Option("--name", help="The database's name. Default: the project database's."),
     ] = None,
+    as_json: JsonOption = False,
 ) -> None:
     """Convert a database of a Brightway project into a database folder, and report what did
     not map. The project's files are read directly and never written: bw2data is not needed.
@@ -73,7 +74,7 @@ def import_brightway_command(
     something needs a decision (the database is written), 2 when nothing was written: for example
     an exchange that comes from a node the project does not have.
     """
-    from headwater.cli.excel import folders_not_held, print_import
+    from headwater.cli.excel import folders_not_held, show_import
     from headwater.io.brightway import import_brightway
 
     try:
@@ -91,6 +92,4 @@ def import_brightway_command(
         needed = folders_not_held(linked, method)
     except (HeadwaterError, OSError) as error:
         fail(error, code=2)
-    print_import(done, needed)
-    if not done.clean:
-        raise typer.Exit(code=1)
+    show_import(done, needed, as_json)

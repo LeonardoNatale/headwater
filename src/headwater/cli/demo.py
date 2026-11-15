@@ -7,7 +7,12 @@ from typing import Annotated
 
 import typer
 
-from headwater.cli._common import fail
+from headwater.cli._common import JsonOption, fail
+from headwater.cli._json import echo
+
+FORMAT = "headwater-demo/1"
+"""The `format` of `demo --json`. Within version 1 keys may be added, none is renamed or
+removed."""
 
 
 def demo_command(
@@ -15,6 +20,7 @@ def demo_command(
         Path,
         typer.Argument(help="Where to copy the demo: a new or an empty folder, `.git` allowed."),
     ],
+    as_json: JsonOption = False,
 ) -> None:
     """Copy the demo into FOLDER: a toy release, four databases and a study of one of them.
 
@@ -31,8 +37,12 @@ def demo_command(
     with as_file(files("headwater") / "demo") as demo:
         shutil.copytree(demo, folder, dirs_exist_ok=True)
     [release] = (p.name for p in (folder / "releases").iterdir())
-    typer.echo(
-        f"Copied the demo into {folder}. Then, in that folder:\n\n"
-        f"  headwater release pull {Path('releases') / release}\n"
-        "  headwater calc studies/tshirt-footprint"
-    )
+    then = [
+        f"headwater release pull {Path('releases') / release}",
+        "headwater calc studies/tshirt-footprint",
+    ]
+    if as_json:
+        echo({"format": FORMAT, "folder": str(folder), "release": release, "then": then})
+        return
+    typer.echo(f"Copied the demo into {folder}. Then, in that folder:\n")
+    typer.echo("\n".join(f"  {line}" for line in then))

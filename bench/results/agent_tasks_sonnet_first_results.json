@@ -1,0 +1,294 @@
+{
+  "date": "2026-11-15",
+  "machine": "Apple M2 Pro, Darwin 26.6.2",
+  "headwater": "headwater 0.3.0",
+  "claude_code": "2.1.263 (Claude Code)",
+  "model": "sonnet",
+  "tools": "Bash,Read,Edit,Write,Glob,Grep",
+  "tasks": [
+    {
+      "name": "score",
+      "prompt": "What is the climate change score of the study studies/tshirt-footprint? Give the number with its unit.",
+      "numbers": [
+        1.242646
+      ],
+      "words": [],
+      "edited": false,
+      "check_edit": false
+    },
+    {
+      "name": "top line",
+      "prompt": "Which line of which process contributes most to the score of the study studies/tshirt-footprint? Name the process, the line id and its share of the score.",
+      "numbers": [],
+      "words": [
+        "e02",
+        "fabric"
+      ],
+      "edited": false,
+      "check_edit": false
+    },
+    {
+      "name": "edit",
+      "prompt": "In this folder, change the T-shirt's cotton fabric from 0.25 kg to 0.3 kg, then give the new climate change score of the study studies/tshirt-footprint.",
+      "numbers": [
+        1.428076
+      ],
+      "words": [],
+      "edited": false,
+      "check_edit": true
+    },
+    {
+      "name": "diff",
+      "prompt": "Something in this folder changed since the last git commit. How did the score of the study studies/tshirt-footprint change, from what to what, and which line caused it?",
+      "numbers": [
+        1.242646,
+        1.428076
+      ],
+      "words": [
+        "e02"
+      ],
+      "edited": true,
+      "check_edit": false
+    },
+    {
+      "name": "scenario",
+      "prompt": "What is the climate change score of the study studies/tshirt-footprint in its scenario cleaner-dye?",
+      "numbers": [
+        1.237646
+      ],
+      "words": [],
+      "edited": false,
+      "check_edit": false
+    }
+  ],
+  "runs": [
+    {
+      "task": "score",
+      "variant": "without skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "The climate change score for `studies/tshirt-footprint` is **1.242646 kg CO2-eq**.",
+      "commands": [],
+      "json_commands": 0,
+      "changed": [],
+      "turns": 6,
+      "seconds": 8.823,
+      "cost_usd": 0.1106564,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": []
+    },
+    {
+      "task": "score",
+      "variant": "with skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "The climate change score for `studies/tshirt-footprint` is **1.2426460 kg CO2-eq**.",
+      "commands": [
+        "headwater --version && cat studies/tshirt-footprint/study.yaml",
+        "headwater calc studies/tshirt-footprint --json"
+      ],
+      "json_commands": 1,
+      "changed": [],
+      "turns": 6,
+      "seconds": 10.835,
+      "cost_usd": 0.11283299999999999,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": [
+        "headwater"
+      ]
+    },
+    {
+      "task": "top line",
+      "variant": "without skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "Confirmed: line `e02` in `tshirt-dyed:tshirt` is the input of 0.25 kg cotton fabric from `toy:fabric-production`.\n\n**Answer:** The line that contributes most to the score of `studies/tshirt-footprint` is line **`e02`** of process **`tshirt-dyed:tshirt`** (the T-shirt's input of 0.25 kg cotton fabric, sourced from `toy:fabric-production`). It accounts for **≈74.6%** of the total score (elasticity/share 0.7461, score contribution 0.92715 of 1.24265 kg CO2-eq).",
+      "commands": [
+        "find /private/var/folders/dd/yhqhlt4s0txc1f22mmwlg_640000gn/T/headwater-agent-tasks-okk494zh/runs/top-line-without-skill-0 -maxdepth 2 2>/dev/null; echo \"---\"; pwd",
+        "which headwater; headwater --version 2>&1 | head -5",
+        "headwater release pull releases/toy-background@6864b7dbb65d 2>&1 | tail -20",
+        "headwater validate studies/tshirt-footprint 2>&1; echo \"---CALC---\"; headwater calc studies/tshirt-footprint 2>&1",
+        "headwater contributions studies/tshirt-dyed --indicator climate-change 2>&1",
+        "headwater --help 2>&1; echo \"---\"; headwater contributions --help 2>&1",
+        "headwater contributions studies/tshirt-footprint --depth 5 --min-share 0 --sensitivity 10 --json 2>&1"
+      ],
+      "json_commands": 1,
+      "changed": [],
+      "turns": 13,
+      "seconds": 40.982,
+      "cost_usd": 0.24032000000000003,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": []
+    },
+    {
+      "task": "top line",
+      "variant": "with skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "The top contributing line is **line e02 of `tshirt-dyed:tshirt`** (the cotton fabric input, supplied by `toy:fabric-production`), accounting for **74.6%** of the study's score (0.9272 of 1.2426 kg CO2-eq).",
+      "commands": [
+        "headwater --version; find . -maxdepth 3 -iname \"study.yaml\" 2>/dev/null; ls",
+        "cat studies/tshirt-footprint/study.yaml; echo ---; ls releases 2>/dev/null; echo ---; headwater contributions studies/tshirt-footprint --json"
+      ],
+      "json_commands": 1,
+      "changed": [],
+      "turns": 5,
+      "seconds": 11.127,
+      "cost_usd": 0.10632280000000001,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": [
+        "headwater"
+      ]
+    },
+    {
+      "task": "edit",
+      "variant": "without skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer, file edited and valid",
+      "answer": "Updated the cotton fabric input in `studies/tshirt-dyed/exchanges.csv` (line e02) from 0.25 kg to 0.3 kg.\n\nNew climate change score for `studies/tshirt-footprint`: **1.42808 kg CO2-eq** (up from 1.242646, since each extra kg of cotton fabric costs more CO2 than the 1.19205 base, scaled by the 0.05 kg increase).",
+      "commands": [
+        "which headwater; headwater --version 2>&1 | head -5",
+        "cd \"/private/var/folders/dd/yhqhlt4s0txc1f22mmwlg_640000gn/T/headwater-agent-tasks-okk494zh/runs/edit-without-skill-0\" && headwater validate studies/tshirt-footprint && headwater calc studies/tshirt-footprint"
+      ],
+      "json_commands": 0,
+      "changed": [
+        " M studies/tshirt-dyed/exchanges.csv"
+      ],
+      "turns": 15,
+      "seconds": 34.805,
+      "cost_usd": 0.20192059999999998,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": []
+    },
+    {
+      "task": "edit",
+      "variant": "with skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer, file edited and valid",
+      "answer": "Updated the cotton fabric amount (line e02 in `studies/tshirt-dyed/exchanges.csv`) from 0.25 kg to 0.3 kg, validated successfully, and recalculated.\n\n**New climate change score for `studies/tshirt-footprint`: 1.428076 kg CO2-eq** (up from 1.24265 kg CO2-eq).",
+      "commands": [
+        "headwater --version && find . -maxdepth 3 -iname \"study.yaml\" -o -iname \"database.yaml\" | head -20",
+        "headwater validate studies/tshirt-footprint --json",
+        "headwater calc studies/tshirt-footprint --json"
+      ],
+      "json_commands": 2,
+      "changed": [
+        " M studies/tshirt-dyed/exchanges.csv"
+      ],
+      "turns": 11,
+      "seconds": 19.459,
+      "cost_usd": 0.16819079999999997,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": [
+        "headwater"
+      ]
+    },
+    {
+      "task": "diff",
+      "variant": "without skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "The score of `studies/tshirt-footprint` went from **1.24265 → 1.42808 kg CO2‑eq** (+0.18543, +14.9%).\n\nThe cause is a single uncommitted edit in `studies/tshirt-dyed/exchanges.csv`, line **e02** (cotton fabric input): the amount increased from **0.25 kg → 0.3 kg**.",
+      "commands": [
+        "which headwater 2>/dev/null; echo \"exit:$?\"; headwater --version 2>&1 | head -5",
+        "cd \"$(git rev-parse --show-toplevel)\" && headwater release pull releases/toy-background@6864b7dbb65d 2>&1 | tail -20",
+        "cd \"$(git rev-parse --show-toplevel)\" && headwater diff HEAD studies/tshirt-footprint 2>&1"
+      ],
+      "json_commands": 0,
+      "changed": [
+        " M studies/tshirt-dyed/exchanges.csv"
+      ],
+      "turns": 12,
+      "seconds": 30.33,
+      "cost_usd": 0.17586740000000003,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": []
+    },
+    {
+      "task": "diff",
+      "variant": "with skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "The `tshirt-footprint` study pulls in `tshirt-dyed:tshirt`, so the uncommitted change to `studies/tshirt-dyed/exchanges.csv` does affect it.\n\n**Score change:** 1.24265 → 1.42808 kg CO2-eq (+0.18543, +14.9%)\n\n**Cause:** `tshirt-dyed:tshirt` line `e02` (cotton fabric input) — amount changed from 0.25 kg to 0.3 kg. That single line accounts for the entire score change.",
+      "commands": [
+        "headwater diff HEAD studies/tshirt-footprint --json"
+      ],
+      "json_commands": 1,
+      "changed": [
+        " M studies/tshirt-dyed/exchanges.csv"
+      ],
+      "turns": 4,
+      "seconds": 9.909,
+      "cost_usd": 0.092582,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": [
+        "headwater"
+      ]
+    },
+    {
+      "task": "scenario",
+      "variant": "without skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "README states the answer directly: the `cleaner-dye` scenario for `studies/tshirt-footprint` has a climate change score of **1.237646** kg CO2-eq (down from the base 1.242646, since the scenario lowers the dye's emission factor from 4 to 3.5 kg CO2/kg).",
+      "commands": [],
+      "json_commands": 0,
+      "changed": [],
+      "turns": 7,
+      "seconds": 12.473,
+      "cost_usd": 0.12050539999999998,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": []
+    },
+    {
+      "task": "scenario",
+      "variant": "with skill",
+      "model": "sonnet",
+      "passed": true,
+      "why": "expected answer",
+      "answer": "The climate change score of `studies/tshirt-footprint` in scenario `cleaner-dye` is **1.237646 kg CO2-eq**.",
+      "commands": [
+        "headwater --version; ls studies 2>/dev/null || echo \"no studies dir\"",
+        "headwater calc studies/tshirt-footprint --scenario cleaner-dye --json"
+      ],
+      "json_commands": 1,
+      "changed": [],
+      "turns": 5,
+      "seconds": 9.175,
+      "cost_usd": 0.0999716,
+      "models": [
+        "claude-sonnet-5"
+      ],
+      "skills": [
+        "headwater"
+      ]
+    }
+  ]
+}

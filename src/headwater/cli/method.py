@@ -2,11 +2,12 @@
 import-set`: write a normalisation and weighting set beside its method."""
 
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 
-from headwater.cli._common import fail, open_release
+from headwater.cli._common import JsonOption, fail, open_release
+from headwater.cli._json import echo
 from headwater.io.formats import describe, method_from
 from headwater.io.method import MappedMethod, write_method
 from headwater.io.source import MethodOptions, SourceKind
@@ -21,6 +22,14 @@ _SHOWN = 20
 """Flows listed one by one before the rest are counted."""
 
 _FORMATS = describe(SourceKind.method)
+
+IMPORT_FORMAT = "headwater-method-import/1"
+"""The `format` of `method import --json`. Within version 1 keys may be added, none is renamed
+or removed."""
+
+SET_FORMAT = "headwater-method-import-set/1"
+"""The `format` of `method import-set --json`. Within version 1 keys may be added, none is
+renamed or removed."""
 
 
 @method_app.command("import")
@@ -70,6 +79,7 @@ def import_command(
             "keys is, with who and when. Needed when the release has another flow list."
         ),
     ] = None,
+    as_json: JsonOption = False,
 ) -> None:
     """Map every factor of a method to an elementary flow of a release, and write a method
     folder. Factors whose flow is not in the flow list are listed, not guessed."""
@@ -88,6 +98,9 @@ def import_command(
         folder = write_method(mapped, out or Path("methods") / mapped.method.id)
     except (HeadwaterError, OSError) as error:
         fail(error)
+    if as_json:
+        echo({"format": IMPORT_FORMAT, "folder": str(folder), **_method_data(mapped, path)})
+        return
     _report(mapped, path)
     typer.echo(f"Wrote method {mapped.method.id} to {folder}")
 
@@ -118,6 +131,7 @@ def import_set_command(
         Path | None,
         typer.Option(help="The set folder to write. Default: beside the method, named by --id."),
     ] = None,
+    as_json: JsonOption = False,
 ) -> None:
     """Write a normalisation and weighting set beside its method, pinned to it by its hash.
 
@@ -138,6 +152,21 @@ def import_set_command(
     steps = [
         s for s, given in (("normalised", nw_set.normalises), ("weighted", nw_set.weighs)) if given
     ]
+    left_out = indicators[0].left_out if indicators else ()
+    if as_json:
+        echo(
+            {
+                "format": SET_FORMAT,
+                "folder": str(folder),
+                "set": {"id": nw_set.id, "version": nw_set.version, "unit": nw_set.unit},
+                "method": {"id": found.id, "version": found.version, "hash": nw_set.method.hash},
+                "rows": len(nw_set.rows),
+                "steps": steps,
+                "indicators": [i.id for i in indicators],
+                "left_out": list(left_out),
+            }
+        )
+        return
     unit_text = f", in {nw_set.unit}" if nw_set.unit else ""
     typer.echo(
         f"Read {_count(len(nw_set.rows), 'row')} from {path}: {' and '.join(steps)}{unit_text}."
@@ -146,10 +175,44 @@ def import_set_command(
         f"Set {nw_set.id} {nw_set.version} adds {_count(len(indicators), 'indicator')} to method "
         f"{found.id} {found.version}, pinned by its hash {nw_set.method.hash[:12]}."
     )
-    left_out = indicators[0].left_out if indicators else ()
     if left_out:
         typer.echo(f"Indicators of {found.id} with no row, left out: {', '.join(left_out)}")
     typer.echo(f"Wrote {folder}")
+
+
+def _method_data(imported: MappedMethod, path: Path) -> dict[str, Any]:
+    """What `method import` read and mapped, as data."""
+    source = imported.source
+    return {
+        "method": {"id": imported.method.id, "version": imported.method.version},
+        "source": {"name": source.name, "path": str(path), "flow_list": source.flow_list},
+        "release": f"{imported.release.name}@{imported.release.hash}",
+        "flow_list": imported.method.flow_list,
+        "flows": imported.flows,
+        "factors": sum(r.factors for r in imported.indicators),
+        "indicators": [
+            {
+                "id": r.indicator.id,
+                "factors": r.factors,
+                "mapped": r.mapped,
+                "copied": r.copied,
+                "not_in_flow_list": len(r.unmapped),
+                "flows_without_factor": len(r.flows_without_factor),
+            }
+            for r in imported.indicators
+        ],
+        "unmapped": [
+            {"indicator": r.indicator.id, "key": u.key, "where": u.where, "reason": u.reason}
+            for r in imported.indicators
+            for u in r.unmapped
+        ],
+        "not_characterised": [
+            {"id": f.id, "name": f.name, "compartment": f.compartment}
+            for f in imported.not_characterised
+        ],
+        "left_out": list(source.left_out),
+        "warnings": [str(w) for w in imported.warnings],
+    }
 
 
 def _report(imported: MappedMethod, path: Path) -> None:
