@@ -1,0 +1,22 @@
+name: Feature request
+description: Something you want headwater to do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What do you want to do?
+      description: The task, in your own words, with one concrete example.
+      placeholder: I want to export my database to a Brightway Excel file, so a colleague can open it in Brightway.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What happens today?
+      description: How you do it now, or why you can't.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Links, file formats, sizes, or ideas for how it could work.
