@@ -6,18 +6,28 @@ A Python library and command line for life cycle assessment (LCA). A background 
 
 ## Install
 
+headwater needs Python 3.13 or later. With uv you do not need to install Python first: uv gets it for you.
+
 ```bash
+# With uv
+uv add headwater             # in a project: the Python library and the command line
+uv tool install headwater    # only the headwater command, available everywhere
+
+# With pip, in a virtual environment
 pip install headwater
 ```
 
-Python 3.13 or later. Extras: `headwater[pandas]` for tables as DataFrames, `headwater[gcs]` and `headwater[s3]` to pull releases from Google Cloud Storage or S3.
+Extras add optional features: `pandas` gives tables as DataFrames, `gcs` and `s3` pull releases from Google Cloud Storage or S3. Example: `uv add "headwater[pandas]"` or `pip install "headwater[pandas]"`.
+
+To upgrade: `uv sync -P headwater` in a project, `uv tool upgrade headwater`, or `pip install -U headwater`.
+
+Using Claude Code or another AI agent? Run `headwater skill install` once in your project, so the agent knows how to use headwater ([details](https://github.com/LeonardoNatale/headwater#using-headwater-with-an-ai-agent)).
 
 ## Quick start
 
-The demo is a toy: it needs no licence and no download beyond the package.
+With headwater installed, try the demo. It is a toy: it needs no licence and no download beyond the package.
 
 ```bash
-pip install headwater
 headwater demo headwater-demo
 cd headwater-demo
 headwater release pull releases/toy-background@6864b7dbb65d
@@ -54,7 +64,6 @@ More notebooks cover ecoinvent 3.12 and the same tasks in Brightway.
 headwater ships a skill: a short guide that Claude Code, or another AI agent, reads before it uses headwater. It sits in the package as the [Library Skills](https://github.com/tiangolo/library-skills) convention asks, as FastAPI's does. Link it into your project once:
 
 ```bash
-pip install headwater
 headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
