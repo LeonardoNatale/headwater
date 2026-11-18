@@ -2,13 +2,13 @@
 
 Runs only when these are set:
 
-- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.12.xlsx`
+- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.13.xlsx`
 - `ECOINVENT_RELEASE`: the release of the same version, a folder or `name@hash` in
-  HEADWATER_HOME, for example `ecoinvent-3.12-cutoff@b9428cdd8045`
+  HEADWATER_HOME, for example `ecoinvent-3.13-cutoff@9bbbb9d97a81`
 
 The comparison with ecoinvent's own scores also needs `ECOINVENT_CUMULATIVE_LCIA`, the cumulative
-LCIA workbook of that release (`Cut-off Cumulative LCIA v3.12.xlsx`). Its data sheet is read as a
-stream of XML: it is 795 MB unpacked. No value of the licensed files is written here: counts,
+LCIA workbook of that release (`Cut-off Cumulative LCIA v3.13.xlsx`). Its data sheet is read as a
+stream of XML: it is 868 MB unpacked. No value of the licensed files is written here: counts,
 names and differences only. Run with `-s` to see the summary.
 """
 
@@ -50,13 +50,13 @@ CATEGORIES = {
 }
 """The carbon categories imported next to EF v3.1, by workbook method."""
 
-COUNTS_3_12 = {
+COUNTS_3_13 = {
     "climate-change-biogenic-removals-incl-co2": 2,
     "climate-change-biogenic-emissions-incl-co2": 8,
     "climate-change-biogenic-incl-co2": 10,
     "climate-change-direct-land-use-change": 12,
 }
-"""Factors of each carbon indicator in the 3.12 workbook. Every one maps to the 3.12 release."""
+"""Factors of each carbon indicator in the 3.13 workbook. Every one maps to the 3.13 release."""
 
 RELATIVE = 1e-6
 """Against ecoinvent's cumulative LCIA: the default of AGENTS.md for another engine."""
@@ -110,12 +110,12 @@ def test_counts_of_ef_and_of_the_carbon_categories(imported: dict[str, MethodImp
 
     ef = imported["EF-3.1"]
     carbon = [r for i, m in imported.items() if i != "EF-3.1" for r in m.indicators]
-    assert sorted(r.indicator.id for r in carbon) == sorted(COUNTS_3_12)
-    assert ef.workbook.version == "3.12"
-    assert sum(r.factors for r in ef.indicators) == 27_415
-    assert ef.flows == 9_850
-    assert len(ef.not_characterised) == 1_890
-    assert {r.indicator.id: r.factors for r in carbon} == COUNTS_3_12
+    assert sorted(r.indicator.id for r in carbon) == sorted(COUNTS_3_13)
+    assert ef.workbook.version == "3.13"
+    assert sum(r.factors for r in ef.indicators) == 27_403
+    assert ef.flows == 9_893
+    assert len(ef.not_characterised) == 1_909
+    assert {r.indicator.id: r.factors for r in carbon} == COUNTS_3_13
     assert all(r.mapped == r.factors for r in carbon)
 
 
@@ -144,9 +144,9 @@ def test_the_carbon_indicators_sit_next_to_ef_in_one_indicators_release(
 
     print(f"\n{written.name}: {len(vectors.indicators)} indicators")
     assert [m.id for m in written.method_entries] == list(imported)
-    assert len(vectors.indicators) == 25 + len(COUNTS_3_12)
+    assert len(vectors.indicators) == 25 + len(COUNTS_3_13)
     assert vectors.method_id == "+".join(imported)
-    assert set(vectors.indicators) >= set(COUNTS_3_12)
+    assert set(vectors.indicators) >= set(COUNTS_3_13)
     assert np.isfinite(vectors.scores).all()
 
 

@@ -9,16 +9,18 @@
 - A2 Two imports of the same folder give the same release hash.
 - A3 Its flows are cut-off's, but for the 88 it treats, which are wastes here. Methods hold
   elementary flows only, so a method mapped onto the cut-off release maps onto it as it is.
-  Needs `ECOINVENT_DIR`, the cut-off folder. With `ECOINVENT_LCIA`, the LCIA workbook, EF v3.1
-  maps onto it to the very method it maps to on cut-off.
+  Needs `ECOINVENT_3_12_DIR`, the 3.12 cut-off folder. With `ECOINVENT_3_12_LCIA`, the 3.12 LCIA
+  workbook, EF v3.1 maps onto it to the very method it maps to on cut-off.
 - A4 Brightway's matrices equal headwater's cell by cell, both rounded to float32 as Brightway
   stores them, and the same matrices solved by headwater's calc give scores within 1e-9 (D21).
   Reads `$HEADWATER_WORK/reference-3.12-apos/`, written by
   `bench/bw_reference.py --system-model apos`, and is skipped when it is missing.
 
-EF 3.1 against ecoinvent's APOS cumulative LCIA is `tests/integration/test_method_import.py`, run
-with `ECOINVENT_RELEASE` set to the APOS release and `ECOINVENT_CUMULATIVE_LCIA` to its file.
-No test imports Brightway. Run with `-s` to see counts and differences, never values.
+EF 3.1 against ecoinvent's APOS cumulative LCIA is
+`test_method_import.py::test_scores_match_ecoinvent_cumulative_lcia`, run with `ECOINVENT_LCIA`
+set to the 3.12 workbook, `ECOINVENT_RELEASE` to the APOS release and `ECOINVENT_CUMULATIVE_LCIA`
+to its file: the other tests of that file pin 3.13's counts. No test imports Brightway. Run with
+`-s` to see counts and differences, never values.
 """
 
 import json
@@ -49,8 +51,8 @@ from headwater.release import Release
 from headwater.release.content import method_hash
 
 ECOINVENT_APOS_DIR = os.environ.get("ECOINVENT_APOS_DIR")
-ECOINVENT_DIR = os.environ.get("ECOINVENT_DIR")
-ECOINVENT_LCIA = os.environ.get("ECOINVENT_LCIA")
+ECOINVENT_3_12_DIR = os.environ.get("ECOINVENT_3_12_DIR")
+ECOINVENT_3_12_LCIA = os.environ.get("ECOINVENT_3_12_LCIA")
 HEADWATER_WORK = os.environ.get("HEADWATER_WORK")
 
 pytestmark = pytest.mark.skipif(not ECOINVENT_APOS_DIR, reason="ECOINVENT_APOS_DIR is not set")
@@ -61,7 +63,7 @@ FACTORS = {"Carbon dioxide, fossil": 1.0, "Methane, fossil": 29.8, "Dinitrogen m
 """The 3-flow climate method of docs/appendix/benchmarks.md, as bench/bw_reference.py writes it."""
 
 EF_3_1 = "dbb0de237f259caa43f9249d30e4dfacf134c97c387da2a6172ba7391863752e"
-"""EF v3.1 mapped onto the cut-off release (tests/integration/test_import_hashes.py)."""
+"""EF v3.1 mapped onto the 3.12 cut-off release."""
 
 TREATED_FLOWS = 88
 """Recyclable (57) and allocatable (31) flows that an APOS dataset treats: a negative reference."""
@@ -120,13 +122,13 @@ def test_a2_importing_twice_gives_the_same_release_hash(
     assert second.hash == release.hash
 
 
-@pytest.mark.skipif(not ECOINVENT_DIR, reason="ECOINVENT_DIR is not set")
+@pytest.mark.skipif(not ECOINVENT_3_12_DIR, reason="ECOINVENT_3_12_DIR is not set")
 def test_a3_the_flows_are_cut_off_s_but_the_treated_ones_are_wastes(source: Inventory) -> None:
     # MasterData is the same file in both folders. APOS treats 88 Recyclable and allocatable
     # flows, which are wastes in its release. A method holds elementary flows only, so one
     # mapped onto the cut-off release maps onto this one as it is.
-    assert ECOINVENT_DIR
-    cutoff = {f.id: f for f in read_masterdata(Path(ECOINVENT_DIR) / "MasterData").flows}
+    assert ECOINVENT_3_12_DIR
+    cutoff = {f.id: f for f in read_masterdata(Path(ECOINVENT_3_12_DIR) / "MasterData").flows}
     apos = {f.id: f for f in source.flows}
     differ = sorted(i for i in apos if apos[i] != cutoff.get(i))
     print(f"\nA3: {len(apos):,} flows, {len(differ)} of another kind than in cut-off")
@@ -138,14 +140,14 @@ def test_a3_the_flows_are_cut_off_s_but_the_treated_ones_are_wastes(source: Inve
         assert cutoff[i].kind is FlowKind.product
         assert apos[i] == cutoff[i].model_copy(update={"kind": FlowKind.waste})
     assert set(source.flow_properties) == set(
-        read_masterdata(Path(ECOINVENT_DIR) / "MasterData").flow_properties
+        read_masterdata(Path(ECOINVENT_3_12_DIR) / "MasterData").flow_properties
     )
 
 
-@pytest.mark.skipif(not ECOINVENT_LCIA, reason="ECOINVENT_LCIA is not set")
+@pytest.mark.skipif(not ECOINVENT_3_12_LCIA, reason="ECOINVENT_3_12_LCIA is not set")
 def test_a3_ef_3_1_maps_onto_it_as_onto_cut_off(release: Release) -> None:
-    assert ECOINVENT_LCIA
-    imported = method_from(Path(ECOINVENT_LCIA), release, MethodOptions(method="EF v3.1"))
+    assert ECOINVENT_3_12_LCIA
+    imported = method_from(Path(ECOINVENT_3_12_LCIA), release, MethodOptions(method="EF v3.1"))
 
     assert method_hash(imported.method) == EF_3_1
 

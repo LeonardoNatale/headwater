@@ -2,12 +2,12 @@
 
 Runs only when these are set:
 
-- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.12.xlsx`
+- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.13.xlsx`
 - `ECOINVENT_RELEASE`: the release of the same version, a folder or `name@hash` in
-  HEADWATER_HOME, for example `ecoinvent-3.12-cutoff@b9428cdd8045`
+  HEADWATER_HOME, for example `ecoinvent-3.13-cutoff@9bbbb9d97a81`
 
 The comparison with ecoinvent's own scores also needs `ECOINVENT_CUMULATIVE_LCIA`, the cumulative
-LCIA workbook of that release (`Cut-off Cumulative LCIA v3.12.xlsx`). No value of the
+LCIA workbook of that release (`Cut-off Cumulative LCIA v3.13.xlsx`). No value of the
 licensed files is written here: counts and names only. Run with `-s` to see the summary.
 """
 
@@ -64,15 +64,15 @@ PARTS = {
 }
 """Indicators that are the sum of their sub-indicators, flow by flow."""
 
-FACTORS_3_12 = {
+FACTORS_3_13 = {
     "acidification": 20,
-    "climate-change": 189,
+    "climate-change": 187,
     "climate-change-biogenic": 4,
-    "climate-change-fossil": 173,
+    "climate-change-fossil": 171,
     "climate-change-land-use-and-land-use-change": 12,
-    "ecotoxicity-freshwater": 7274,
-    "ecotoxicity-freshwater-inorganics": 714,
-    "ecotoxicity-freshwater-organics": 6560,
+    "ecotoxicity-freshwater": 7297,
+    "ecotoxicity-freshwater-inorganics": 715,
+    "ecotoxicity-freshwater-organics": 6582,
     "energy-resources-non-renewable": 7,
     "eutrophication-freshwater": 13,
     "eutrophication-marine": 29,
@@ -80,9 +80,9 @@ FACTORS_3_12 = {
     "human-toxicity-carcinogenic": 821,
     "human-toxicity-carcinogenic-inorganics": 85,
     "human-toxicity-carcinogenic-organics": 736,
-    "human-toxicity-non-carcinogenic": 5002,
-    "human-toxicity-non-carcinogenic-inorganics": 472,
-    "human-toxicity-non-carcinogenic-organics": 4530,
+    "human-toxicity-non-carcinogenic": 4975,
+    "human-toxicity-non-carcinogenic-inorganics": 473,
+    "human-toxicity-non-carcinogenic-organics": 4502,
     "ionising-radiation-human-health": 175,
     "land-use": 155,
     "material-resources-metals-minerals": 79,
@@ -91,7 +91,7 @@ FACTORS_3_12 = {
     "photochemical-oxidant-formation-human-health": 259,
     "water-use": 5,
 }
-"""Factors of each EF v3.1 indicator in the 3.12 workbook. Every one maps to the 3.12 release."""
+"""Factors of each EF v3.1 indicator in the 3.13 workbook. Every one maps to the 3.13 release."""
 
 RELATIVE = 1e-6
 """Against ecoinvent's cumulative LCIA: the default of AGENTS.md for another engine."""
@@ -123,12 +123,12 @@ def test_counts_of_mapped_and_unmapped_factors_per_indicator(imported: MethodImp
         )
     print(f"flows with no factor for any indicator: {len(imported.not_characterised)}")
 
-    assert imported.workbook.version == "3.12"
+    assert imported.workbook.version == "3.13"
     assert len(imported.indicators) == 25
-    assert {r.indicator.id: r.factors for r in imported.indicators} == FACTORS_3_12
+    assert {r.indicator.id: r.factors for r in imported.indicators} == FACTORS_3_13
     assert [r.unmapped for r in imported.indicators] == [()] * 25
-    assert imported.flows == 9850
-    assert len(imported.not_characterised) == 1890
+    assert imported.flows == 9893
+    assert len(imported.not_characterised) == 1909
 
 
 def test_climate_factors_of_the_three_greenhouse_gases(

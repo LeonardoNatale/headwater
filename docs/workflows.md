@@ -30,16 +30,16 @@ headwater calc project/tshirt-footprint
 ### Anyone with an ecoinvent licence
 
 ```bash
-headwater release import ~/ecoinvent/3.12_cutoff_ecoSpold02 --version 3.12
-headwater method import "$HOME/ecoinvent/LCIA Implementation 3.12.xlsx" \
-  --method "EF v3.1" --flow-list ecoinvent-3.12-cutoff@b9428cdd8045
+headwater release import ~/ecoinvent/3.13_cutoff_ecoSpold02 --version 3.13
+headwater method import "$HOME/ecoinvent/LCIA Implementation 3.13.xlsx" \
+  --method "EF v3.1" --flow-list ecoinvent-3.13-cutoff@9bbbb9d97a81
 ```
 
 The second command maps EF 3.1 onto the release's flows and writes the method folder `methods/EF-3.1`. EF 3.1 has many indicators, so a calculation names the one it wants:
 
 ```python
 import headwater as hw
-bg = hw.load("ecoinvent-3.12-cutoff@b9428cdd8045", method="methods/EF-3.1")  # factorizes once
+bg = hw.load("ecoinvent-3.13-cutoff@9bbbb9d97a81", method="methods/EF-3.1")  # factorizes once
 result = hw.open("tshirt").calc(bg, "tshirt:tshirt", indicator="climate-change")
 result.contributions()
 result.sensitivity()
@@ -52,7 +52,7 @@ headwater calc tshirt --method methods/EF-3.1
 headwater contributions tshirt --method methods/EF-3.1 --indicator climate-change
 ```
 
-The import parses the source once, validates and links it, and writes a release folder into `HEADWATER_HOME` (default `~/.headwater`). `--version` is required, because ecoSpold2 files do not record the database version. Each file names the release it last changed in, and `--version` must be the newest of them: a folder whose files name release 3.11, imported as 3.12, is refused. ecoinvent 3.12 writes release 3.0 in every file, so when no file names a later release, `--version` is taken as given and the import warns `version-unchecked`. `--exclude` lists source files to skip, each with a reason, recorded as data gaps. After that, nothing is imported again: every study on that machine points at the same release.
+The import parses the source once, validates and links it, and writes a release folder into `HEADWATER_HOME` (default `~/.headwater`). `--version` is required, because ecoSpold2 files do not record the database version. Each file names the release it last changed in, and `--version` must be the newest of them: a folder whose files name release 3.11, imported as 3.12, is refused. ecoinvent 3.12 and 3.13 write release 3.0 in every file, so when no file names a later release, `--version` is taken as given and the import warns `version-unchecked`. `--exclude` lists source files to skip, each with a reason, recorded as data gaps. After that, nothing is imported again: every study on that machine points at the same release.
 
 `notebooks/` walks through this step by step.
 
@@ -61,18 +61,18 @@ The import parses the source once, validates and links it, and writes a release 
 One person imports a release and puts its folder where the team can read it: a shared folder or a bucket. Everyone else pulls it into their cache. The last part of the path is the release's folder name, `name@hash`:
 
 ```bash
-headwater release pull /shared/releases/ecoinvent-3.12-cutoff@b9428cdd8045
-headwater release pull gs://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045
-headwater release pull s3://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045
-headwater release pull https://data.example.com/releases/ecoinvent-3.12-cutoff@b9428cdd8045
+headwater release pull /shared/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81
+headwater release pull gs://acme-lca/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81
+headwater release pull s3://acme-lca/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81
+headwater release pull https://data.example.com/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81
 ```
 
 To put a release in a bucket, copy its folder as it is:
 
 ```bash
-gcloud storage cp -r ~/.headwater/releases/ecoinvent-3.12-cutoff@b9428cdd8045 gs://acme-lca/releases/
-aws s3 sync ~/.headwater/releases/ecoinvent-3.12-cutoff@b9428cdd8045 \
-  s3://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045
+gcloud storage cp -r ~/.headwater/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81 gs://acme-lca/releases/
+aws s3 sync ~/.headwater/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81 \
+  s3://acme-lca/releases/ecoinvent-3.13-cutoff@9bbbb9d97a81
 ```
 
 `file://`, `http://` and `https://` work with the base install. `gs://` needs the `gcs` extra and `s3://` the `s3` extra (`uv add 'headwater[gcs]'` or `pip install 'headwater[gcs]'`); without them the command says which one to install. From Python, `hw.load("gs://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045", method="methods/EF-3.1")` pulls the release and loads it from the cache.
@@ -731,7 +731,7 @@ Notebooks stay thin. The model lives in the database files, where it can be revi
 
 ```python
 import headwater as hw
-bg = hw.load("ecoinvent-3.12-cutoff@b9428cdd8045", method="methods/EF-3.1")
+bg = hw.load("ecoinvent-3.13-cutoff@9bbbb9d97a81", method="methods/EF-3.1")
 hw.open("tshirt").calc(bg, "tshirt:tshirt", indicator="climate-change")
 ```
 

@@ -409,6 +409,18 @@ Script: `import_timing.py`. Raw output: [bench/results/import_timing_results.jso
 
 **On ecoinvent 3.12** (`import_timing.py`, 25 October 2026, [raw output](../../bench/results/import_timing_3.12_results.json)): reading 26,533 files in 10 worker processes took 27.3 s and freezing 6.4 s, 33.7 s in all, the best of two runs, at a load average of 4.8 before it. The second run took 37.3 s at a load of 10.6. Release `ecoinvent-3.12-cutoff@b9428cdd8045`, no file excluded. **Not a quiet run.**
 
+**On ecoinvent 3.13** (`import_timing.py --version 3.13`, 18 November 2026, [raw output](../../bench/results/import_timing_3.13_results.json)): 3.12 and 3.13 ran in turns, three runs each, from one checkout, on the same Mac with Python 3.14.8. The best runs:
+
+| Step | 3.12 | 3.13 |
+|---|---|---|
+| Read: parse the files in 10 worker processes, check, link | 17.4 s, 26,533 files | 18.0 s, 27,400 files |
+| Freeze: check, hash and write the release | 5.9 s | 5.8 s |
+| Total | 23.2 s | 23.8 s |
+| Lines | 892,943 | 910,858 |
+| Release | `ecoinvent-3.12-cutoff@b9428cdd8045` | `ecoinvent-3.13-cutoff@9bbbb9d97a81` |
+
+3.13 has 3% more datasets and 2% more lines, and takes 3% longer. **Not a quiet run:** other work kept the load average between 12 and 16 before each run, so the times are rough.
+
 The release hash changes because the format changes: a `geographies` table (541 rows), `resolved_at` with no time zone, and the format `headwater-release/2`. The rows of the other tables are the same: the exchanges' digest did not move on the toy.
 
 Where the time goes after the change. The read row is from one profiled run, slower than the best above; the freeze rows time each check once, on the tables of that run.
@@ -548,6 +560,34 @@ Products whose score cancels: below 10⁻³ of its gross, from a forward solve p
 | EF v3.1 land use | 281 | 372 |
 | EF v3.1 human toxicity, carcinogenic | 2 | 12 |
 | Biogenic removals, biogenic emissions, direct land-use change, EF v3.1 climate change | 0 | 2, 0, 1, 5 |
+
+## ecoinvent 3.13 against ecoinvent's scores
+
+**Version:** ecoinvent 3.13 cut-off.
+
+**Scope:** one Apple Silicon Mac (arm64), 10 CPUs, macOS 26.6 (Darwin 25.6). Python 3.14.8, NumPy 2.5.3, SciPy 1.18.1, PyArrow 26.0.0, lxml 6.1.3, openpyxl 3.1.5, 18 November 2026, 2 BLAS threads. Release `ecoinvent-3.13-cutoff@9bbbb9d97a81`, ecoinvent's `LCIA Implementation 3.13.xlsx` and its `Cut-off Cumulative LCIA v3.13.xlsx`. EF v3.1 is imported whole, and the carbon categories as on 3.12 ([above](#carbon-indicators-on-ecoinvent-312)). Counts and differences only. The load average was about 13, which does not change these numbers.
+
+Scripts: `test_scores_match_ecoinvent_cumulative_lcia` of [tests/integration/test_method_import.py](../../tests/integration/test_method_import.py) and of [tests/integration/test_carbon_indicators.py](../../tests/integration/test_carbon_indicators.py), run with `ECOINVENT_LCIA`, `ECOINVENT_RELEASE` and `ECOINVENT_CUMULATIVE_LCIA` set to the 3.13 files (D50): 2 passed in 145 s.
+
+| Import | Factors | Mapped | Elementary flows with no factor |
+|---|---|---|---|
+| EF v3.1, 25 indicators | 27,403 | all | 1,909 of 9,893 |
+| The four carbon categories | 2, 8, 10 and 12 | all | |
+
+Counts from [bench/ecoinvent_versions.py](../../bench/ecoinvent_versions.py), [raw output](../../bench/results/ecoinvent_versions_3.12_3.13_results.json). No 3.12 id or activity UUID is in 3.13. The name, product and location of 26,482 of the 26,533 datasets of 3.12 are those of a dataset of 3.13, which is the rule `headwater upgrade` maps by when ids change. From the 3.12 workbook to the 3.13 one, 122 EF v3.1 factors of the same flow and category change, in climate change, freshwater ecotoxicity and carcinogenic human toxicity; 108 rows are new and 120 are gone. The mapping gives every one of the 122 and the 108 its 3.13 factor. Of the 50 elementary flows new in 3.13, 32 have a factor in the workbook, all of them in EF v3.1, and all 32 map; the other 18 have no factor in any of its methods. The 7 flows 3.13 removes (`2-Propen-1-ol`) are in no row of the workbook.
+
+Each product's score against ecoinvent's cumulative LCIA, relative to the larger of the two, on all 27,400 products:
+
+| Indicator | Largest relative difference | Above 10⁻⁶ |
+|---|---|---|
+| EF v3.1, 24 of its 25 indicators | 6.6 × 10⁻¹¹ (ionising radiation) | 0 |
+| EF v3.1 land use | 1.4 | 195, each a score that cancels, with a difference at most 1.2 × 10⁻¹⁶ of its gross |
+| Biogenic removals | 6.7 × 10⁻¹² | 0 |
+| Biogenic emissions | 6.6 × 10⁻¹¹ | 0 |
+| Their sum | 3.9 × 10⁻⁹ | 0 |
+| Direct land-use change | 3.9 × 10⁻¹² | 0 |
+
+The sum has 7 products above 10⁻⁹. One cancels, at 8.3 × 10⁻⁶ of its gross; the other six are at 2.1 × 10⁻³ of theirs. Each difference is at most 2.8 × 10⁻¹² of the gross. At headwater's exact zeros, ecoinvent's file holds exact zeros too for these four.
 
 ## Top contributors against Brightway
 

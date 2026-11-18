@@ -1,9 +1,8 @@
-"""The default id and version of every method of ecoinvent's 3.12 LCIA workbook, from its name.
+"""The default id and version of every method of ecoinvent's 3.13 LCIA workbook, from its name.
 
-Runs only when `ECOINVENT_LCIA` is set to `LCIA Implementation 3.12.xlsx`. The table below is what
-the workbook's reader gave before the naming rules moved to `headwater.io.method`, so a change to
-them that moves any of these ids is caught. Method names are public; no value of the workbook is
-here.
+Runs only when `ECOINVENT_LCIA` is set to `LCIA Implementation 3.13.xlsx`. The table below is what
+the naming rules of `headwater.io.method` give, so a change to them that moves any of these ids is
+caught. Method names are public; no value of the workbook is here.
 """
 
 import os
@@ -39,10 +38,12 @@ EXPECTED: dict[str, tuple[str | None, str | None]] = {
     "Ecological Scarcity 2021": ("Ecological-Scarcity-2021", "2021"),
     "Ecological Scarcity 2021 no LT": ("Ecological-Scarcity-2021-no-LT", "2021"),
     "Ecosystem Damage Potential": (None, None),
-    "IMPACT World+ v2.1, footprint version": ("IMPACT-World-2.1-footprint-version", "2.1"),
+    "IMPACT World+ v2.2.1, footprint version": ("IMPACT-World-2.2.1-footprint-version", "2.2.1"),
     "IPCC 2013": ("IPCC-2013", "2013"),
     "IPCC 2013 no LT": ("IPCC-2013-no-LT", "2013"),
     "IPCC 2021": ("IPCC-2021", "2021"),
+    "IPCC 2021 (GHG Protocol mandatory)": ("IPCC-2021-GHG-Protocol-mandatory", "2021"),
+    "IPCC 2021 (GHG Protocol mandatory) no LT": ("IPCC-2021-GHG-Protocol-mandatory-no-LT", "2021"),
     "IPCC 2021 (incl. biogenic CO2)": ("IPCC-2021-incl-biogenic-CO2", "2021"),
     "IPCC 2021 (incl. biogenic CO2) no LT": ("IPCC-2021-incl-biogenic-CO2-no-LT", "2021"),
     "IPCC 2021 no LT": ("IPCC-2021-no-LT", "2021"),
@@ -66,7 +67,7 @@ EXPECTED: dict[str, tuple[str | None, str | None]] = {
     "USEtox v2.13, midpoint": ("USEtox-2.13-midpoint", "2.13"),
     "USEtox v2.13, midpoint no LT": ("USEtox-2.13-midpoint-no-LT", "2.13"),
 }
-"""Each method name of the 3.12 workbook, with its default id and version, or None for a name
+"""Each method name of the 3.13 workbook, with its default id and version, or None for a name
 that holds no version and needs `--version`."""
 
 
