@@ -1,5 +1,5 @@
-"""What `contributions`, `where` and `sensitivity` share: open a database or a study, load its
-background, and calculate each product asked for, for one indicator.
+"""What `contributions`, `where`, `sensitivity` and `inventory` share: open a database or a
+study, load its background, and calculate each product asked for, for one indicator.
 
 A database gives one product: its only one, or the one `--product` names. A study gives each of
 its products, its amount of it, in the scenario `--scenario` names, or the one `--product` names.
@@ -74,10 +74,14 @@ def analyse(
     method_folder: list[Path] | None,
     product: str | None,
     scenario: str | None,
+    any_indicator: bool = False,
 ) -> Analysed:
     """Open `folder`, load its background and calculate the products asked for, for one
     indicator. Leaves with exit code 1 on an error of the folder or the background, and 2 for a
-    product or a scenario that the folder does not have."""
+    product or a scenario that the folder does not have.
+
+    With `any_indicator`, for what does not depend on the indicator, such as the inventory, the
+    first indicator of the method is used and `indicator` is not asked for."""
     from headwater.cli.study import known_scenario, one_product, study_scenario
 
     try:
@@ -99,7 +103,10 @@ def analyse(
             method_folders=method_folder,
             kind="database" if isinstance(opened, hw.Database) else "study",
         )
-        [chosen] = pick_indicators(background, indicator, one=True)
+        if any_indicator:
+            chosen = background.method.indicators[0].id
+        else:
+            [chosen] = pick_indicators(background, indicator, one=True)
         if isinstance(opened, hw.Database):
             assert wanted is not None
             results = (opened.calc(background, wanted, indicator=chosen),)
@@ -127,9 +134,9 @@ def _study_product(study: hw.Study, product: str | None, command: str) -> str | 
     return product
 
 
-def header(analysed: Analysed) -> list[str]:
+def header(analysed: Analysed, *, indicator: bool = True) -> list[str]:
     """The first lines of the text: the folder, the background and its method, the scenario of
-    a study when one is named, and the indicator."""
+    a study when one is named, and the indicator unless `indicator` is False."""
     opened, background = analysed.opened, analysed.background
     if isinstance(opened, hw.Database):
         lines = database_header(opened, analysed.path, background)
@@ -141,6 +148,8 @@ def header(analysed: Analysed) -> list[str]:
         ]
         if analysed.scenario is not None:
             lines.append(f"Scenario: {analysed.scenario}")
+    if not indicator:
+        return lines
     return [*lines, indicator_line(background, analysed.results[0])]
 
 

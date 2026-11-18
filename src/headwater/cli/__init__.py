@@ -61,6 +61,10 @@ COMMANDS = {
         "headwater.cli.where:where_command",
         "Split a score by the process that emits it, anywhere upstream, and by location.",
     ),
+    "inventory": Entry(
+        "headwater.cli.inventory:inventory_command",
+        "The inventory: the total of each elementary flow over a product's whole life cycle.",
+    ),
     "schema": Entry(
         "headwater.cli.schema:schema_command",
         "Write JSON schemas for database.yaml, study.yaml and scenario files into FOLDER/.schemas.",
@@ -115,6 +119,7 @@ EXAMPLES: dict[str, Example] = {
     "contributions": Example("headwater contributions project/tshirt-footprint --json", DEMO),
     "sensitivity": Example("headwater sensitivity project/tshirt-footprint --top 3 --json", DEMO),
     "where": Example("headwater where project/tshirt-footprint --json", DEMO),
+    "inventory": Example("headwater inventory project/tshirt-footprint --json", DEMO),
     "schema": Example("headwater schema project --json", DEMO),
     "find": Example(
         "headwater find electricity --release toy-background@6864b7dbb65d --json", DEMO
