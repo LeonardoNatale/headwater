@@ -12,6 +12,11 @@ below are set: the releases, methods and database are licensed and local.
 Exit test of M4: every supplier maps, the upgraded database validates, and every score that
 moved by more than 1% is explained: what the release changed adds up line by line, and the rest
 is the database's. No value of the licensed data is written here.
+
+It runs from ecoinvent 3.12 to 3.13 (D50): the database pins the 3.12 cut-off release, `_TO` is
+the 3.13 cut-off release, and the two method folders are EF v3.1 mapped onto each. No activity
+UUID of 3.12 is in 3.13, so the same dataset maps every supplier. A study beside the database
+that names 3.12 ids must move with it, so give a database folder with no such study next to it.
 """
 
 import csv

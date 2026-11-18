@@ -1,7 +1,7 @@
 """Finding processes by name on a licensed release. Runs only when ECOINVENT_RELEASE is set.
 
 `ECOINVENT_RELEASE` is a release folder, or `name@hash` in HEADWATER_HOME, for example
-`ecoinvent-3.12-cutoff@b9428cdd8045`. The search reads two tables and loads no method, so nothing
+`ecoinvent-3.13-cutoff@9bbbb9d97a81`. The search reads two tables and loads no method, so nothing
 is factorized. The test checks which process comes first and by which rule: no value or count of
 the licensed data is written here. Timings are in docs/appendix/benchmarks.md, from
 bench/find_timing.py.

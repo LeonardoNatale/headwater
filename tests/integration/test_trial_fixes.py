@@ -1,12 +1,12 @@
-"""The calls the M6 notebook trial asked for, on ecoinvent 3.12 with EF v3.1: Brightway's direct and
+"""The calls the M6 notebook trial asked for, on ecoinvent with EF v3.1: Brightway's direct and
 upstream, the exact lookup, flow names on release lines, and locations and tables of contribution
 trees.
 
 Runs only when these are set:
 
-- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.12.xlsx`
+- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.13.xlsx`
 - `ECOINVENT_RELEASE`: the release of the same version, a folder or `name@hash` in
-  HEADWATER_HOME, for example `ecoinvent-3.12-cutoff@b9428cdd8045`
+  HEADWATER_HOME, for example `ecoinvent-3.13-cutoff@9bbbb9d97a81`
 
 Each check compares two roads to one number, so no value of the licensed files is written here.
 """

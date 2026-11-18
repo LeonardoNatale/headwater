@@ -1,11 +1,12 @@
 """Import of an ecoSpold2 folder into a release: the time of each stage, best of a few runs.
 
-    uv run python bench/import_timing.py <results.json> [runs] [--label before] [--exclude exclude.csv]
+    uv run python bench/import_timing.py <results.json> [runs] --version 3.13 [--label before]
+        [--exclude exclude.csv]
 
-Reads `$ECOINVENT_DIR` (a folder holding datasets/ and MasterData/, the 3.12 cut-off) and writes
-each release into a new temporary folder under `$HEADWATER_WORK`, deleted after the run. The
-3.12 files have no empty file, so no exclude file is needed; `--exclude` takes one, as for
-`headwater release import`.
+Reads `$ECOINVENT_DIR` (a folder holding datasets/ and MasterData/, for example the 3.13
+cut-off) as the version given, and writes each release into a new temporary folder under
+`$HEADWATER_WORK`, deleted after the run. The 3.12 and 3.13 files have no empty file, so no
+exclude file is needed; `--exclude` takes one, as for `headwater release import`.
 
 Runs are added to those already in the JSON under the same label, so two versions of headwater
 can be timed in turns (before, after, before, after) by running this script from each checkout
@@ -31,9 +32,11 @@ from headwater.io.ecospold2 import read_ecospold2
 from headwater.io.exclude import Exclusion, read_exclude
 
 
-def run(folder: Path, exclude: Sequence[Exclusion], work: Path) -> dict[str, object]:
+def run(
+    folder: Path, version_: str, exclude: Sequence[Exclusion], work: Path
+) -> dict[str, object]:
     start = time.perf_counter()
-    source = read_ecospold2(folder, version="3.12", exclude=exclude)
+    source = read_ecospold2(folder, version=version_, exclude=exclude)
     read = time.perf_counter() - start
     into = Path(tempfile.mkdtemp(prefix="import-timing-", dir=work))
     try:
@@ -54,8 +57,9 @@ def run(folder: Path, exclude: Sequence[Exclusion], work: Path) -> dict[str, obj
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 2 or "--version" not in sys.argv:
         raise SystemExit(__doc__)
+    ecoinvent = sys.argv[sys.argv.index("--version") + 1]
     exclude = (
         read_exclude(Path(sys.argv[sys.argv.index("--exclude") + 1]))
         if "--exclude" in sys.argv
@@ -69,7 +73,7 @@ def main() -> None:
     found = []
     for i in range(runs):
         load = os.getloadavg()[0]
-        result = run(folder, exclude, work)
+        result = run(folder, ecoinvent, exclude, work)
         result["load_before"] = round(load, 2)
         found.append(result)
         print(f"run {i + 1}: {result['read_s']} s read, {result['freeze_s']} s freeze", flush=True)
@@ -86,6 +90,7 @@ def main() -> None:
         "pyarrow": version("pyarrow"),
         "lxml": version("lxml"),
         "date": datetime.now(UTC).date().isoformat(),
+        "version": ecoinvent,
         "runs": found,
         "best": {k: best[k] for k in ("read_s", "freeze_s", "total_s")},
         "release": best["release"],

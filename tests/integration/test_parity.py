@@ -1,7 +1,8 @@
-"""Parity with Brightway on ecoinvent 3.12 cut-off. Runs only when ECOINVENT_DIR is set.
+"""Parity with Brightway on ecoinvent 3.12 cut-off. Runs only when ECOINVENT_3_12_DIR is set.
 
-`ECOINVENT_DIR` is the folder that holds `datasets/` and `MasterData/`, for example
-`/path/to/ecoinvent/3.12-cutoff`.
+`ECOINVENT_3_12_DIR` is the 3.12 cut-off folder that holds `datasets/` and `MasterData/`, for
+example `/path/to/ecoinvent/3.12-cutoff`. The Brightway reference is for 3.12, so this file stays
+on 3.12 while the other ecoinvent tests read 3.13 from `ECOINVENT_DIR` (D50).
 
 - X1 (a) Brightway's matrices equal headwater's, entry by entry, rounded to float32 as Brightway
   stores them. The only difference allowed: the 2,426 recyclable lines, which headwater keeps
@@ -43,10 +44,10 @@ from headwater.query._internals import internals
 from headwater.query._release import _BIOSPHERE, _TECHNOSPHERE, _Query
 from headwater.release import Release
 
-ECOINVENT_DIR = os.environ.get("ECOINVENT_DIR")
+ECOINVENT_3_12_DIR = os.environ.get("ECOINVENT_3_12_DIR")
 HEADWATER_WORK = os.environ.get("HEADWATER_WORK")
 
-pytestmark = pytest.mark.skipif(not ECOINVENT_DIR, reason="ECOINVENT_DIR is not set")
+pytestmark = pytest.mark.skipif(not ECOINVENT_3_12_DIR, reason="ECOINVENT_3_12_DIR is not set")
 
 VERSION = "3.12"
 FACTORS = {"Carbon dioxide, fossil": 1.0, "Methane, fossil": 29.8, "Dinitrogen monoxide": 273.0}
@@ -64,8 +65,8 @@ type Columns = dict[str, list[Any]]
 
 @pytest.fixture(scope="module")
 def source() -> Inventory:
-    assert ECOINVENT_DIR
-    return read_ecospold2(Path(ECOINVENT_DIR), version=VERSION)
+    assert ECOINVENT_3_12_DIR
+    return read_ecospold2(Path(ECOINVENT_3_12_DIR), version=VERSION)
 
 
 @pytest.fixture(scope="module")
@@ -581,8 +582,8 @@ def test_x3_importing_twice_gives_the_same_release_hash(
     release: Release, tmp_path_factory: pytest.TempPathFactory
 ) -> None:
     # The second import uses another number of workers, so files finish in another order.
-    assert ECOINVENT_DIR
-    again = read_ecospold2(Path(ECOINVENT_DIR), version=VERSION, workers=2)
+    assert ECOINVENT_3_12_DIR
+    again = read_ecospold2(Path(ECOINVENT_3_12_DIR), version=VERSION, workers=2)
     second = again.freeze(into=tmp_path_factory.mktemp("second"))
     print(f"\nX3: {release.path.name} and {second.path.name}")
 

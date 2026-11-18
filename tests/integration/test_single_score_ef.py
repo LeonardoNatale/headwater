@@ -1,10 +1,10 @@
-"""A normalisation and weighting set on EF v3.1 and ecoinvent 3.12 changes no method and no release.
+"""A normalisation and weighting set on EF v3.1 and ecoinvent 3.13 changes no method and no release.
 
 Runs only when these are set:
 
-- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.12.xlsx`
+- `ECOINVENT_LCIA`: the workbook, for example `.../LCIA Implementation 3.13.xlsx`
 - `ECOINVENT_RELEASE`: the release of the same version, a folder or `name@hash` in
-  HEADWATER_HOME, for example `ecoinvent-3.12-cutoff@b9428cdd8045`
+  HEADWATER_HOME, for example `ecoinvent-3.13-cutoff@9bbbb9d97a81`
 
 The set is synthetic: every normalisation and weight is 1, so its single score is the plain sum
 of EF's 16 categories, with their units mixed. It is no EF single score: JRC's factors are not
@@ -33,9 +33,9 @@ pytestmark = pytest.mark.skipif(
     reason="ECOINVENT_LCIA and ECOINVENT_RELEASE are not set",
 )
 
-RELEASE_3_12 = "b9428cdd8045"
-EF_3_1 = "dbb0de237f25"
-"""The hashes of the 3.12 release and of EF v3.1 mapped to it (tests/integration/
+RELEASE_3_13 = "9bbbb9d97a81"
+EF_3_1 = "12b71a956691"
+"""The hashes of the 3.13 release and of EF v3.1 mapped to it (tests/integration/
 test_import_hashes.py)."""
 
 
@@ -77,7 +77,7 @@ def test_a_set_on_ef_changes_no_method_and_no_release(
     bg = hw.load(release.path, method=method, sets=nw_set)
     written = bg.write_indicators(into=tmp_path)
 
-    assert release.hash.startswith(RELEASE_3_12)
+    assert release.hash.startswith(RELEASE_3_13)
     assert internals(bg).method_hash.startswith(EF_3_1)
     assert method_hash(bg.method).startswith(EF_3_1)
     assert {p.name: p.read_bytes() for p in method.iterdir()} == files

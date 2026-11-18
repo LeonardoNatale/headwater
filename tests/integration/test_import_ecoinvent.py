@@ -1,7 +1,7 @@
-"""Import of a licensed ecoinvent 3.12 cut-off folder. Runs only when ECOINVENT_DIR is set.
+"""Import of a licensed ecoinvent 3.13 cut-off folder. Runs only when ECOINVENT_DIR is set.
 
 `ECOINVENT_DIR` is the folder that holds `datasets/` and `MasterData/`, for example
-`/path/to/ecoinvent/3.12-cutoff`. Every file of the folder reads and every line links, so
+`/path/to/ecoinvent/3.13-cutoff`. Every file of the folder reads and every line links, so
 nothing is excluded and nothing is a data gap. The counts are measured on that folder. Run with
 `-s` to see the counts and timings.
 """
@@ -21,6 +21,8 @@ ECOINVENT_DIR = os.environ.get("ECOINVENT_DIR")
 
 pytestmark = pytest.mark.skipif(not ECOINVENT_DIR, reason="ECOINVENT_DIR is not set")
 
+VERSION = "3.13"
+
 
 @pytest.fixture(scope="module")
 def folder() -> Path:
@@ -31,7 +33,7 @@ def folder() -> Path:
 @pytest.fixture(scope="module")
 def source(folder: Path) -> Inventory:
     start = time.perf_counter()
-    found = read_ecospold2(folder, version="3.12")
+    found = read_ecospold2(folder, version=VERSION)
     print(f"\nread {len(found.processes):,} datasets in {time.perf_counter() - start:.1f} s")
     return found
 
@@ -41,7 +43,7 @@ def test_every_line_links_and_nothing_is_a_data_gap(source: Inventory) -> None:
     assert source.problems == ()
 
 
-def test_counts_of_ecoinvent_3_12(source: Inventory) -> None:
+def test_counts_of_ecoinvent_3_13(source: Inventory) -> None:
     catalog = Catalog(source.flows, source.processes, source.flow_properties, source.units)
     lines = [e for p in source.processes for e in p.exchanges]
     roles = Counter(e.role for e in lines)
@@ -60,25 +62,25 @@ def test_counts_of_ecoinvent_3_12(source: Inventory) -> None:
     print({**counts, "roles": dict(roles), "flows": dict(flows), "lines": len(lines)})
 
     assert counts == {
-        "datasets": 26_533,
-        "treatments": 4_623,
-        "waste inputs": 47_740,
-        "recyclables": 2_426,
-        "own-use datasets": 856,
-        "elementary flows": 9_850,
-        "negative emissions": 2_288,
-        "negative resources": 405,
+        "datasets": 27_400,
+        "treatments": 4_691,
+        "waste inputs": 48_718,
+        "recyclables": 2_468,
+        "own-use datasets": 853,
+        "elementary flows": 9_893,
+        "negative emissions": 2_187,
+        "negative resources": 343,
     }
     assert (
         roles[Role.input]
         + roles[Role.own_use]
         + roles[Role.waste_to_treatment]
         + roles[Role.recyclable]
-        == 312_518
+        == 320_222
     )
-    assert roles[Role.emission] + roles[Role.resource] == 553_892
-    assert roles[Role.reference] == 26_533
-    assert len(lines) == 892_943
+    assert roles[Role.emission] + roles[Role.resource] == 563_236
+    assert roles[Role.reference] == 27_400
+    assert len(lines) == 910_858
 
 
 def test_units_merge_with_the_built_in_table(source: Inventory) -> None:
@@ -92,8 +94,8 @@ def test_the_release_freezes(source: Inventory, tmp_path: Path) -> None:
     size = sum(p.stat().st_size for p in release.path.rglob("*") if p.is_file())
     print(f"\nfroze {release.path.name} in {took:.1f} s, {size / 1e6:.1f} MB")
 
-    assert release.table("processes").num_rows == 26_533
-    assert release.table("exchanges").num_rows == 892_943
+    assert release.table("processes").num_rows == 27_400
+    assert release.table("exchanges").num_rows == 910_858
     assert release.table("issues").num_rows == 0
     assert release.table("geographies").num_rows == 541
     con = release.connect()

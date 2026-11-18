@@ -57,7 +57,7 @@ print(f"{result.score:.6f}")  # 1.242646
   - [02-writing-a-database](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/02-writing-a-database.ipynb): a database written file by file, a study with scenarios, and the mistakes headwater catches.
   - [03-case-study](https://github.com/LeonardoNatale/headwater/blob/main/notebooks/03-case-study.ipynb): a backpack on invented data, from its footprint to two scenarios, a Monte Carlo range and a design change in git.
 
-More notebooks cover ecoinvent 3.12 and the same tasks in Brightway.
+More notebooks cover ecoinvent 3.13 and the same tasks in Brightway.
 
 ## Using headwater with an AI agent
 

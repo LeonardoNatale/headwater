@@ -7,9 +7,9 @@ Six notebooks that teach headwater by running it, for someone who knows LCA and 
 | [01-first-footprint](01-first-footprint.ipynb) | A footprint step by step: load a release, calculate, contributions, where, sensitivity, change one amount, add a waste line | the demo's toy T-shirt | | kept, re-run by CI |
 | [02-writing-a-database](02-writing-a-database.ipynb) | Every file of a database, one by one: database.yaml, flows, processes and exchanges, overrides, parameters, cut-offs, no_factor, uses; a study next to it, with products, amounts and scenarios; and the mistakes headwater catches | a toy tote bag on the demo's background | | kept, re-run by CI |
 | [03-case-study](03-case-study.ipynb) | A product from start to end: validate, calculate, contributions, where, sensitivity, two scenarios, a Monte Carlo range, a design change shown with `headwater diff` | a backpack on [invented data](case-study/README.md) | | kept, re-run by CI |
-| [04-working-with-ecoinvent](04-working-with-ecoinvent.ipynb) | Import ecoinvent 3.12 and its methods (EF 3.1, IPCC 2021 carbon indicators), find, footprint, where, contributions, a database on ecoinvent, many products at once | ecoinvent 3.12 cut-off | an ecoinvent licence | removed before commit |
+| [04-working-with-ecoinvent](04-working-with-ecoinvent.ipynb) | Import ecoinvent 3.13 and its methods (EF 3.1, IPCC 2021 carbon indicators), find, footprint, where, contributions, a database on ecoinvent, many products at once | ecoinvent 3.13 cut-off | an ecoinvent licence | removed before commit |
 | [05-coming-from-brightway](05-coming-from-brightway.ipynb) | The same tasks in Brightway and in headwater, side by side, and what differs | toy T-shirt | the `brightway` group | kept, refreshed by hand |
-| [06-brightway-and-headwater-on-ecoinvent](06-brightway-and-headwater-on-ecoinvent.ipynb) | Notebook 05 on ecoinvent 3.12, with every task timed in both tools | ecoinvent 3.12 cut-off | an ecoinvent licence, the `brightway` group | removed before commit |
+| [06-brightway-and-headwater-on-ecoinvent](06-brightway-and-headwater-on-ecoinvent.ipynb) | Notebook 05 on ecoinvent 3.13, with every task timed in both tools | ecoinvent 3.13 cut-off | an ecoinvent licence, the `brightway` group | removed before commit |
 
 Notebooks 01 and 02 copy the demo that `pip install headwater` ships, with `headwater demo`, as the quick start of the [README](../README.md) does. Notebook 03 reads its data from [case-study/](case-study/README.md), next to it. Notebooks 01 to 03 work in a temporary folder and a temporary `HEADWATER_HOME`, so they change nothing in the repository or in your release cache.
 
@@ -35,11 +35,11 @@ uv run --group notebooks --group brightway --with jupyterlab jupyter lab noteboo
 
 ## Notebooks 04 and 06: ecoinvent
 
-They need a licensed ecoinvent 3.12 copy. Set these before you start VS Code or Jupyter:
+They need a licensed ecoinvent 3.13 copy. Set these before you start VS Code or Jupyter:
 
 ```bash
-export ECOINVENT_DIR="/path/to/ecoinvent 3.12_cutoff_ecoSpold02"      # holds datasets/ and MasterData/
-export ECOINVENT_LCIA="/path/to/LCIA Implementation 3.12.xlsx"
+export ECOINVENT_DIR="/path/to/ecoinvent 3.13_cutoff_ecoSpold02"      # holds datasets/ and MasterData/
+export ECOINVENT_LCIA="/path/to/LCIA Implementation 3.13.xlsx"
 export HEADWATER_HOME=~/lca/headwater                                  # optional, default ~/.headwater
 export NOTEBOOK_BRIGHTWAY_DIR=~/lca/notebook-brightway                 # optional, notebook 06 only
 ```
