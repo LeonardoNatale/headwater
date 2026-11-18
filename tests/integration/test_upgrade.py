@@ -15,8 +15,9 @@ is the database's. No value of the licensed data is written here.
 
 It runs from ecoinvent 3.12 to 3.13 (D50): the database pins the 3.12 cut-off release, `_TO` is
 the 3.13 cut-off release, and the two method folders are EF v3.1 mapped onto each. No activity
-UUID of 3.12 is in 3.13, so the same dataset maps every supplier. A study beside the database
-that names 3.12 ids must move with it, so give a database folder with no such study next to it.
+UUID of 3.12 is in 3.13, so the same dataset maps the suppliers of the databases tested so far.
+A study beside the database that names 3.12 ids must move with it, so give a database folder
+with no such study next to it.
 """
 
 import csv

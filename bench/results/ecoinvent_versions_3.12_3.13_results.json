@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-18",
+  "old": "ecoinvent-3.12-cutoff@b9428cdd8045",
+  "new": "ecoinvent-3.13-cutoff@9bbbb9d97a81",
+  "old_workbook": "LCIA Implementation 3.12.xlsx",
+  "new_workbook": "LCIA Implementation 3.13.xlsx",
+  "datasets": {
+    "old": 26533,
+    "new": 27400,
+    "same_id": 0,
+    "same_activity_uuid": 0,
+    "activity_uuids_old": 22993,
+    "same_dataset": 26482,
+    "no_same_dataset": 51,
+    "new_by_dataset": 918,
+    "product_uuids_kept": 4341,
+    "product_uuids_old": 4346
+  },
+  "elementary_flows": {
+    "old": 9850,
+    "new": 9893,
+    "added": 50,
+    "removed": 7,
+    "removed_names": [
+      "2-Propen-1-ol"
+    ]
+  },
+  "methods": {
+    "EF-3.1": {
+      "workbook_version": "3.13",
+      "factors": 27403,
+      "mapped": 27403,
+      "unmapped": 0,
+      "flows": 9893,
+      "no_factor": 1909
+    },
+    "IPCC-2021-incl-biogenic-CO2": {
+      "workbook_version": "3.13",
+      "factors": 20,
+      "mapped": 20,
+      "unmapped": 0,
+      "flows": 9893,
+      "no_factor": 9883
+    },
+    "IPCC-2021": {
+      "workbook_version": "3.13",
+      "factors": 12,
+      "mapped": 12,
+      "unmapped": 0,
+      "flows": 9893,
+      "no_factor": 9881
+    }
+  },
+  "new_flows": {
+    "with_a_row_in_any_method": 32,
+    "with_a_row_of_ef": 32,
+    "with_an_ef_factor": 32
+  },
+  "removed_flows": {
+    "with_a_row_in_any_method": 0,
+    "with_a_factor": 0
+  },
+  "ef_rows": {
+    "old": 27415,
+    "new": 27403,
+    "changed": 122,
+    "changed_by_category": {
+      "climate change": 12,
+      "climate change: fossil": 12,
+      "ecotoxicity: freshwater": 35,
+      "ecotoxicity: freshwater, organics": 35,
+      "human toxicity: carcinogenic": 14,
+      "human toxicity: carcinogenic, organics": 14
+    },
+    "only_new": 108,
+    "only_old": 120,
+    "changed_given": 122,
+    "only_new_given": 108
+  }
+}

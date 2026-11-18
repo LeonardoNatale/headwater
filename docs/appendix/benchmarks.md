@@ -574,7 +574,7 @@ Scripts: `test_scores_match_ecoinvent_cumulative_lcia` of [tests/integration/tes
 | EF v3.1, 25 indicators | 27,403 | all | 1,909 of 9,893 |
 | The four carbon categories | 2, 8, 10 and 12 | all | |
 
-From the 3.12 workbook to the 3.13 one, 122 EF v3.1 factors of the same flow and category change, in climate change, freshwater ecotoxicity and carcinogenic human toxicity; 108 rows are new and 120 are gone. The mapping gives every one of the 122 and the 108 its 3.13 factor. Of the 50 elementary flows new in 3.13, 32 have a factor in the workbook, all of them in EF v3.1, and all 32 map; the other 18 have no factor in any of its methods. The 7 flows 3.13 removes (`2-Propen-1-ol`) are in no row of the workbook.
+Counts from [bench/ecoinvent_versions.py](../../bench/ecoinvent_versions.py), [raw output](../../bench/results/ecoinvent_versions_3.12_3.13_results.json). No 3.12 id or activity UUID is in 3.13. The name, product and location of 26,482 of the 26,533 datasets of 3.12 are those of a dataset of 3.13, which is the rule `headwater upgrade` maps by when ids change. From the 3.12 workbook to the 3.13 one, 122 EF v3.1 factors of the same flow and category change, in climate change, freshwater ecotoxicity and carcinogenic human toxicity; 108 rows are new and 120 are gone. The mapping gives every one of the 122 and the 108 its 3.13 factor. Of the 50 elementary flows new in 3.13, 32 have a factor in the workbook, all of them in EF v3.1, and all 32 map; the other 18 have no factor in any of its methods. The 7 flows 3.13 removes (`2-Propen-1-ol`) are in no row of the workbook.
 
 Each product's score against ecoinvent's cumulative LCIA, relative to the larger of the two, on all 27,400 products:
 
