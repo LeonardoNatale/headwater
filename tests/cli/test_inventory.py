@@ -34,6 +34,12 @@ def document(*args: str) -> dict[str, Any]:
     return json.loads(out)
 
 
+def run_where(*args: str) -> dict[str, Any]:
+    code, out, err = run("where", *args, "--json")
+    assert code == 0, err
+    return json.loads(out)
+
+
 def amounts(result: dict[str, Any]) -> dict[str, float]:
     return {f["flow_id"]: f["amount"] for f in result["flows"]}
 
@@ -87,6 +93,8 @@ def test_json_of_the_study(demo: Path) -> None:
     assert result["rest"] == []
     assert "sums" not in result, "no sum without a filter: kg of CO2 and of CH4 do not add up"
     assert result["provenance"]["pin"] == RELEASE
+    [where] = run_where(STUDY)["results"]
+    assert result["provenance"]["input_hash"] == where["provenance"]["input_hash"]
 
 
 def test_a_scenario_of_the_study(demo: Path) -> None:

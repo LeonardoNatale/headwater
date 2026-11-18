@@ -276,10 +276,10 @@ def _process_background(
 
 
 def _provenance(result: hw.Result) -> dict[str, Any]:
-    """Where an inventory comes from: the release the folder pins, and the largest residual of
-    the solves. No method: it does not change the totals."""
+    """Where an inventory comes from: the hash of the inputs of the result it is read from, the
+    release the folder pins, and the largest residual of the solves."""
     p = result.provenance
-    return {"pin": p.pin, "residual": p.residual}
+    return {"input_hash": p.input_hash, "pin": p.pin, "residual": p.residual}
 
 
 @dataclass(frozen=True)
