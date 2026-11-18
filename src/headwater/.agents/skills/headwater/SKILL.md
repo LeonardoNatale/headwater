@@ -1,9 +1,9 @@
 ---
 name: headwater
-description: Life cycle assessment (LCA) with the headwater command line. Score a database or a study (a carbon footprint in kg CO2-eq, and other indicators), explain a score (contributions, where it is emitted, sensitivity), change a line and validate it, compare two versions in git, find a background process, import from Excel or Brightway. Use it when a folder holds database.yaml or study.yaml with processes.csv and exchanges.csv, when a release is named like name@hash, or when the user asks about a footprint or an LCA made with headwater.
+description: Life cycle assessment (LCA) with the headwater command line. Score a database or a study (a carbon footprint in kg CO2-eq, and other indicators), explain a score (contributions, where it is emitted, sensitivity), total each flow such as water or energy (inventory), change a line and validate it, compare two versions in git, find a background process, import from Excel or Brightway. Use it when a folder holds database.yaml or study.yaml with processes.csv and exchanges.csv, when a release is named like name@hash, or when the user asks about a footprint or an LCA made with headwater.
 license: Apache-2.0
 metadata:
-  headwater-version: "0.3.0"
+  headwater-version: "0.4.0"
 ---
 
 # headwater
@@ -20,7 +20,7 @@ headwater release pull releases/toy-background@6864b7dbb65d
 headwater calc project/tshirt-footprint --json
 ```
 
-The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This is the skill of headwater 0.3.0. If `headwater --version` prints another version, the skill is an old copy: run `headwater skill install --force`.
+The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This is the skill of headwater 0.4.0. If `headwater --version` prints another version, the skill is an old copy: run `headwater skill install --force`.
 
 ## What the files are
 
@@ -44,6 +44,8 @@ Read `results[].score`, with `results[].indicator.unit`. A study scores each of 
 - `headwater contributions <folder> --json`: what the score buys, level by level, in `results[].tree` (each node has `score`, `share` of the whole, `direct` and `children`), then the lines that move it most, in `results[].sensitivity`.
 - `headwater where <folder> --json`: which processes emit the score, anywhere upstream, and in which locations.
 - `headwater sensitivity <folder> --top 10 --json`: the lines a person can change, largest elasticity first. The elasticity is the % change of the score per 1% change of the line. `sensitivity` is the change of the score per one more unit of the line.
+
+- `headwater inventory <folder> --json`: the total of each elementary flow over the whole life cycle, with no method, in `results[].flows`. `--flow water --compartment "natural resource"` keeps the water taken and adds its total in `results[].sums`. It also takes a background process id with `--release`.
 
 Each takes a database or a study, `--product`, and for a study `--scenario`. Example: on the demo, `headwater contributions project/tshirt-footprint --json` gives 1.24265 kg CO2-eq, and the cotton fabric, line e02 of `tshirt-dyed:tshirt`, is 74.6% of it.
 
@@ -110,10 +112,10 @@ Exit codes: 0 done; 1 the data has a problem (validation errors, a line not mapp
 
 ## Docs
 
-The docs of headwater 0.3.0:
+The docs of headwater 0.4.0:
 
-- [README](https://github.com/LeonardoNatale/headwater/blob/v0.3.0/README.md)
-- [The command line](https://github.com/LeonardoNatale/headwater/blob/v0.3.0/docs/workflows.md#command-line)
-- [The Python API](https://github.com/LeonardoNatale/headwater/blob/v0.3.0/docs/calculation.md#python-api)
-- [The file formats](https://github.com/LeonardoNatale/headwater/blob/v0.3.0/docs/design.md#file-formats)
-- [Decisions](https://github.com/LeonardoNatale/headwater/blob/v0.3.0/docs/decisions.md)
+- [README](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/README.md)
+- [The command line](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/workflows.md#command-line)
+- [The Python API](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/calculation.md#python-api)
+- [The file formats](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/design.md#file-formats)
+- [Decisions](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/decisions.md)

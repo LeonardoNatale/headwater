@@ -55,6 +55,16 @@ x[electricity] × s[fabric] = 0.5298 × 0.25 = 0.13245
 check: 3 → 4 kWh per kg fabric moves the T-shirt from 1.19205 to 1.32450
 ```
 
+**The inventory is B times s.** How much of each elementary flow the T-shirt emits over its whole life cycle, with no method, is what each process emits per run times how much it runs:
+
+```
+CO2:  0.5 kg per kWh × 1.25 kWh   + 2.0 kg per kg × 0.25 kg   = 1.125 kg
+CH4:  0.001 kg per kWh × 1.25 kWh + 0.004 kg per kg × 0.25 kg = 0.00225 kg
+check: 1.125 × 1 + 0.00225 × 29.8                             = 1.19205
+```
+
+The factors of an indicator turn the inventory into the score: c · (B s) = (Bᵀ c) · s = h · s, the forward road.
+
 **With the waste line.** Incineration has a burden of 1.2 per kg treated, so 0.05 kg sent adds 0.06: the T-shirt scores **1.25205**. Inside the matrix this is stored the ecoinvent way (−0.05 kg × −1.2), which gives the same +0.06.
 
 ## The general case
@@ -69,6 +79,8 @@ check: 3 → 4 kWh per kg fabric moves the T-shirt from 1.19205 to 1.32450
 s = A⁻¹ f          forward: how much each process runs
 x = A⁻ᵀ h          backward: score per unit of every product, for one indicator
 score = h · s = x · f
+g = B s            the inventory: the total of each elementary flow, with no method
+score = c · g
 d score / d A[i,j] = −x[i] × s[j]
 d score / d B[k,j] = c[k] × s[j]
 ```
@@ -135,6 +147,7 @@ The engine takes questions, not instructions. A small planner picks the cheapest
 | Thousands of SKUs | Sparse multiply: SKU × product amounts, times the matrix of stored vectors. Or a DuckDB join and group-by. |
 | Why is this score what it is? | Walk the tree: direct + Σ amount × score of supplier, recursively, pruned below a share of the total |
 | Where do the emissions physically happen? | One forward solve for `s`, then `h × s` per process, or `B × s` per elementary flow |
+| How much water, energy or CO₂ does it take, with no method? | One forward solve for `s`, then `B × s`: the inventory |
 | Which inputs matter most? | `x[i] × s[j]` for every matrix entry, after one forward solve |
 | Which named parameters matter most? | Chain rule: entry sensitivities × derivative of each formula with respect to the parameter |
 | What if one process changes? | Rank-1 update of all scores with the stored factorization |
@@ -190,10 +203,11 @@ The no-pivoting choice is tested on cut-off and APOS data, both ecoinvent 3.12 (
 
 Recursive, from stored scores, no solve. Each node lists direct emissions and each purchase as amount × score of supplier. Children are sorted by size, pruned below a share of the root total (for example 3%), and limited to a maximum depth. The supply graph has loops, so pruning and the depth limit are what stop the recursion.
 
-Three views of one result, all cheap:
+Four views of one result, all cheap:
 
 - **What it buys** (the tree above).
 - **Where it is emitted**: emitting processes anywhere upstream, from one forward solve. Each process's part is its direct emissions times how much it runs, and the parts are also summed by location.
+- **The inventory**: the total of each elementary flow, `B × s`, from the same forward solve, with no method. Every flow is listed, whether the method has a factor for it or not.
 - **Sensitivity analysis**: what a user can change (inputs, wastes, emissions, resources, own use, avoided products), ranked by elasticity, that is the % change in score per 1% change of that line. A process's own reference line is left out unless asked for.
 
 ### Edits and scenarios
@@ -384,6 +398,7 @@ Names follow ISO 14040/44 where it has a term, and Brightway otherwise: `contrib
 | `Provenance` | `result.provenance` | `pin` is `toy-background@fixture`, `releases` is empty for a folder |
 | `Contribution` | What `contributions` returns | prints as a tree, below |
 | `Where`, `Emitter`, `Place` | What `where` returns, by process and by location | prints as a list, below |
+| `FlowTotal` | One flow of `inventory` | `FlowTotal(toy:co2 Carbon dioxide, fossil (air): 1.125 kg)` |
 | `Sensitivity` | One line of `sensitivity` | `Sensitivity(tshirt:tshirt e02, T-shirt: input 0.25 kg, elasticity 0.7778, sensitivity 3.7086)` |
 | `ParameterSensitivity` | One line of `result.parameters` | `ParameterSensitivity(fabric_kg = 0.25 kg, elasticity 0.7778, sensitivity 3.7086)` |
 | `NotCharacterised` | A flow with no factor | `tshirt:cod`, `in_database` true, with the reason of its row |
@@ -397,7 +412,7 @@ A `Background` has these:
 | Name | Example on the toy |
 |---|---|
 | `score(process_id, *, indicator=None)` | `bg.score("toy:fabric-production")` is 3.7086, `bg.score("toy:incineration-textile-waste")` 1.2 |
-| `contributions`, `where`, `sensitivity` | [A background product](#a-background-product) |
+| `contributions`, `where`, `sensitivity`, `inventory` | [A background product](#a-background-product) |
 | `direct_and_upstream(process_id, *, indicator=None)` | `bg.direct_and_upstream("toy:fabric-production")` is (2.1192, 1.5894): [A background product](#a-background-product) |
 | `find`, `get_process` | [Finding a process](#finding-a-process) |
 | `processes(process_ids)` | `bg.processes(["toy:fabric-production"])` holds its lines e01 to e04, each with the name of its flow, `flow_name`, taken from the flows the background holds. On a release, one call with every id is much faster than one call per id: with 50 ids in a call, about 4.6 ms per id against 42 ms per id alone ([Processes read from a release](appendix/benchmarks.md#processes-read-from-a-release)) |
@@ -533,6 +548,8 @@ print(result.where())
 
 `contributions` shows the T-shirt's electricity as 0.26490, what the T-shirt buys; `where` shows 0.66225, everything electricity emits for it. It returns a `Where`: `processes`, a tuple of `Emitter`s (`process_id`, `name`, `location`, `amount`, `unit`, `score`, `copy_of`, and `database` for a process of a database it uses), where `amount` is how much the process makes or treats for the score, and `locations`, a tuple of `Place`s (`location`, `score`, `processes`), each largest first by size. Only the `top` largest of each are kept. The others are summed into `rest` and `locations_rest`, and counted in `rest_count` and `locations_rest_count`, so each grouping adds up to `score`. `score` is the forward road, h · s, the sum of every part: it equals `result.score` within the solve's tolerance. A process that emits nothing has no row and is not counted. `top=None` keeps every process that emits something. **`where.to_dataframe()`** gives the processes kept as a pandas DataFrame: `process_id`, `name`, `location`, `amount`, `unit`, `score` and `share`, which with `rest` add up to `score`.
 
+**`result.inventory()`** is the inventory: the total of each elementary flow that a process running for the result emits or takes, with no method, as a tuple of `FlowTotal`s (`flow_id`, `name`, `compartment`, `unit`, `amount`). For the T-shirt, `toy:co2` 1.125 kg and `toy:ch4` 0.00225 kg, both to air. Times the method's factors it is the score: 1.125 + 29.8 × 0.00225 = 1.19205. Every flow is listed, with or without a factor: the T-shirt with 0.002 kg of COD to water lists `tshirt:cod`, which counts 0 in the score. A flow takes its name and compartment from the database that defines it, else from the background. The amount is in the flow's reference unit and keeps the sign of the lines, so a crop taking CO₂ from the air gives a negative emission, and a flow whose lines cancel out is listed at 0. A flow that no running process emits or takes is not listed. The flows are sorted by unit, then largest first by size. A study's result is its amount of the product, as for the score. It needs no solve: it reads how much each process runs from the forward solve `calc` already did, and it is the same for every indicator.
+
 **`result.direct_and_upstream()`** splits the score as Brightway does: `direct` is the database process's own row of `where(top=None)`, and `upstream` is the score minus it. The T-shirt emits nothing itself: (0, 1.19205). It needs no solve.
 
 With the electricity moved to RER, the locations are RER 0.66225 (55.6%) and GLO 0.52980 (44.4%). A location is the code the process's record holds: a region is not split into the places it contains, and RoW is one location. The database's copy of a background process has its own row, marked `(local copy, GLO)`: for `tshirt-local-electricity`, fabric 0.52980, the grid's electricity 0.39735 for the fabric's 0.75 kWh, and the copy 0.16490 for the T-shirt's own 0.5 kWh. A treatment runs for the kg it treats: in `tshirt-waste`, incineration runs 0.05 kg and emits 0.06. `where` needs no new solve: it reads how much each process runs from the forward solve `calc` already did.
@@ -577,6 +594,8 @@ print(bg.contributions("toy:fabric-production"))
 ```
 
 For a waste treatment the unit is 1 kg treated, and the score is the positive burden per kg: `bg.contributions("toy:incineration-textile-waste").score` is 1.2.
+
+**`bg.inventory(process_id)`** is the inventory of one unit of a background product, as `result.inventory()`: for 1 kg of cotton fabric, 3.5 kg of `toy:co2` (2 by fabric production itself and 1.5 by its 3 kWh of electricity) and 0.007 kg of `toy:ch4`. For a waste treatment it is 1 kg treated: 1.2 kg of `toy:co2` for incineration, which emits no methane, so methane is not listed. It takes one forward solve, as `where`, and the method the background was loaded with does not change it. On ecoinvent 3.13 cut-off with EF 3.1, the inventory times each indicator's factors gives the stored score of 10 products, one market per sector, within 10⁻⁹ of the sum of the terms' sizes ([benchmarks](appendix/benchmarks.md#inventory-totals)).
 
 **`bg.direct_and_upstream(process_id, *, indicator=None)`** splits the score as Brightway does, where `direct` is the process's column of the characterised inventory: its own row of `where(process_id, top=None)`, everything it emits for the unit, and `upstream` is `bg.score(process_id)` minus that. For 1 kg of cotton fabric it is (2.1192, 1.5894). It differs from `contributions(process_id).direct` only when the process feeds itself through a loop: if each kWh of electricity bought 0.01 kg of fabric, the fabric would run 1.03 times for 1 kg, and its Brightway direct would count all of them, while the tree's `direct` counts the 1 kg it starts from and puts the rest under its electricity. A process that buys its own product directly is the same in both. It takes one forward solve, as `where`. `contributions` reads the stored scores and solves nothing. `where` and `sensitivity` each do one forward solve for how much each process runs, 2.4 ms on ecoinvent ([benchmarks](appendix/benchmarks.md#calculation-core)), and keeps pivoted factors if that solve needs them. For 1 kg of fabric, which runs electricity for 3 kWh:
 
