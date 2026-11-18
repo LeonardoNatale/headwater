@@ -44,8 +44,11 @@ def test_the_readme_says_alpha_and_names_no_milestone() -> None:
     assert re.findall(r"\bM\d+\b", README) == []
 
 
-def test_the_readme_has_an_install_line() -> None:
-    assert "pip install headwater" in section("Quick start")
+def test_the_install_section_shows_uv_and_pip_and_the_skill() -> None:
+    install = section("Install")
+    for line in ("uv add headwater", "uv tool install headwater", "pip install headwater"):
+        assert line in install
+    assert "headwater skill install" in install
 
 
 def test_the_quick_start_runs_as_written_and_scores_the_demo_study(tmp_path: Path) -> None:

@@ -4,10 +4,21 @@ How people use headwater day to day. The "Available" column of the operations ta
 
 ## Setup
 
+### Install
+
+Python 3.13 or later. With uv, uv gets Python for you.
+
+```bash
+uv add headwater             # in a project: the Python library and the command line
+uv tool install headwater    # only the headwater command, available everywhere
+pip install headwater        # with pip, in a virtual environment
+```
+
+Extras: `pandas` (tables as DataFrames), `gcs` and `s3` (pull releases from Google Cloud Storage or S3), as `uv add "headwater[gcs]"` or `pip install "headwater[gcs]"`. To upgrade: `uv sync -P headwater`, `uv tool upgrade headwater` or `pip install -U headwater`.
+
 ### Anyone, with no licence
 
 ```bash
-pip install headwater
 headwater demo headwater-demo
 cd headwater-demo
 headwater release pull releases/toy-background@6864b7dbb65d
@@ -19,7 +30,6 @@ headwater calc project/tshirt-footprint
 ### Anyone with an ecoinvent licence
 
 ```bash
-pip install headwater
 headwater release import ~/ecoinvent/3.12_cutoff_ecoSpold02 --version 3.12
 headwater method import "$HOME/ecoinvent/LCIA Implementation 3.12.xlsx" \
   --method "EF v3.1" --flow-list ecoinvent-3.12-cutoff@b9428cdd8045
@@ -65,7 +75,7 @@ aws s3 sync ~/.headwater/releases/ecoinvent-3.12-cutoff@b9428cdd8045 \
   s3://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045
 ```
 
-`file://`, `http://` and `https://` work after `pip install headwater`. `gs://` needs `pip install 'headwater[gcs]'` and `s3://` needs `pip install 'headwater[s3]'`; without them the command says which one to install. From Python, `hw.load("gs://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045", method="methods/EF-3.1")` pulls the release and loads it from the cache.
+`file://`, `http://` and `https://` work with the base install. `gs://` needs the `gcs` extra and `s3://` the `s3` extra (`uv add 'headwater[gcs]'` or `pip install 'headwater[gcs]'`); without them the command says which one to install. From Python, `hw.load("gs://acme-lca/releases/ecoinvent-3.12-cutoff@b9428cdd8045", method="methods/EF-3.1")` pulls the release and loads it from the cache.
 
 The pull checks the release before it is cached: its manifest against its own hash, every file against its sha256, and every table's rows against the digests the hash covers. It is written to a hidden folder first and moved into place only when all of it matches. A release that does not match, or a download that stops half way, leaves nothing in the cache and the command exits 1 naming the file or the URL. The 12 characters of hash in the URL are the pin: a release with another hash at that URL is refused. Pulling a release the cache has already changes nothing, and fetches only its small `release.json`. After the first pull, `name@hash` loads from the cache with no network.
 
@@ -524,7 +534,6 @@ A scenario line with no single match in the successor stops the upgrade, and the
 An AI agent such as Claude Code drives headwater through its command line. headwater ships a skill, the short guide an agent reads before it starts, and the user links it into a project once (D49):
 
 ```bash
-pip install headwater
 headwater demo headwater-demo && cd headwater-demo
 headwater skill install
 ```
