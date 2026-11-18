@@ -54,7 +54,9 @@ def front_matter() -> dict[str, object]:
 def test_the_package_holds_one_skill_and_it_is_the_file_of_the_repository() -> None:
     assert packaged() == SKILL.read_bytes()
     skipped = {".venv", "dist", ".claude"}  # .claude holds the worktrees of agent sessions
-    copies = [p for p in ROOT.rglob("SKILL.md") if not skipped.intersection(p.parts)]
+    copies = [
+        p for p in ROOT.rglob("SKILL.md") if not skipped.intersection(p.relative_to(ROOT).parts)
+    ]
     assert [p.relative_to(ROOT) for p in copies] == [SKILL.relative_to(ROOT)]
 
 
