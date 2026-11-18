@@ -1,0 +1,42 @@
+name: Bug report
+description: headwater did something wrong or unexpected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please don't paste ecoinvent amounts, factors or scores here, they are licensed. If you can, show the problem on the toy demo (`headwater demo`).
+  - type: textarea
+    id: ran
+    attributes:
+      label: What did you run?
+      description: The command or the Python code.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened?
+      description: The output or the error message.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: headwater version
+      description: The output of `headwater --version`.
+      placeholder: headwater 0.3.0
+    validations:
+      required: true
+  - type: input
+    id: data
+    attributes:
+      label: Data
+      description: The toy demo, or the source and its version.
+      placeholder: ecoinvent 3.13 cut-off
