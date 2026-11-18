@@ -14,6 +14,7 @@ from headwater.calc.cancellation import cancellation, cancellation_of, process_p
 from headwater.model import (
     Catalog,
     Exchange,
+    Flow,
     InvalidDataError,
     LineChange,
     Method,
@@ -372,6 +373,7 @@ class Database:
             unit=unit,
             provenance=provenance,
             system=system,
+            flows=_records(catalog, inner.flow),
             uncovered=_with_own(
                 background.not_characterised,
                 _acknowledged(self.folder, catalog, method, uncovered, acknowledged),
@@ -704,6 +706,19 @@ def _acknowledged(
                 flow_id, name, process_ids, in_database=True, reason=reasons[flow_id]
             )
     return tuple(by_flow[flow_id] for flow_id in sorted(by_flow))
+
+
+def _records(
+    catalog: Catalog, background: Callable[[str], Flow | None]
+) -> Callable[[str], Flow | None]:
+    """The record of a flow by id: from the catalog of the database's processes, which holds
+    the flows they name, else from the background's flows."""
+
+    def record(flow_id: str) -> Flow | None:
+        found = catalog.flow(flow_id)
+        return found if found is not None else background(flow_id)
+
+    return record
 
 
 def _with_own(

@@ -14,6 +14,7 @@ from headwater.calc.cancellation import Cancellation
 from headwater.calc.explain import largest, sums_by_group
 from headwater.model import (
     CutOffCriterion,
+    Flow,
     Formula,
     FormulaError,
     Issue,
@@ -507,6 +508,37 @@ class Where:
 
 
 @dataclass(frozen=True)
+class FlowTotal:
+    """The total of one elementary flow over a product's whole life cycle, with no method: what
+    every process that runs for it emits or takes, times how much it runs.
+
+    Example, the T-shirt: `toy:co2`, Carbon dioxide, fossil, to air, 1.125 kg, of which 0.625
+    from the 1.25 kWh of electricity and 0.5 from the 0.25 kg of fabric. The amount keeps the
+    sign of the lines, so a flow whose lines cancel out can be 0. Every flow is listed, whether
+    the method has a factor for it or not.
+    """
+
+    flow_id: str
+    name: str
+    compartment: str | None
+    """Where the flow goes or comes from, such as `air` or `natural resource/in water`. None
+    for a flow with no compartment."""
+    unit: str
+    """The reference unit of the flow, which every line is converted to."""
+    amount: float
+
+    def __repr__(self) -> str:
+        where = f" ({self.compartment})" if self.compartment else ""
+        return f"FlowTotal({self.flow_id} {self.name}{where}: {self.amount:.6g} {self.unit})"
+
+
+class FlowRecords(Protocol):
+    """Gives the record of an elementary flow by its id, or None for an id it does not hold."""
+
+    def __call__(self, flow_id: str, /) -> Flow | None: ...
+
+
+@dataclass(frozen=True)
 class NotCharacterised:
     """An elementary flow that the method has no factor for, in any indicator.
 
@@ -641,13 +673,15 @@ class Result:
         unit: str,
         provenance: Provenance,
         system: System,
+        flows: FlowRecords,
         uncovered: tuple[NotCharacterised, ...] = (),
         locations: Locations,
         parameters: ParameterSet | None = None,
         formula_lines: tuple[FormulaLine, ...] = (),
         amount: float = 1.0,
     ) -> None:
-        """`locations` holds the location of each process of `system`, in its order."""
+        """`locations` holds the location of each process of `system`, in its order, and
+        `flows` gives the record of each elementary flow its processes emit or take."""
         if len(locations) != len(system.ids):
             raise ValueError(
                 f"locations must name one location per process: {len(system.ids)}, "
@@ -663,6 +697,7 @@ class Result:
         """How much of what `process_id` makes is scored: 1, or a study's amount of it."""
         self.provenance = provenance
         self._system = system
+        self._flows = flows
         self._uncovered = uncovered
         self._parameters = parameters or ParameterSet()
         self._formula_lines = formula_lines
@@ -765,6 +800,17 @@ class Result:
         electricity production 0.66225 and fabric production 0.52980, all in GLO.
         """
         return where_of(self._system, self._locations, top=top)
+
+    def inventory(self) -> tuple[FlowTotal, ...]:
+        """The inventory: the total of each elementary flow that a process running for the
+        result emits or takes, with no method, its amount of the product included.
+
+        Example, the T-shirt: 1.125 kg of `toy:co2` and 0.00225 kg of `toy:ch4`, both to air.
+        Times the method's factors it gives the score: 1.125 + 29.8 x 0.00225 = 1.19205. A flow
+        with no factor is listed too. Sorted by unit, then largest |amount| first. No solve: the
+        supply is the one `where` and `sensitivity` read.
+        """
+        return inventory_of(self._system, self._flows)
 
     def sensitivity(
         self, *, top: int | None = None, include_reference: bool = False
@@ -989,6 +1035,35 @@ def where_of(s: System, locations: Locations, *, top: int | None) -> Where:
         locations_rest=places.rest,
         locations_rest_count=places.rest_count,
     )
+
+
+def inventory_of(s: System, records: FlowRecords) -> tuple[FlowTotal, ...]:
+    """The total of every elementary flow that a process running for `s` emits or takes, the
+    parts of the system summed by flow id. `records` gives each flow's name and compartment.
+
+    Sorted by unit, then largest |amount| first, then by id. Example, the T-shirt: kg of
+    `toy:co2`, 1.125, then of `toy:ch4`, 0.00225. Raises ValueError naming a flow that `records`
+    does not hold.
+    """
+    totals: dict[str, float] = {}
+    units: dict[str, str] = {}
+    for part in s.parts:
+        block = part.block
+        runs = s.s[part.offset : part.offset + block.B.shape[1]]
+        with ids_in_errors(s.ids[part.offset :]):
+            found = calc.inventory(block.B, runs)
+        for k in np.flatnonzero(found.reached).tolist():
+            flow_id = block.flows[k]
+            totals[flow_id] = totals.get(flow_id, 0.0) + float(found.amount[k])
+            units.setdefault(flow_id, block.flow_units[k])
+    made: list[FlowTotal] = []
+    for flow_id, amount in totals.items():
+        record = records(flow_id)
+        if record is None:
+            raise ValueError(f"flow {flow_id} has no record, so it has no name or compartment")
+        made.append(FlowTotal(flow_id, record.name, record.compartment, units[flow_id], amount))
+    made.sort(key=lambda t: (t.unit.casefold(), t.unit, -abs(t.amount), t.flow_id))
+    return tuple(made)
 
 
 def _reference_amounts(s: System) -> Vector:

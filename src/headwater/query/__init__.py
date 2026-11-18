@@ -1,5 +1,5 @@
-"""The public Python API: open a database, load a background, then calc, contributions and
-sensitivity, or score many products at once.
+"""The public Python API: open a database, load a background, then calc, contributions,
+sensitivity and the inventory, or score many products at once.
 
 The names load their module when first used, so `headwater.query.search`, which `headwater find`
 needs, does not load numpy and scipy for the solver."""
@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from headwater.query.result import (
         Contribution,
         Emitter,
+        FlowTotal,
         NotCharacterised,
         ParameterSensitivity,
         Place,
@@ -40,6 +41,7 @@ __getattr__, __dir__ = lazy_exports(
         "headwater.query.result": [
             "Emitter",
             "Contribution",
+            "FlowTotal",
             "Sensitivity",
             "NotCharacterised",
             "ParameterSensitivity",
@@ -60,6 +62,7 @@ __all__ = [
     "Emitter",
     "Contribution",
     "Database",
+    "FlowTotal",
     "Sensitivity",
     "Study",
     "Match",
