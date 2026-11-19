@@ -21,6 +21,7 @@ from typer.testing import CliRunner
 from headwater.cli import COMMANDS, EXAMPLES, app
 from headwater.cli._json import GROUPS
 from tests.cli.conftest import ANSI
+from tests.cli.schemas import check, file_name, schemas
 from tests.upgrade.conftest import build_toy, short
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
@@ -31,6 +32,25 @@ writes, and `diff` the edit made before it."""
 
 NO_JSON = {"skill show"}
 """The one command without `--json`: its output is the skill."""
+
+VARIANTS = {
+    "calc of a database": ("calc", "project/tshirt-dyed", "--json"),
+    "calc of a scenario": (
+        "calc",
+        "project/tshirt-footprint",
+        "--scenario",
+        "cleaner-dye",
+        "--json",
+    ),
+    "contributions of a database": ("contributions", "project/tshirt-dyed", "--json"),
+    "sensitivity of a database": ("sensitivity", "project/tshirt-dyed", "--json"),
+    "where of a database": ("where", "project/tshirt-dyed", "--json"),
+    "inventory of a database": ("inventory", "project/tshirt-dyed", "--json"),
+    "validate of a database": ("validate", "project/tshirt-dyed", "--json"),
+    "a usage error": ("calc", "project/tshirt-footprint", "--indicator", "nope", "--json"),
+    "a folder that does not exist": ("calc", "project/no-such-folder", "--json"),
+}
+"""Command lines whose output has another shape than the examples, for the schema test."""
 
 
 def run(*args: str) -> tuple[int, str, str]:
@@ -167,6 +187,37 @@ def test_every_command_takes_json_and_prints_one_document(
     assert code == 0, err
     data = json.loads(out)
     assert data["format"].startswith("headwater-")
+
+
+@pytest.fixture(scope="module")
+def printed(demo: Path, ran: dict[str, tuple[int, str, str]]) -> dict[str, str]:
+    """The standard output of every command line with `--json`: the examples, then `VARIANTS`."""
+    found = {name: ran[name][1] for name in ORDER if name not in NO_JSON}
+    found["release pull"] = _pull_json()[1]
+    found |= {name: run(*words)[1] for name, words in VARIANTS.items()}
+    return found
+
+
+@pytest.mark.parametrize("name", [n for n in ORDER if n not in NO_JSON] + list(VARIANTS))
+def test_each_json_output_matches_the_schema_of_its_format(
+    name: str, printed: dict[str, str]
+) -> None:
+    """AGENTS.md rule 11. Example: a key of `contributions --json` renamed fails here, naming it."""
+    check(json.loads(printed[name]))
+
+
+def test_every_schema_is_the_format_of_a_command_or_an_older_version_of_one(
+    printed: dict[str, str],
+) -> None:
+    formats = {json.loads(out)["format"] for out in printed.values()}
+    latest = {f.rpartition("/")[0]: int(f.rpartition("/")[2]) for f in formats}
+
+    for name, schema in schemas().items():
+        base, _, version = str(schema["title"]).rpartition("/")
+        assert base in latest and int(version) <= latest[base], (
+            f"{name} is the schema of no format a command prints"
+        )
+    assert {file_name(f) for f in formats} <= set(schemas())
 
 
 def _pull_json() -> tuple[int, str, str]:

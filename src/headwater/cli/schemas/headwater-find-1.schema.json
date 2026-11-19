@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-find/1",
+  "description": "What `headwater find --json` prints: the background processes that match, the best first. Example: `headwater find electricity --release toy-background@6864b7dbb65d --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "matches"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-find/1"
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "process_id",
+          "flow_id",
+          "name",
+          "reference_product",
+          "location",
+          "unit",
+          "kind",
+          "why"
+        ],
+        "properties": {
+          "process_id": {
+            "type": "string",
+            "description": "The supplier to write in a study file."
+          },
+          "flow_id": {
+            "type": "string",
+            "description": "The id of the reference product: the flow the process makes, or the waste it treats."
+          },
+          "name": {
+            "type": "string"
+          },
+          "reference_product": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit of the reference product."
+          },
+          "kind": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string",
+            "description": "The rule that matched, such as `name starts with`."
+          }
+        }
+      }
+    }
+  }
+}

@@ -202,7 +202,7 @@ def _method_data(imported: MappedMethod, path: Path) -> dict[str, Any]:
             for r in imported.indicators
         ],
         "unmapped": [
-            {"indicator": r.indicator.id, "key": u.key, "where": u.where, "reason": u.reason}
+            {"indicator": r.indicator.id, "key": str(u.key), "where": u.where, "reason": u.reason}
             for r in imported.indicators
             for u in r.unmapped
         ],

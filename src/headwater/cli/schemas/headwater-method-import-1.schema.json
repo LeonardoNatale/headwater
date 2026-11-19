@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-method-import/1",
+  "description": "What `headwater method import --json` prints: the method folder written and how the method's factors mapped to the flows of a release. Example: `headwater method import olca-toy --method \"toy climate v1\" --flow-list toy-1.0@37b242df3416 --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-method-import/1"
+    },
+    "folder": {
+      "type": "string",
+      "description": "The method folder written."
+    },
+    "method": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The method's name in the source."
+        },
+        "path": {
+          "type": "string"
+        },
+        "flow_list": {
+          "type": "string",
+          "description": "The flow list the source's factors are written in."
+        }
+      },
+      "required": [
+        "name",
+        "path",
+        "flow_list"
+      ]
+    },
+    "release": {
+      "type": "string",
+      "description": "The release whose flow list the factors are mapped to, `name@hash` with the full hash."
+    },
+    "flow_list": {
+      "type": "string",
+      "description": "The flow list of the method written."
+    },
+    "flows": {
+      "type": "integer",
+      "description": "Elementary flows in the release's flow list."
+    },
+    "factors": {
+      "type": "integer",
+      "description": "Factors read from the source, for every indicator."
+    },
+    "indicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "factors": {
+            "type": "integer",
+            "description": "Factors of this indicator in the source."
+          },
+          "mapped": {
+            "type": "integer",
+            "description": "Flows of the release this indicator's factors map to."
+          },
+          "copied": {
+            "type": "integer",
+            "description": "Flows of the release given a factor that covers their subcompartment, and none of their own."
+          },
+          "not_in_flow_list": {
+            "type": "integer",
+            "description": "Factors whose flow is not in the release."
+          },
+          "flows_without_factor": {
+            "type": "integer",
+            "description": "Elementary flows of the release with no factor for this indicator."
+          }
+        },
+        "required": [
+          "id",
+          "factors",
+          "mapped",
+          "copied",
+          "not_in_flow_list",
+          "flows_without_factor"
+        ]
+      }
+    },
+    "unmapped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "indicator": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string",
+            "description": "How the factor names its flow: the flow's id, or `name (compartment)`."
+          },
+          "where": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Where the factor is in the source, for example `CFs!A12`."
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "indicator",
+          "key",
+          "where",
+          "reason"
+        ]
+      },
+      "description": "Factors whose flow is not in the release's flow list, in the order of the source."
+    },
+    "not_characterised": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "compartment": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "compartment"
+        ]
+      },
+      "description": "Elementary flows of the flow list with no factor for any indicator, sorted by id."
+    },
+    "left_out": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Categories of the source's method that were not read."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Rows of the flow mapping that no factor needed."
+    }
+  },
+  "required": [
+    "format",
+    "folder",
+    "method",
+    "source",
+    "release",
+    "flow_list",
+    "flows",
+    "factors",
+    "indicators",
+    "unmapped",
+    "not_characterised",
+    "left_out",
+    "warnings"
+  ]
+}

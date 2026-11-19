@@ -163,7 +163,10 @@ def public(thing: object) -> set[str]:
 
 
 def test_headwater_exports_exactly_these_names() -> None:
-    assert sorted(hw.__all__) == HEADWATER
+    assert sorted(hw.__all__) == HEADWATER, (
+        "the public API changes only with D38 (AGENTS.md rule 12): update docs/decisions.md, then "
+        "HEADWATER in tests/query/test_api.py"
+    )
     for name in HEADWATER:
         assert hasattr(hw, name), name
 

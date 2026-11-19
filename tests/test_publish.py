@@ -20,11 +20,11 @@ REPOSITORY = "https://github.com/LeonardoNatale/headwater"
 
 
 def test_the_version_is_written_once_in_pyproject() -> None:
-    assert PYPROJECT["version"] == "0.4.0"
-    assert version("headwater") == "0.4.0"
-    assert headwater.__version__ == "0.4.0"
+    assert PYPROJECT["version"] == "0.4.1"
+    assert version("headwater") == "0.4.1"
+    assert headwater.__version__ == "0.4.1"
     source = (ROOT / "src" / "headwater" / "__init__.py").read_text()
-    assert "0.4.0" not in source
+    assert "0.4.1" not in source
 
 
 def test_headwater_version_prints_the_version() -> None:
@@ -34,7 +34,7 @@ def test_headwater_version_prints_the_version() -> None:
     done = subprocess.run([command, "--version"], capture_output=True, text=True)
 
     assert done.returncode == 0, done.stderr
-    assert done.stdout == "headwater 0.4.0\n"
+    assert done.stdout == "headwater 0.4.1\n"
 
 
 def test_the_metadata_names_the_licence_the_author_and_no_email() -> None:

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-release-list/1",
+  "description": "What `headwater release list --json` prints: each folder of the cache, `releases/` in HEADWATER_HOME, with the release it holds or why it cannot be read. Example: `headwater release list --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-release-list/1"
+    },
+    "folder": {
+      "type": "string",
+      "description": "The cache folder."
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "folder": {
+            "type": "string",
+            "description": "The folder's name."
+          },
+          "release": {
+            "type": "string",
+            "description": "`name@hash`, with the first 12 characters of the hash, as a database pins it."
+          },
+          "hash": {
+            "type": "string",
+            "description": "The release's full hash."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "source",
+              "indicators"
+            ],
+            "description": "source: imported from a source. indicators: solved indicator vectors for one method."
+          },
+          "path": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "description": "The size of the folder's files."
+          },
+          "error": {
+            "type": "string",
+            "description": "Why the folder does not read as a release."
+          }
+        },
+        "required": [
+          "folder",
+          "path",
+          "bytes"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "release",
+              "hash",
+              "kind"
+            ]
+          },
+          {
+            "required": [
+              "error"
+            ]
+          }
+        ]
+      },
+      "description": "One entry per folder of the cache, sorted by name. A folder that reads as a release has `release`, `hash` and `kind`. One that does not has `error`."
+    }
+  },
+  "required": [
+    "format",
+    "folder",
+    "releases"
+  ]
+}

@@ -95,11 +95,17 @@ def test_every_link_points_at_a_file_of_the_repository_at_this_version() -> None
         assert (ROOT / path).is_file(), link
 
 
-def test_every_headwater_command_the_skill_names_exists_with_its_options() -> None:
+def command_spans() -> list[str]:
+    """Every `headwater ...` the skill writes, in backticks or in a bash block."""
     text = SKILL.read_text(encoding="utf-8")
     spans = re.findall(r"`(headwater [^`]+)`", text)
     for block in re.findall(r"^```bash\n(.*?)^```", text, flags=re.M | re.S):
         spans += [line for line in block.splitlines() if line.startswith("headwater ")]
+    return spans
+
+
+def test_every_headwater_command_the_skill_names_exists_with_its_options() -> None:
+    spans = command_spans()
     assert len(spans) > 20
 
     for span in spans:
@@ -116,6 +122,24 @@ def test_every_headwater_command_the_skill_names_exists_with_its_options() -> No
         _, help_text = run(*name.split(), "--help")
         for option in (w.split("=")[0] for w in words if w.startswith("--")):
             assert option in help_text, f"{span}: {name} has no {option}"
+
+
+NOT_IN_THE_SKILL = {"skill show"}
+"""The one command the skill need not name: its output is the skill."""
+
+
+def test_the_skill_names_every_command() -> None:
+    """AGENTS.md rule 11: a new command gets a line in the skill."""
+    words = [shlex.split(span)[1:3] for span in command_spans()]
+    named = {w[0] for w in words} | {" ".join(w) for w in words}
+    commands = [
+        f"{name} {word}" if name in GROUPS else name
+        for name in COMMANDS
+        for word in (getattr(load(name), "commands", {}) if name in GROUPS else [""])
+    ]
+
+    missing = [c for c in commands if c not in named | NOT_IN_THE_SKILL]
+    assert not missing, f"add a line to {SKILL.relative_to(ROOT)} for: {', '.join(missing)}"
 
 
 def test_show_prints_the_skill_byte_for_byte() -> None:

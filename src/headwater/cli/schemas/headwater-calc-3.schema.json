@@ -1,0 +1,404 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-calc/3",
+  "description": "Printed by `headwater calc --json`: the scores of each product of a database or a study, for each indicator, with provenance. Example, in the folder of `headwater demo`: `headwater calc project/tshirt-footprint --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-calc/3"
+    },
+    "path": {
+      "type": "string",
+      "description": "The database or study folder, as given."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "database",
+        "study"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of the database or the study."
+    },
+    "background": {
+      "type": "object",
+      "properties": {
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The release the background was read from, as name@hash. Null for a folder."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The folder the background was read from. Null for a release."
+        }
+      },
+      "required": [
+        "release",
+        "folder"
+      ],
+      "description": "The background the scores are calculated on."
+    },
+    "method": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "hash"
+      ],
+      "description": "The method the background was loaded with, and the hash of its content. Null when several methods are used together: `methods` names them."
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The id of each method the background was loaded with, in order."
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "The version of headwater that calculated the scores."
+    },
+    "solver": {
+      "type": "object",
+      "properties": {
+        "solver": {
+          "type": "string"
+        },
+        "ordering": {
+          "type": "string"
+        },
+        "diag_pivot_thresh": {
+          "type": "number"
+        },
+        "scaling": {
+          "type": "string"
+        },
+        "tolerance": {
+          "type": "number"
+        },
+        "condition_limit": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "solver",
+        "ordering",
+        "diag_pivot_thresh",
+        "scaling",
+        "tolerance",
+        "condition_limit"
+      ],
+      "description": "How the background was factorized. The database's own processes use the same settings."
+    },
+    "scenario": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The scenario of the study the scores are calculated in, from `--scenario`. Null for none."
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the process that makes the product."
+          },
+          "name": {
+            "type": "string",
+            "description": "What the process makes."
+          },
+          "process": {
+            "type": "string",
+            "description": "The name of the process."
+          },
+          "flow": {
+            "type": "string",
+            "description": "The id of the flow the process makes."
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The unit of that flow. Null when the flow has no record."
+          },
+          "amount": {
+            "type": "number",
+            "description": "For a study only: how much of the product it scores, in `unit`."
+          },
+          "per": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What each score is for: `1 kg` for a database, the amount and unit of a study's product, `0.5 kg`. Null when `unit` is null."
+          },
+          "input_hash": {
+            "type": "string",
+            "description": "sha256 of the inputs the product's scores are calculated from."
+          },
+          "residual": {
+            "type": "number",
+            "description": "The largest residual of the solves behind the product's scores."
+          },
+          "cancels": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "The indicators whose score is near 0 because its positive and negative parts cancel. For a database only the first product is calculated in full, so it is null for the others."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "process",
+          "flow",
+          "unit",
+          "per",
+          "input_hash",
+          "residual",
+          "cancels"
+        ]
+      },
+      "description": "Each product scored. For a database, the first is calculated in full and the others are scored on the same background."
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "process": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "process"
+            ]
+          },
+          "indicator": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string",
+                "description": "The unit of the score. Empty for a normalised score."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "unit"
+            ]
+          },
+          "score": {
+            "type": "number",
+            "description": "For a study, the score of its amount of the product."
+          }
+        },
+        "required": [
+          "product",
+          "indicator",
+          "score"
+        ]
+      },
+      "description": "One score per product and indicator."
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "method_hash": {
+          "type": "string"
+        },
+        "pin": {
+          "type": "string",
+          "description": "The background the database or the study pins, as written: `toy-background@6864b7dbb65d`."
+        },
+        "uses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "For a database, the databases it uses, directly or not, by name. For a study, every database it reaches."
+        },
+        "condition": {
+          "type": "number",
+          "description": "The condition estimate of the factors the background was solved with. For a database, the first product's. For a study, the largest of its products."
+        },
+        "database_condition": {
+          "type": "number",
+          "description": "The same estimate for the block of the database's own processes. For a database, the first product's. For a study, the largest of its products."
+        },
+        "residual": {
+          "type": "number",
+          "description": "The largest residual of every product."
+        },
+        "not_characterised": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "processes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every process that emits or takes the flow."
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "For a flow of a database's own processes, the reason its `no_factor.csv` row gives. Null otherwise."
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "processes",
+              "reason"
+            ]
+          },
+          "description": "The elementary flows the method has no factor for, in any indicator, each once. They count 0 in every score. For a database, those of the first product. For a study, those of every product."
+        },
+        "database": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "commit": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "changed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name",
+            "commit",
+            "changed"
+          ],
+          "description": "For a database only: the database, and the commit its git repository is at, null when it is not in git. `changed` is true when its files, or those of a database it uses, differ from that commit."
+        },
+        "study": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "saved": {
+              "type": "boolean"
+            },
+            "commit": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "changed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name",
+            "saved",
+            "commit",
+            "changed"
+          ],
+          "description": "For a study only: the study, and the commit its git repository is at, null when it is not saved or not in git. `changed` is true when its files, or those of a database it reaches, differ from that commit."
+        }
+      },
+      "required": [
+        "method_hash",
+        "pin",
+        "uses",
+        "condition",
+        "database_condition",
+        "residual",
+        "not_characterised"
+      ]
+    }
+  },
+  "required": [
+    "format",
+    "path",
+    "kind",
+    "name",
+    "background",
+    "method",
+    "methods",
+    "engine_version",
+    "solver",
+    "scenario",
+    "products",
+    "results",
+    "provenance"
+  ]
+}

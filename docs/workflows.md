@@ -575,12 +575,14 @@ Asked "what drives the footprint of project/tshirt-footprint?", Claude then runs
 | `contributions` | `headwater-contributions/1` | `indicator`, `results` (each `product`, `score`, `tree`, `sensitivity`) |
 | `where` | `headwater-where/1` | `results` (each `where`: `processes`, `locations`) |
 | `sensitivity` | `headwater-sensitivity/1` | `results` (each `sensitivity`) |
+| `inventory` | `headwater-inventory/1` | `filters`, `results` (each `flows`, `rest`) |
 | `find` | `headwater-find/1` | `matches` |
 | `diff` | `headwater-diff/2` | see [diff](#command-line) |
 | `upgrade` | `headwater-upgrade/2` | see [Upgrading](#upgrading-to-a-new-release) |
 | `schema` | `headwater-schema/1` | `written`, `process_ids` |
 | `release import` | `headwater-release-import/1` | `release`, `path`, `processes`, `flows`, `lines`, `roles`, `data_gaps`, `warnings` |
 | `release pull` | `headwater-release-pull/1` | `release`, `path` |
+| `release list` | `headwater-release-list/1` | `folder`, `releases` |
 | `method import` | `headwater-method-import/1` | `method`, `folder`, `indicators`, `unmapped`, `not_characterised` |
 | `method import-set` | `headwater-method-import-set/1` | `set`, `method`, `folder`, `indicators`, `left_out` |
 | `database import-excel`, `import-brightway` | `headwater-database-import/1` | `folder`, `clean`, `lines`, `to_decide`, `validation` |
@@ -589,6 +591,8 @@ Asked "what drives the footprint of project/tshirt-footprint?", Claude then runs
 | `demo` | `headwater-demo/1` | `folder`, `release`, `then` |
 | `skill install` | `headwater-skill-install/1` | `skill`, `targets` |
 | any, on a failure | `headwater-error/1` | `command`, `exit_code`, `errors` |
+
+Each format has a JSON schema in the package: `headwater-calc/3` is [src/headwater/cli/schemas/headwater-calc-3.schema.json](../src/headwater/cli/schemas/headwater-calc-3.schema.json). It lists every key, and those always printed are required. A released schema never changes, so a key renamed, removed or of another type is a new version, `headwater-calc/4`, in a new file.
 
 **An example in every `--help`.** The last line of each command's help is a command that runs, on the demo for most. The examples of `release import`, `method import`, `method import-set`, `database import-excel`, `import-brightway`, `convert` and `upgrade` name a toy file of the repository's `tests/fixtures`, and a test copies it into a copy of the demo and runs the line.
 

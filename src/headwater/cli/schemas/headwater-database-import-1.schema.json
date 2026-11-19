@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-database-import/1",
+  "description": "What `headwater database import-excel --json` and `headwater database import-brightway --json` print: where the database was written, what became of each line, and what validation found. Example: `headwater database import-excel tshirt.xlsx --release toy-background@6864b7dbb65d --out project/tshirt-excel --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-database-import/1"
+    },
+    "folder": {
+      "type": "string",
+      "description": "The database folder written."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the database written, the prefix of its process ids."
+    },
+    "replaced": {
+      "type": "boolean",
+      "description": "The folder held the unedited files of an earlier import, and they were replaced."
+    },
+    "clean": {
+      "type": "boolean",
+      "description": "Every line mapped, every formula and parameter copied, and a database that validates and that `calc` will not refuse."
+    },
+    "source": {
+      "type": "string",
+      "description": "For import-excel, the workbook's file name. For import-brightway, the name of the project's folder."
+    },
+    "source_database": {
+      "type": "string",
+      "description": "The source's own name for its database, as Brightway names it."
+    },
+    "release": {
+      "type": "string",
+      "description": "The release linked to, `name@hash` with the first 12 characters of the hash."
+    },
+    "activities": {
+      "type": "integer"
+    },
+    "exchange_rows": {
+      "type": "integer"
+    },
+    "lines": {
+      "type": "object",
+      "properties": {
+        "mapped": {
+          "type": "integer"
+        },
+        "unmapped": {
+          "type": "integer"
+        },
+        "waiting": {
+          "type": "integer"
+        },
+        "unexpressible": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mapped",
+        "unmapped",
+        "waiting",
+        "unexpressible"
+      ],
+      "description": "The number of exchange rows of each status."
+    },
+    "mapped_by": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "description": "How the mapped lines were linked: the number of lines for each code, such as `release` or `reference`."
+    },
+    "to_decide": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/outcome"
+      },
+      "description": "Every line that is not mapped, and every mapped line linked by name only."
+    },
+    "skipped_activities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/outcome"
+      },
+      "description": "One per activity that was not converted, with the reason."
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "integer"
+        },
+        "copied": {
+          "type": "integer"
+        },
+        "not_copied": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "scope": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "copied": {
+                "type": "boolean"
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "name",
+              "scope",
+              "copied",
+              "code",
+              "message"
+            ]
+          }
+        }
+      },
+      "required": [
+        "rows",
+        "copied",
+        "not_copied"
+      ]
+    },
+    "databases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "integer"
+          },
+          "treated_as": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "rows",
+          "treated_as"
+        ]
+      },
+      "description": "Each database the source's lines name, and what the import took it for."
+    },
+    "uses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The other databases this database uses."
+    },
+    "unused_mapping": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Rows of the mapping file that no line needed."
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "message",
+          "source"
+        ]
+      },
+      "description": "Things a person should know that are not failures: a formula that disagrees with the number next to it, a column that was not read, a skipped sheet."
+    },
+    "validation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/problem"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/problem"
+          }
+        }
+      },
+      "required": [
+        "errors",
+        "warnings"
+      ],
+      "description": "What validation of the written database found. Null when it did not run."
+    },
+    "validation_skipped": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Why validation did not run. Null when it ran."
+    },
+    "method_folders": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Method folders given with --method whose method the release does not hold. validate, calc and diff need them as --method-folder."
+    }
+  },
+  "required": [
+    "format",
+    "folder",
+    "name",
+    "replaced",
+    "clean",
+    "source",
+    "source_database",
+    "release",
+    "activities",
+    "exchange_rows",
+    "lines",
+    "mapped_by",
+    "to_decide",
+    "skipped_activities",
+    "parameters",
+    "databases",
+    "uses",
+    "unused_mapping",
+    "notes",
+    "validation",
+    "validation_skipped",
+    "method_folders"
+  ],
+  "$defs": {
+    "outcome": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Where the row is: `inventory!A42`."
+        },
+        "activity": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string",
+          "description": "The row as a person finds it in the sheet: `name | reference product | location`."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "mapped",
+            "unmapped",
+            "waiting",
+            "unexpressible"
+          ],
+          "description": "mapped: written with its supplier or flow. unmapped: could not be linked, written with no supplier. waiting: buys from another database whose folder is not there yet. unexpressible: linked, but its formula is not in headwater's syntax."
+        },
+        "code": {
+          "type": "string",
+          "description": "Why, as a stable word: `release`, `not-in-release`, `negative-to-product`..."
+        },
+        "message": {
+          "type": "string"
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Processes or flows a person might have meant. Only to read, never applied."
+        },
+        "database": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "For a `waiting` line: the database folder it will buy from."
+        },
+        "by_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "For a line linked with no reference product or no location, because exactly one process fits: the supplier, and what the workbook left out. Accepted, and listed to be reviewed."
+        },
+        "process_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The line this row became in the database, when it was written."
+        }
+      },
+      "required": [
+        "source",
+        "activity",
+        "line",
+        "status",
+        "code",
+        "message",
+        "suggestions",
+        "database",
+        "by_name",
+        "process_id",
+        "line_id"
+      ]
+    },
+    "problem": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "item": {
+          "type": "string",
+          "description": "What is wrong, for example `tshirt:tshirt line e02` or `flow toy:n2o`."
+        },
+        "message": {
+          "type": "string"
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A file and a row, when known."
+        },
+        "text": {
+          "type": "string",
+          "description": "The line `validate` prints for this problem."
+        }
+      },
+      "required": [
+        "code",
+        "item",
+        "message",
+        "location",
+        "text"
+      ]
+    }
+  }
+}

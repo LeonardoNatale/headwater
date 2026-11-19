@@ -22,9 +22,22 @@ git clone https://github.com/LeonardoNatale/headwater.git
 cd headwater
 uv sync
 uv run ruff check . && uv run ruff format --check .
+uv run lint-imports
 uv run pyright
 uv run pytest
 ```
+
+`lint-imports` checks the layers of the package: `calc/` imports only `headwater.model`, numpy, scipy and the standard library, `model/` imports no other part of headwater, and nothing imports `cli/`. The contracts are in `pyproject.toml`.
+
+### Git hooks
+
+Install them once in a clone:
+
+```bash
+uv run pre-commit install --hook-type pre-commit --hook-type pre-push
+```
+
+On each commit they run the quick checks, ruff and `lint-imports`. On each push they run pyright and the contract tests: every command's `--json` against its schema, the skill, the public API and the layers. They call the tools pinned in `uv.lock`, through `uv run`. CI runs the same checks and the whole test suite, so a hook only tells you sooner. `git commit --no-verify` skips them.
 
 Python 3.14 for development (`.python-version`); the package supports 3.13 and later. Tools come from the project's dev dependencies, pinned in `uv.lock`. Never rely on globally installed ones.
 
@@ -124,4 +137,4 @@ Any statement about speed, size or accuracy, in a doc, a docstring or a pull req
 
 ## Pull requests
 
-One task, one branch, one pull request, ready for review. Commit messages follow Conventional Commits, and CI must pass. The owner reviews and merges. The details are in [AGENTS.md](AGENTS.md#branches-commits-and-pull-requests).
+One task, one branch, one pull request, ready for review, with the body of [.github/pull_request_template.md](.github/pull_request_template.md). Commit messages follow Conventional Commits, and CI must pass. With Claude Code, the skills `add-command` and `review-pr` in [.claude/skills/](.claude/skills/) walk through adding a command and checking a pull request. The owner reviews and merges. The details are in [AGENTS.md](AGENTS.md#branches-commits-and-pull-requests).

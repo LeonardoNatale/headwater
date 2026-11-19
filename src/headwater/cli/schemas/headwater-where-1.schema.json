@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-where/1",
+  "description": "Printed by `headwater where --json`: for each product, its score split by the process that emits it, anywhere upstream, and by location. Example, in the folder of `headwater demo`: `headwater where project/tshirt-footprint --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-where/1"
+    },
+    "path": {
+      "type": "string",
+      "description": "The database or study folder, as given."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "database",
+        "study"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of the database or the study."
+    },
+    "background": {
+      "type": "object",
+      "properties": {
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The release the background was read from, as name@hash. Null for a folder."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The folder the background was read from. Null for a release."
+        }
+      },
+      "required": [
+        "release",
+        "folder"
+      ],
+      "description": "The background the scores are calculated on."
+    },
+    "method": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "description": "The method the background was loaded with. Null when several methods are used together: `methods` names them."
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The id of each method the background was loaded with, in order."
+    },
+    "indicator": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string",
+          "description": "The unit of the score. Empty for a normalised score."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "unit"
+      ],
+      "description": "The one indicator analysed."
+    },
+    "scenario": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The scenario of the study the scores are calculated in, from `--scenario`. Null for none."
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "The version of headwater that calculated the scores."
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The id of the process that makes the product."
+              },
+              "amount": {
+                "type": "number",
+                "description": "How much of what the process makes is scored: 1 for a database, the study's amount for a study."
+              }
+            },
+            "required": [
+              "id",
+              "amount"
+            ]
+          },
+          "score": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit of the score. Empty for a normalised score."
+          },
+          "where": {
+            "type": "object",
+            "properties": {
+              "processes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "process_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string",
+                      "description": "The code of the process's location, as its record holds it: `GLO`, `RER`."
+                    },
+                    "amount": {
+                      "type": "number",
+                      "description": "How much of its reference flow the process makes, or treats, for this score, in its reference unit."
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "score": {
+                      "type": "number",
+                      "description": "The process's direct emissions for that amount, characterised."
+                    },
+                    "share": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The share of the whole score. Null for a score of exactly 0."
+                    },
+                    "copy_of": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "For the database's own copy of a background process, made by an override, the id of that process. Null for every other process."
+                    },
+                    "database": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "For a process of a database that the scored database uses, that database's name. Null for the scored database's own processes and the background's."
+                    }
+                  },
+                  "required": [
+                    "process_id",
+                    "name",
+                    "location",
+                    "amount",
+                    "unit",
+                    "score",
+                    "share",
+                    "copy_of",
+                    "database"
+                  ]
+                },
+                "description": "The processes kept by `--top`, largest first. A process that emits nothing has no row."
+              },
+              "rest": {
+                "type": "number",
+                "description": "The processes left out by `--top`, summed."
+              },
+              "rest_count": {
+                "type": "integer",
+                "description": "How many processes `--top` left out."
+              },
+              "locations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "location": {
+                      "type": "string",
+                      "description": "The code of the location, such as `GLO` or `CN`."
+                    },
+                    "score": {
+                      "type": "number",
+                      "description": "The parts of the processes there, summed."
+                    },
+                    "share": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "The share of the whole score. Null for a score of exactly 0."
+                    },
+                    "processes": {
+                      "type": "integer",
+                      "description": "How many processes there emit something for this score."
+                    }
+                  },
+                  "required": [
+                    "location",
+                    "score",
+                    "share",
+                    "processes"
+                  ]
+                },
+                "description": "The locations kept by `--top`, largest first."
+              },
+              "locations_rest": {
+                "type": "number",
+                "description": "The locations left out by `--top`, summed."
+              },
+              "locations_rest_count": {
+                "type": "integer",
+                "description": "How many locations `--top` left out."
+              }
+            },
+            "required": [
+              "processes",
+              "rest",
+              "rest_count",
+              "locations",
+              "locations_rest",
+              "locations_rest_count"
+            ]
+          },
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "input_hash": {
+                "type": "string",
+                "description": "sha256 of the inputs the score is calculated from."
+              },
+              "method_hash": {
+                "type": "string"
+              },
+              "pin": {
+                "type": "string",
+                "description": "The background the database or the study pins, as written: `toy-background@6864b7dbb65d`."
+              },
+              "residual": {
+                "type": "number",
+                "description": "The largest residual of the solves behind the score."
+              }
+            },
+            "required": [
+              "input_hash",
+              "method_hash",
+              "pin",
+              "residual"
+            ]
+          }
+        },
+        "required": [
+          "product",
+          "score",
+          "unit",
+          "where",
+          "provenance"
+        ]
+      },
+      "description": "One entry per product: the one product of a database, or each product of a study, or the one `--product` names."
+    }
+  },
+  "required": [
+    "format",
+    "path",
+    "kind",
+    "name",
+    "background",
+    "method",
+    "methods",
+    "indicator",
+    "scenario",
+    "engine_version",
+    "results"
+  ]
+}

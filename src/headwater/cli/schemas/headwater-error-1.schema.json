@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-error/1",
+  "description": "What any command prints under `--json` when it fails: the command, its exit code and what is wrong, each problem in the shape of `validate --json`. Example: `headwater contributions project/none --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "command",
+    "exit_code",
+    "errors"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-error/1"
+    },
+    "command": {
+      "type": "string",
+      "description": "The command that ran: `contributions`, or `database import-excel` for a command of a group. Empty when the command line names none."
+    },
+    "exit_code": {
+      "type": "integer",
+      "description": "The exit code of the command, 1 or 2. A usage error exits with 2."
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/problem"
+      },
+      "description": "The problems of invalid data, else one problem whose code is the error's class in kebab case (`singular-matrix`), `error` for a plain headwater error, or `usage` for a usage error."
+    }
+  },
+  "$defs": {
+    "problem": {
+      "type": "object",
+      "required": [
+        "code",
+        "item",
+        "message",
+        "location",
+        "text"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Stable, so tools can match on it: `supplier-not-found`."
+        },
+        "item": {
+          "type": "string",
+          "description": "What is wrong: `tshirt:tshirt line e02`, or `flow toy:n2o`."
+        },
+        "message": {
+          "type": "string"
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A file and a row, when known: `exchanges.csv:3`."
+        },
+        "text": {
+          "type": "string",
+          "description": "The line `validate` prints: item, message, and the location in brackets."
+        }
+      }
+    }
+  }
+}

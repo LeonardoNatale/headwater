@@ -1,6 +1,6 @@
 [project]
 name = "headwater"
-version = "0.4.0"
+version = "0.4.1"
 description = "A Python library for life cycle assessment (LCA)."
 readme = "README.md"
 license = "Apache-2.0"
@@ -65,9 +65,11 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "import-linter>=2.16",
     "jsonschema>=4.26",
     "pandas>=2.2",
     "pandas-stubs",
+    "pre-commit>=4.7.0",
     "pyarrow-stubs>=20.0.0.20260819",
     "pyright[nodejs]",
     "pytest",
@@ -114,3 +116,85 @@ testpaths = ["tests"]
 addopts = ["--import-mode=importlib"]
 # A UserWarning raised in headwater's own code, or by a library it calls, fails the test.
 filterwarnings = ["error::UserWarning:headwater"]
+
+# The layers of the package, checked by `uv run lint-imports` (AGENTS.md rules 8 and 13).
+# Imports under `if TYPE_CHECKING:` count too.
+[tool.importlinter]
+root_package = "headwater"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "calc/ imports no part of headwater but model, and no I/O library"
+type = "forbidden"
+source_modules = ["headwater.calc"]
+forbidden_modules = [
+    "headwater._lazy",
+    "headwater.cli",
+    "headwater.diff",
+    "headwater.io",
+    "headwater.link",
+    "headwater.query",
+    "headwater.release",
+    "headwater.study",
+    "headwater.upgrade",
+    "csv",
+    "duckdb",
+    "fsspec",
+    "gcsfs",
+    "http",
+    "io",
+    "json",
+    "lxml",
+    "openpyxl",
+    "os",
+    "pandas",
+    "pathlib",
+    "pickle",
+    "pyarrow",
+    "s3fs",
+    "shutil",
+    "socket",
+    "sqlite3",
+    "subprocess",
+    "tempfile",
+    "typer",
+    "urllib",
+    "yaml",
+]
+broken_contract_guidance = "calc/ takes arrays and returns arrays (AGENTS.md rule 8). Read files, cache and print in the layer that calls it, query/ or cli/, and pass calc/ the arrays."
+
+[[tool.importlinter.contracts]]
+name = "calc/ imports no third-party library but numpy and scipy"
+type = "forbidden"
+source_modules = ["headwater.calc"]
+# Every dependency of pyproject.toml but numpy and scipy (tests/test_layers.py). pydantic reaches
+# calc/ through headwater.model, so only a direct import is refused.
+forbidden_modules = ["pydantic"]
+allow_indirect_imports = true
+broken_contract_guidance = "calc/ imports only headwater.model, numpy, scipy and the standard library (AGENTS.md rule 13)."
+
+[[tool.importlinter.contracts]]
+name = "model/ imports no other part of headwater"
+type = "forbidden"
+source_modules = ["headwater.model"]
+forbidden_modules = [
+    "headwater._lazy",
+    "headwater.calc",
+    "headwater.cli",
+    "headwater.diff",
+    "headwater.io",
+    "headwater.link",
+    "headwater.query",
+    "headwater.release",
+    "headwater.study",
+    "headwater.upgrade",
+]
+broken_contract_guidance = "model/ holds the records every other part uses, so it imports none of them (AGENTS.md rule 13)."
+
+[[tool.importlinter.contracts]]
+name = "Nothing imports cli/"
+type = "protected"
+protected_modules = ["headwater.cli"]
+allowed_importers = []
+as_packages = true
+broken_contract_guidance = "cli/ is the top layer, a thin layer over the Python API (AGENTS.md rule 13). Move what the other module needs out of cli/, into the package that owns it."

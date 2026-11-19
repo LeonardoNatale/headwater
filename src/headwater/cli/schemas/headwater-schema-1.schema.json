@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-schema/1",
+  "description": "What `headwater schema --json` prints: the JSON schema files written for database.yaml, study.yaml and scenario files. Example: `headwater schema project --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "folder",
+    "written",
+    "process_ids"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-schema/1"
+    },
+    "folder": {
+      "type": "string"
+    },
+    "written": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The paths of the files written."
+    },
+    "process_ids": {
+      "type": "integer",
+      "description": "How many process ids of the databases in the folder the schemas complete from."
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-uses/2",
+  "description": "What `headwater database uses --json` prints: for each database given, the databases and studies that reach it, and the files next to it that did not read. Example: `headwater database uses project/dyes --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "ref",
+    "databases"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-uses/2"
+    },
+    "ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The git ref the files were read at, or null for the files on disk."
+    },
+    "databases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "users",
+          "errors"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "kind",
+                "through"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "database",
+                    "study"
+                  ]
+                },
+                "through": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The databases it goes through, from the one it names down to this database."
+                }
+              }
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "file",
+                "message"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string",
+                  "description": "database.yaml or study.yaml."
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

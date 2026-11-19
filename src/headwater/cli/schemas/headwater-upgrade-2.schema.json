@@ -1,0 +1,370 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-upgrade/2",
+  "description": "What `headwater upgrade --json` prints: how each supplier maps to the new release, what to review, what was written, and the validation and diff of each upgraded folder. Example: `headwater upgrade upgrade/tshirt --to toy-2@bd46d2b98059 --mapping upgrade/upgrade-mapping.csv --check --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "databases",
+    "studies",
+    "from",
+    "to",
+    "check",
+    "complete",
+    "counts",
+    "matches",
+    "flags",
+    "problems",
+    "warnings",
+    "written",
+    "validation",
+    "diffs"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-upgrade/2"
+    },
+    "databases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The databases upgraded together: those given, those the studies reach, and every database they use."
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "from": {
+      "type": "string",
+      "description": "The release they move from: `name@hash`."
+    },
+    "to": {
+      "type": "string",
+      "description": "The release they move to: `name@hash`."
+    },
+    "check": {
+      "type": "boolean",
+      "description": "True with --check: nothing is written."
+    },
+    "complete": {
+      "type": "boolean",
+      "description": "True when every supplier is mapped and nothing else stops the upgrade. When false, nothing is written and `written`, `validation` and `diffs` are empty."
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "mapping",
+        "same-id",
+        "correspondence",
+        "same-dataset",
+        "unmapped"
+      ],
+      "properties": {
+        "mapping": {
+          "$ref": "#/$defs/count"
+        },
+        "same-id": {
+          "$ref": "#/$defs/count"
+        },
+        "correspondence": {
+          "$ref": "#/$defs/count"
+        },
+        "same-dataset": {
+          "$ref": "#/$defs/count"
+        },
+        "unmapped": {
+          "$ref": "#/$defs/count"
+        }
+      },
+      "description": "Suppliers and the lines that name them, per rule. Every rule is listed."
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/match"
+      },
+      "description": "One per old process the folders name, in the order they name them."
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/flag"
+      }
+    },
+    "problems": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/problem"
+      },
+      "description": "What stops the upgrade besides an unmapped supplier."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/problem"
+      }
+    },
+    "written": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The files written, from the folder that holds the databases and studies: `tshirt/exchanges.csv`. Empty with --check."
+    },
+    "validation": {
+      "type": "array",
+      "items": {
+        "$ref": "headwater-validate-2.schema.json"
+      },
+      "description": "Each upgraded database and study validated on the new release."
+    },
+    "diffs": {
+      "type": "array",
+      "items": {
+        "$ref": "headwater-diff-2.schema.json"
+      },
+      "description": "Each upgraded database that validates, diffed across the release change."
+    }
+  },
+  "$defs": {
+    "dataset": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "product",
+        "product_name",
+        "location",
+        "unit",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "product": {
+          "type": "string",
+          "description": "The id of the flow it makes, or of the waste it treats."
+        },
+        "product_name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string",
+          "description": "The unit of its reference line."
+        },
+        "kind": {
+          "type": "string"
+        }
+      },
+      "description": "One process of a release."
+    },
+    "count": {
+      "type": "object",
+      "required": [
+        "suppliers",
+        "lines"
+      ],
+      "properties": {
+        "suppliers": {
+          "type": "integer"
+        },
+        "lines": {
+          "type": "integer"
+        }
+      }
+    },
+    "match": {
+      "type": "object",
+      "required": [
+        "old",
+        "rule",
+        "new",
+        "code",
+        "reason",
+        "decision",
+        "automatic",
+        "suggestions",
+        "lines"
+      ],
+      "properties": {
+        "old": {
+          "$ref": "#/$defs/dataset"
+        },
+        "rule": {
+          "enum": [
+            "mapping",
+            "same-id",
+            "correspondence",
+            "same-dataset",
+            "unmapped"
+          ],
+          "description": "What decided the successor: a mapping row, the same id, a correspondence row, the same dataset, or none."
+        },
+        "new": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/dataset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The successor, null when unmapped."
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why it is unmapped: `not-in-release`, `split`, `deleted` or `not-a-process`."
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "who",
+            "when",
+            "source",
+            "comment"
+          ],
+          "properties": {
+            "who": {
+              "type": "string"
+            },
+            "when": {
+              "type": "string",
+              "description": "ISO 8601 date and time, in UTC."
+            },
+            "source": {
+              "type": "string",
+              "description": "Where the row is: `suppliers.csv:3`."
+            },
+            "comment": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "description": "Who decided, when, and on which row, for a mapping row."
+        },
+        "automatic": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/dataset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "What the rules would have given, when a mapping row decided otherwise."
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dataset"
+          },
+          "description": "Processes a person might mean, for an unmapped supplier. Never applied."
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The places that name it: `tshirt:tshirt line e06`, `override of toy:1:elec line e02`."
+        }
+      },
+      "description": "One supplier and its successor, or why it has none."
+    },
+    "flag": {
+      "type": "object",
+      "required": [
+        "kind",
+        "old",
+        "new",
+        "message",
+        "added",
+        "removed",
+        "lines"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "description": "`row` or `market`."
+        },
+        "old": {
+          "$ref": "#/$defs/dataset"
+        },
+        "new": {
+          "$ref": "#/$defs/dataset"
+        },
+        "message": {
+          "type": "string"
+        },
+        "added": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "For RoW, the places with a dataset of their own that the new release adds. For a market, the suppliers it buys from that the old one did not."
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "A link to read again even though it mapped: RoW, or a market that changed."
+    },
+    "problem": {
+      "type": "object",
+      "required": [
+        "code",
+        "item",
+        "message",
+        "text"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "item": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string",
+          "description": "Item and message, then the location in brackets when known."
+        }
+      },
+      "description": "A problem, without the `location` key of `validate --json`."
+    }
+  }
+}
