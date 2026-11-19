@@ -45,6 +45,7 @@ The words headwater uses, in plain words, each with one example. Most examples u
 | Life cycle assessment (LCA) | Adding up the environmental impacts of a product across its supply chain | the CO₂ of a T-shirt, from cotton farming to the factory gate |
 | Product (reference flow) | What a process makes, in one unit | 1 kg cotton fabric |
 | Elementary flow | Something taken from or released to nature | CO₂ to air, water from a river |
+| Inventory (life cycle inventory) | The total of each elementary flow over a product's whole life cycle, with no method: what every process that runs for it emits or takes, times how much it runs. `headwater inventory` prints it. | 1 T-shirt: 1.125 kg CO₂ and 0.00225 kg methane to air |
 | Foreground | What a practitioner models themselves: in headwater, databases | the T-shirt factory |
 | Market | A dataset that mixes the suppliers of one product in one region, with transport and losses | market for electricity, low voltage, India |
 | GLO, RoW | Global; "rest of world", meaning the world minus the regions that have their own dataset | |
@@ -68,7 +69,7 @@ The words headwater uses, in plain words, each with one example. Most examples u
 | Supply (s) | How much each process has to run to make what you asked for. | 1.25 kWh of electricity for one T-shirt |
 | Score vector (x) | The score per unit of every product, for one indicator. | electricity 0.5298, fabric 3.7086 |
 | Direct emissions (h) | A process's own emissions, already converted to one indicator. | fabric 2.0 + 0.004 × 29.8 = 2.1192 |
-| Forward solve | Solving `A s = f` for one product at a time. | gives `s`, for `where` |
+| Forward solve | Solving `A s = f` for one product at a time. | gives `s`, for `where` and the inventory |
 | Transposed solve (adjoint) | Solving `Aᵀ x = h` for one indicator at a time, which gives every product's score at once. | gives `x`, for every score |
 | Factorization (LU) | Splitting A into two triangular matrices once, so later solves take milliseconds. | |
 | Pivoting | Reordering rows during factorization for numerical safety. Slower; often not needed for LCA matrices. | |

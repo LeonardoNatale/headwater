@@ -23,6 +23,7 @@ HEADWATER = [
     "Contribution",
     "Database",
     "Emitter",
+    "FlowTotal",
     "HeadwaterError",
     "InvalidDataError",
     "ManyScores",
@@ -51,6 +52,7 @@ BACKGROUND = {
     "find",
     "get_process",
     "indicators",
+    "inventory",
     "method",
     "methods",
     "not_characterised",
@@ -104,6 +106,7 @@ RESULT = {
     "direct_and_upstream",
     "forward_score",
     "indicator",
+    "inventory",
     "not_characterised",
     "parameters",
     "process_id",
@@ -145,6 +148,8 @@ WHERE = {
     "to_dataframe",
     "unit",
 }
+
+FLOW_TOTAL = {"amount", "compartment", "flow_id", "name", "unit"}
 
 MATCH = {"flow_id", "kind", "location", "name", "process_id", "reference_product", "unit", "why"}
 
@@ -195,6 +200,7 @@ def test_contributions_where_and_matches_show_their_fields(background: hw.Backgr
     result = open_database(TOY_DIR / "tshirt" / "tshirt").calc(background, "tshirt:tshirt")
     assert public(result.contributions()) == CONTRIBUTION
     assert public(result.where()) == WHERE
+    assert public(result.inventory()[0]) == FLOW_TOTAL
     assert public(background.find("electricity")[0]) == MATCH
 
 
@@ -246,6 +252,7 @@ def test_background_calls_take_a_process_id(background: hw.Background) -> None:
     assert background.contributions(process_id=FABRIC).process_id == FABRIC
     assert background.where(process_id=FABRIC, top=1).process_id == FABRIC
     assert background.sensitivity(process_id=FABRIC, top=1)[0].process_id == FABRIC
+    assert background.inventory(process_id=FABRIC)[0].flow_id == "toy:co2"
 
 
 def test_provenance_names_the_pin(background: hw.Background) -> None:

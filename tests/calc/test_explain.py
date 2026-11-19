@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from scipy import sparse
 
 from headwater.calc import (
     CalculationError,
@@ -9,6 +10,7 @@ from headwater.calc import (
     emission_line_levers,
     explain,
     factorize,
+    inventory,
     levers,
     line_levers,
     matrix_entry,
@@ -239,6 +241,29 @@ def test_where_emissions_happen(toy) -> None:
 
     np.testing.assert_allclose(per_process, [0.0, 0.5298, 0.66225, 0.0], rtol=1e-12)
     assert per_process.sum() == pytest.approx(x[toy.tshirt], rel=1e-12)
+
+
+def test_the_inventory_of_the_tshirt(toy) -> None:
+    """1.25 kWh x 0.5 + 0.25 kg x 2 = 1.125 kg of CO2, and 1.25 x 0.001 + 0.25 x 0.004 = 0.00225
+    kg of CH4. Times the factors it is the score: c . (B s) = h . s."""
+    x, s, _ = solve_toy(toy.A, toy.h, toy.tshirt)
+
+    totals = inventory(toy.B, s)
+
+    np.testing.assert_allclose(totals.amount, [1.125, 0.00225], rtol=1e-12)
+    assert totals.reached.tolist() == [True, True]
+    assert toy.c @ totals.amount == pytest.approx(x[toy.tshirt], rel=1e-12)
+
+
+def test_the_inventory_lists_what_runs_even_when_it_cancels() -> None:
+    """Flow 0 is emitted by process 0 and taken back by process 1, flow 1 only by process 2,
+    which does not run, and flow 2 by nothing."""
+    B = sparse.csc_array(np.array([[1.0, -2.0, 0.0], [0.0, 0.0, 5.0], [0.0, 0.0, 0.0]]))
+
+    totals = inventory(B, [2.0, 1.0, 0.0])
+
+    np.testing.assert_allclose(totals.amount, [0.0, 0.0, 0.0], atol=0)
+    assert totals.reached.tolist() == [True, False, False]
 
 
 def test_the_largest_contributions_and_the_rest(toy) -> None:

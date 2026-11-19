@@ -154,6 +154,33 @@ def where(h: ArrayLike, s: ArrayLike) -> Vector:
 
 
 @dataclass(frozen=True, eq=False)
+class Totals:
+    """The total of each elementary flow for one demand, one per row of B."""
+
+    amount: Vector
+    """B x s: what each process emits or takes, times how much it runs, summed."""
+    reached: NDArray[np.bool_]
+    """True for a flow that a process that runs emits or takes. Its total may still be 0, when
+    its entries cancel out."""
+
+
+def inventory(B: MatrixLike, s: ArrayLike) -> Totals:
+    """The inventory of one demand: the total of each elementary flow, B x s.
+
+    Example, the T-shirt: electricity runs 1.25 kWh and emits 0.5 kg of CO2 per kWh, fabric runs
+    0.25 kg and emits 2 kg per kg, so its CO2 is 0.625 + 0.5 = 1.125 kg. The factors c of an
+    indicator turn it into the score: c . (B x s) = (B^T c) . s = h . s.
+
+    `s` holds how much each process runs, one per column of B.
+    """
+    matrix = as_matrix(B, "B", copy=False)
+    sv = as_vector(s, matrix.shape[1], "s")
+    amount = np.asarray(matrix @ sv, dtype=np.float64)
+    reached = np.asarray(abs(matrix) @ (sv != 0).astype(np.float64)) > 0
+    return Totals(amount, reached)
+
+
+@dataclass(frozen=True, eq=False)
 class Largest:
     """The largest of some values by size, and the others summed."""
 

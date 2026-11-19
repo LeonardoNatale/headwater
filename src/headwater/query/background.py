@@ -59,12 +59,14 @@ from headwater.query._system import (
 )
 from headwater.query.result import (
     Contribution,
+    FlowTotal,
     Locations,
     NotCharacterised,
     Sensitivity,
     Where,
     contribution_of,
     counted,
+    inventory_of,
     rank_sensitivity,
     where_of,
 )
@@ -212,6 +214,10 @@ class Internals:
     @cached_property
     def _flows(self) -> Mapping[str, Flow]:
         return {flow.id: flow for flow in self.folder.flows}
+
+    def flow(self, flow_id: str) -> Flow | None:
+        """The record of a flow of the background, or None for an id it does not hold."""
+        return self._flows.get(flow_id)
 
     @cached_property
     def _properties(self) -> Mapping[str, tuple[FlowProperty, ...]]:
@@ -691,6 +697,23 @@ class Background:
         inner = self._internals
         system = inner.supply(inner.indicator(indicator), inner.row(process_id))
         return where_of(system, inner.locations, top=top)
+
+    def inventory(self, process_id: str) -> tuple[FlowTotal, ...]:
+        """The inventory of one unit of a background product: the total of each elementary flow
+        that a process running for it emits or takes, with no method.
+
+        For 1 kg of cotton fabric: 3.5 kg of `toy:co2`, 2 by fabric production itself and 1.5
+        by the 3 kWh of electricity it buys, and 0.007 kg of `toy:ch4`. For a waste treatment it
+        is 1 kg treated: 1.2 kg of `toy:co2` for incineration. Times the factors of an indicator
+        it gives `score(process_id)`. A flow with no factor is listed too. Sorted by unit, then
+        largest |amount| first. One forward solve, as for `where`; the method does not change
+        it. Raises ValueError for an id this background does not hold.
+        """
+        inner = self._internals
+        row = inner.row(process_id)
+        # the supply is the same for every indicator: the first one only fills the system
+        system = inner.supply(inner.method.indicators[0].id, row)
+        return inventory_of(system, inner.flow)
 
     def direct_and_upstream(
         self, process_id: str, *, indicator: str | None = None

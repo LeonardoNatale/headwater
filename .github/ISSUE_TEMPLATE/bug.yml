@@ -31,7 +31,7 @@ body:
     attributes:
       label: headwater version
       description: The output of `headwater --version`.
-      placeholder: headwater 0.3.0
+      placeholder: headwater 0.4.0
     validations:
       required: true
   - type: input

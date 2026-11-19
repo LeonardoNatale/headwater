@@ -1,6 +1,6 @@
 [project]
 name = "headwater"
-version = "0.3.0"
+version = "0.4.0"
 description = "A Python library for life cycle assessment (LCA)."
 readme = "README.md"
 license = "Apache-2.0"

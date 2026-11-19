@@ -583,6 +583,7 @@ def _background_product(
         unit=unit,
         provenance=provenance,
         system=system,
+        flows=inner.flow,
         uncovered=reached,
         locations=inner.locations,
         amount=product.amount,
