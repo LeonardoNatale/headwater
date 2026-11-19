@@ -1,0 +1,374 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-contributions/1",
+  "description": "Printed by `headwater contributions --json`: for each product, what its score buys level by level, and the lines that move it most. Example, in the folder of `headwater demo`: `headwater contributions project/tshirt-footprint --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-contributions/1"
+    },
+    "path": {
+      "type": "string",
+      "description": "The database or study folder, as given."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "database",
+        "study"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of the database or the study."
+    },
+    "background": {
+      "type": "object",
+      "properties": {
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The release the background was read from, as name@hash. Null for a folder."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The folder the background was read from. Null for a release."
+        }
+      },
+      "required": [
+        "release",
+        "folder"
+      ],
+      "description": "The background the scores are calculated on."
+    },
+    "method": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ],
+      "description": "The method the background was loaded with. Null when several methods are used together: `methods` names them."
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The id of each method the background was loaded with, in order."
+    },
+    "indicator": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string",
+          "description": "The unit of the score. Empty for a normalised score."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "unit"
+      ],
+      "description": "The one indicator analysed."
+    },
+    "scenario": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The scenario of the study the scores are calculated in, from `--scenario`. Null for none."
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "The version of headwater that calculated the scores."
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The id of the process that makes the product."
+              },
+              "amount": {
+                "type": "number",
+                "description": "How much of what the process makes is scored: 1 for a database, the study's amount for a study."
+              }
+            },
+            "required": [
+              "id",
+              "amount"
+            ]
+          },
+          "score": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit of the score. Empty for a normalised score."
+          },
+          "tree": {
+            "$ref": "#/$defs/node",
+            "description": "The contribution tree, the product at its root."
+          },
+          "sensitivity": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/$defs/sensitivity_line"
+            },
+            "description": "The lines that move the score most, largest elasticity first, as many as `--sensitivity` asks for. Null with `--sensitivity 0`, or when there is no sensitivity analysis: `no_sensitivity` says why."
+          },
+          "no_sensitivity": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why there is no sensitivity analysis, such as a score of zero. Null otherwise."
+          },
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "input_hash": {
+                "type": "string",
+                "description": "sha256 of the inputs the score is calculated from."
+              },
+              "method_hash": {
+                "type": "string"
+              },
+              "pin": {
+                "type": "string",
+                "description": "The background the database or the study pins, as written: `toy-background@6864b7dbb65d`."
+              },
+              "residual": {
+                "type": "number",
+                "description": "The largest residual of the solves behind the score."
+              }
+            },
+            "required": [
+              "input_hash",
+              "method_hash",
+              "pin",
+              "residual"
+            ]
+          }
+        },
+        "required": [
+          "product",
+          "score",
+          "unit",
+          "tree",
+          "sensitivity",
+          "no_sensitivity",
+          "provenance"
+        ]
+      },
+      "description": "One entry per product: the one product of a database, or each product of a study, or the one `--product` names."
+    }
+  },
+  "required": [
+    "format",
+    "path",
+    "kind",
+    "name",
+    "background",
+    "method",
+    "methods",
+    "indicator",
+    "scenario",
+    "engine_version",
+    "results"
+  ],
+  "$defs": {
+    "node": {
+      "type": "object",
+      "properties": {
+        "process_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string",
+          "description": "The code of the process's location, as its record holds it: `GLO`, `RER`."
+        },
+        "flow_id": {
+          "type": "string",
+          "description": "The flow the process makes, or the waste it treats."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Units of the flow bought, or sent to treatment, in its reference unit."
+        },
+        "unit": {
+          "type": "string"
+        },
+        "per_unit": {
+          "type": "number",
+          "description": "Score per unit of the flow: per kg made, or per kg treated."
+        },
+        "score": {
+          "type": "number",
+          "description": "`amount` times `per_unit`."
+        },
+        "share": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "The share of the whole score of the tree. Null for a score of exactly 0."
+        },
+        "direct": {
+          "type": "number",
+          "description": "Direct emissions of the process for this amount, characterised."
+        },
+        "rest": {
+          "type": "number",
+          "description": "Purchases left out by `--min-share` or `--depth`, summed. At the last level it is everything the process buys, which `score` already holds."
+        },
+        "copy_of": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "For the database's own copy of a background process, made by an override, the id of that process. Null for every other process."
+        },
+        "database": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "For a process of a database that the scored database uses, that database's name. Null for the scored database's own processes and the background's."
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "description": "Purchases kept, largest first."
+        }
+      },
+      "required": [
+        "process_id",
+        "name",
+        "location",
+        "flow_id",
+        "amount",
+        "unit",
+        "per_unit",
+        "score",
+        "share",
+        "direct",
+        "rest",
+        "copy_of",
+        "database",
+        "children"
+      ],
+      "description": "One process in the tree: score = direct + the children's scores + rest."
+    },
+    "sensitivity_line": {
+      "type": "object",
+      "properties": {
+        "process_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the process."
+        },
+        "line_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the line, such as `input`, `waste_to_treatment`, `emission` or `resource`."
+        },
+        "flow_id": {
+          "type": "string"
+        },
+        "supplier_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The process bought from, or sent to. Null for an emission or a resource."
+        },
+        "supplier_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Its name. Null for an emission or a resource."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Per run of the process, in the flow's reference unit."
+        },
+        "unit": {
+          "type": "string"
+        },
+        "elasticity": {
+          "type": "number",
+          "description": "% change of the score per 1% change of `amount`."
+        },
+        "sensitivity": {
+          "type": "number",
+          "description": "Change of the score per one more unit of `amount`."
+        },
+        "copy_of": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "For the database's own copy of a background process, made by an override, the id of that process. Null for every other process."
+        }
+      },
+      "required": [
+        "process_id",
+        "name",
+        "line_id",
+        "role",
+        "flow_id",
+        "supplier_id",
+        "supplier_name",
+        "amount",
+        "unit",
+        "elasticity",
+        "sensitivity",
+        "copy_of"
+      ]
+    }
+  }
+}

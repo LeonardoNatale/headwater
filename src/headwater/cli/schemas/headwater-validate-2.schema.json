@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-validate/2",
+  "description": "What `headwater validate --json` prints: every error and warning of a database or a study on its background. Example: `headwater validate project/tshirt-footprint --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "path",
+    "kind",
+    "valid",
+    "background",
+    "method",
+    "methods",
+    "errors",
+    "warnings"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-validate/2"
+    },
+    "path": {
+      "type": "string",
+      "description": "The folder as given."
+    },
+    "kind": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "database",
+        "study",
+        null
+      ],
+      "description": "`database` or `study`, or null for a folder that did not read."
+    },
+    "valid": {
+      "type": "boolean",
+      "description": "True when there is no error."
+    },
+    "background": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "release",
+        "folder"
+      ],
+      "properties": {
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "`name@hash` of the release, or null for a folder of process files."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The folder of process files, or null for a release."
+        }
+      },
+      "description": "Null for a folder that did not read."
+    },
+    "method": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "description": "Null for a folder that did not read, and for several methods used together, whose joined id is not written to a file: `methods` lists their ids."
+    },
+    "methods": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "description": "The id of each method used. Null for a folder that did not read."
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/problem"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/problem"
+      }
+    }
+  },
+  "$defs": {
+    "problem": {
+      "type": "object",
+      "required": [
+        "code",
+        "item",
+        "message",
+        "location",
+        "text"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Stable, so tools can match on it: `supplier-not-found`."
+        },
+        "item": {
+          "type": "string",
+          "description": "What is wrong: `tshirt:tshirt line e02`, or `flow toy:n2o`."
+        },
+        "message": {
+          "type": "string"
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A file and a row, when known: `exchanges.csv:3`."
+        },
+        "text": {
+          "type": "string",
+          "description": "The line `validate` prints: item, message, and the location in brackets."
+        }
+      }
+    }
+  }
+}

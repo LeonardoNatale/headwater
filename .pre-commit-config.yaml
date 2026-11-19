@@ -1,0 +1,47 @@
+# Git hooks for headwater, with the pre-commit framework. Install them once in a clone:
+#   uv run pre-commit install --hook-type pre-commit --hook-type pre-push
+# Each hook calls the tool pinned in uv.lock, through `uv run`. CI runs the same checks and more:
+# a hook only tells you sooner.
+default_install_hook_types: [pre-commit, pre-push]
+
+repos:
+  - repo: local
+    hooks:
+      # On commit: the quick checks.
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --locked ruff check --force-exclude
+        language: system
+        types_or: [python, pyi, jupyter]
+        stages: [pre-commit]
+      - id: ruff-format
+        name: ruff format --check
+        entry: uv run --locked ruff format --check --force-exclude
+        language: system
+        types_or: [python, pyi, jupyter]
+        stages: [pre-commit]
+      - id: lint-imports
+        name: lint-imports (the layers, AGENTS.md rule 13)
+        entry: uv run --locked lint-imports
+        language: system
+        pass_filenames: false
+        files: ^(src/|pyproject\.toml$)
+        stages: [pre-commit]
+      # On push: types and the contract tests of AGENTS.md rules 11 to 13.
+      - id: pyright
+        name: pyright
+        entry: uv run --locked pyright
+        language: system
+        pass_filenames: false
+        types_or: [python, pyi, toml]
+        stages: [pre-push]
+      - id: contract-tests
+        name: contract tests (commands, JSON schemas, skill, API, layers)
+        entry: >-
+          uv run --locked pytest -q tests/cli/test_examples_and_json.py tests/cli/test_schemas.py
+          tests/cli/test_startup.py tests/cli/test_skill.py tests/query/test_api.py
+          tests/test_layers.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]

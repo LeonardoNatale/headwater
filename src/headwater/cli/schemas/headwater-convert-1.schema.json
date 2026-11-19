@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-convert/1",
+  "description": "What `headwater database convert --json` prints: each folder converted from processes/ to processes.csv and exchanges.csv. Example: `headwater database convert old-tshirt-dyed --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "converted"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-convert/1"
+    },
+    "converted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "processes",
+          "lines",
+          "files"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "processes": {
+            "type": "integer"
+          },
+          "lines": {
+            "type": "integer"
+          },
+          "files": {
+            "type": "integer",
+            "description": "How many files processes/ held."
+          }
+        }
+      }
+    }
+  }
+}

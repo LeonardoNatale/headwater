@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-inventory/1",
+  "description": "Printed by `headwater inventory --json`: the total of each elementary flow over a product's whole life cycle, with no method, for a database, a study or a background process. Example, in the folder of `headwater demo`: `headwater inventory project/tshirt-footprint --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-inventory/1"
+    },
+    "path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The database or study folder, as given. Null for a background process."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "database",
+        "study",
+        "process"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The name of the database or the study, or the id of the background process."
+    },
+    "scenario": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The scenario of the study the scores are calculated in, from `--scenario`. Null for none."
+    },
+    "background": {
+      "type": "object",
+      "properties": {
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The release the background was read from, as name@hash. Null for a folder."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The folder the background was read from. Null for a release."
+        }
+      },
+      "required": [
+        "release",
+        "folder"
+      ],
+      "description": "The background the scores are calculated on."
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The id of each method the background was loaded with. The method does not change the totals."
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "flow": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "`--flow`: only the flows whose name holds this text, case ignored."
+        },
+        "compartment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "`--compartment`: only the flows of this compartment and of those under it."
+        },
+        "top": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "`--top`: how many flows to list per unit. Null for all of them."
+        }
+      },
+      "required": [
+        "flow",
+        "compartment",
+        "top"
+      ]
+    },
+    "engine_version": {
+      "type": "string",
+      "description": "The version of headwater that calculated the scores."
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The id of the process that makes the product."
+              },
+              "amount": {
+                "type": "number",
+                "description": "How much of what the process makes: 1, or a study's amount of it."
+              }
+            },
+            "required": [
+              "id",
+              "amount"
+            ]
+          },
+          "flow_count": {
+            "type": "integer",
+            "description": "How many elementary flows the inventory has, before the filters."
+          },
+          "flows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "flow_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "compartment": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Where the flow goes or comes from, such as `air` or `natural resource/in water`. Null for a flow with no compartment."
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "The reference unit of the flow."
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "The total, with the sign of the lines: a flow whose lines cancel out can be 0."
+                }
+              },
+              "required": [
+                "flow_id",
+                "name",
+                "compartment",
+                "unit",
+                "amount"
+              ]
+            },
+            "description": "The flows the filters keep and `--top` lists, by unit, then largest first."
+          },
+          "rest": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "unit": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "unit",
+                "amount",
+                "count"
+              ]
+            },
+            "description": "For each unit that `--top` cuts, the flows it leaves out, summed and counted."
+          },
+          "sums": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "unit": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "unit",
+                "amount",
+                "count",
+                "label"
+              ]
+            },
+            "description": "Only with `--flow` or `--compartment`: for each unit, the sum of the flows that match, and how many they are."
+          },
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "input_hash": {
+                "type": "string",
+                "description": "sha256 of the inputs of the result the inventory is read from."
+              },
+              "pin": {
+                "type": "string",
+                "description": "The background the database or the study pins, as written. For a background process, the background: `toy-background@6864b7dbb65d`, or `folder` and its path."
+              },
+              "residual": {
+                "type": "number",
+                "description": "The largest residual of the solves."
+              }
+            },
+            "required": [
+              "pin"
+            ],
+            "description": "Where the inventory comes from. A background process has only `pin`."
+          }
+        },
+        "required": [
+          "product",
+          "flow_count",
+          "flows",
+          "rest",
+          "provenance"
+        ]
+      },
+      "description": "One inventory per product: the one product of a database, each product of a study, or the background process."
+    }
+  },
+  "required": [
+    "format",
+    "path",
+    "kind",
+    "name",
+    "scenario",
+    "background",
+    "methods",
+    "filters",
+    "engine_version",
+    "results"
+  ]
+}

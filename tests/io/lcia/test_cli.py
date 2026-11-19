@@ -1,5 +1,6 @@
 """`headwater method import`, on the fixture workbook and the ecoSpold2 fixture release."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ from typer.testing import CliRunner
 from headwater.cli import app
 from headwater.release import Release, pull
 from headwater.study import read_method
+from tests.cli.schemas import check
 
 runner = CliRunner()
 
@@ -57,6 +59,19 @@ def test_import_writes_the_method_folder_and_reports_per_indicator(
     assert "Cadmium (soil/agricultural)" in output
     assert "left out" not in output
     assert f"Wrote method EF-3.1 to {out}" in output
+
+
+def test_json_names_each_factor_not_in_the_flow_list_by_its_key(
+    workbook: Path, release: Release, tmp_path: Path
+) -> None:
+    code, output = _import(workbook, str(release.path), "--out", str(tmp_path / "m"), "--json")
+
+    assert code == 0, output
+    data = json.loads(output)
+    check(data)
+    unmapped = {(u["indicator"], u["key"]) for u in data["unmapped"]}
+    assert ("climate-change", "Dinitrogen monoxide (air/urban air close to ground)") in unmapped
+    assert ("ecotoxicity-freshwater", "Zinc (soil/agricultural)") in unmapped
 
 
 def test_chosen_categories_are_imported_and_the_others_named(

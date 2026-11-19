@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-release-import/1",
+  "description": "What `headwater release import --json` prints: the release written and what was read from the source. Example: `headwater release import olca-toy --source toy --version 1.0 --licence CC0-1.0 --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-release-import/1"
+    },
+    "release": {
+      "type": "string",
+      "description": "`name@hash`, with the full hash."
+    },
+    "path": {
+      "type": "string",
+      "description": "The release folder in HEADWATER_HOME."
+    },
+    "source_path": {
+      "type": "string",
+      "description": "The source as given on the command line."
+    },
+    "source": {
+      "type": "string",
+      "description": "The source's name, which goes into every id."
+    },
+    "version": {
+      "type": "string",
+      "description": "The source's version, which goes into every id."
+    },
+    "system_model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "seconds": {
+      "type": "number",
+      "description": "How long reading the source took."
+    },
+    "processes": {
+      "type": "integer"
+    },
+    "flows": {
+      "type": "integer"
+    },
+    "lines": {
+      "type": "integer"
+    },
+    "roles": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "integer"
+        },
+        "input": {
+          "type": "integer"
+        },
+        "own_use": {
+          "type": "integer"
+        },
+        "waste_to_treatment": {
+          "type": "integer"
+        },
+        "recyclable": {
+          "type": "integer"
+        },
+        "avoided_product": {
+          "type": "integer"
+        },
+        "emission": {
+          "type": "integer"
+        },
+        "resource": {
+          "type": "integer"
+        }
+      },
+      "description": "The number of lines of each role. A role with no line is left out."
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "process_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "The process's name."
+          },
+          "location": {
+            "type": "string",
+            "description": "The process's location."
+          },
+          "line_id": {
+            "type": "string"
+          },
+          "flow_id": {
+            "type": "string"
+          },
+          "flow_name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "process_id",
+          "name",
+          "location",
+          "line_id",
+          "flow_id",
+          "flow_name",
+          "reason"
+        ]
+      },
+      "description": "Lines resolved as data gaps: no supplier, with the reason."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "format",
+    "release",
+    "path",
+    "source_path",
+    "source",
+    "version",
+    "system_model",
+    "seconds",
+    "processes",
+    "flows",
+    "lines",
+    "roles",
+    "data_gaps",
+    "warnings"
+  ]
+}

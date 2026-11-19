@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-release-pull/1",
+  "description": "What `headwater release pull --json` prints: the release copied into the cache. Example: `headwater release pull releases/toy-background@6864b7dbb65d --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-release-pull/1"
+    },
+    "release": {
+      "type": "string",
+      "description": "`name@hash`, with the full hash."
+    },
+    "path": {
+      "type": "string",
+      "description": "The release folder in the cache."
+    }
+  },
+  "required": [
+    "format",
+    "release",
+    "path"
+  ]
+}

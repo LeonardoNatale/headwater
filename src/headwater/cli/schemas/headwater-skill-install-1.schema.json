@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-skill-install/1",
+  "description": "What `headwater skill install --json` prints: the skill of the installed package and each place it was linked or copied to. Example: `headwater skill install --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "skill",
+    "targets"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-skill-install/1"
+    },
+    "version": {
+      "type": "string",
+      "description": "The version of headwater installed."
+    },
+    "skill": {
+      "type": "string",
+      "description": "The skill folder inside the installed package."
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "kind",
+          "action"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "link",
+              "copy"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "description": "linked, copied, updated, replaced or up to date."
+          }
+        }
+      }
+    }
+  }
+}

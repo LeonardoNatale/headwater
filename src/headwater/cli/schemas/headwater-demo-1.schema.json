@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-demo/1",
+  "description": "What `headwater demo --json` prints: where the demo was copied, its release, and the commands to run next in that folder. Example: `headwater demo headwater-demo --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "folder",
+    "release",
+    "then"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-demo/1"
+    },
+    "folder": {
+      "type": "string"
+    },
+    "release": {
+      "type": "string",
+      "description": "The folder name of the toy release under releases/."
+    },
+    "then": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Commands to run next, in the demo folder."
+    }
+  }
+}

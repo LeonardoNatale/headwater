@@ -1,0 +1,25 @@
+# The hash of each released schema of src/headwater/cli/schemas/ (AGENTS.md rule 11).
+# A released schema never changes what it accepts: a new shape is a new format version,
+# in a new file with a new line here. The hash leaves out descriptions, which may change.
+# tests/cli/test_schemas.py prints the line of a new schema.
+672f948c296903c79c16316392946e772c9a107c7b63fb7173cb08d783e6a5de  headwater-calc-3.schema.json
+9d0a56d5a15592333a77f099556d67e833f947af878bfe0a3620fbba59600a71  headwater-contributions-1.schema.json
+4b091fbaa0fea2cf711b29b7f7185bf2404a9816090c7951c07fa915a2704370  headwater-convert-1.schema.json
+42cac5beb0879b8498b08cef21e3929a69cca4d0f182e5bd7d8994d7fbbca4ec  headwater-database-import-1.schema.json
+ed7611f84bc98fc0fd742ddf63e1bebf6da2b9d9c6e8f8e458b6ad72adfdab06  headwater-demo-1.schema.json
+0c3876a74e53acac8715a2b7aa1e5fe6fbb73a9417a6944a0ceedc7c9576df48  headwater-diff-2.schema.json
+c3ef384177af806f4f5f12146a7a7394f126d042681f2b5223df75df2c62b09c  headwater-error-1.schema.json
+5ab187ce289ce7427639c2b208261e8223e2b6c0848cb5c2528ca9de2119a1d6  headwater-find-1.schema.json
+e1f640fb2cc791243e42c46a166c3be4ff966140e804207babed00ef1d790191  headwater-inventory-1.schema.json
+9f30fa53df0a3f5b47f97b0a964ddc40fff5ec0d694b0dff6c9b564763f82628  headwater-method-import-1.schema.json
+1c3df0c718abb47100f34f21fb58f68e4b316718c65f61dad1a087379d662746  headwater-method-import-set-1.schema.json
+b494ebbcf0054cf5e0fa1c73b7bbc213dbc6075139f7cc1e000a0f188c5d284a  headwater-release-import-1.schema.json
+22386bdb9c9a582423d8d9a2ed15e6cb145c79e16f083022e454659e6e46cad0  headwater-release-list-1.schema.json
+d7bc062f1f23503ffb07d09e22f191da80ed6967f8fd359b9237ba0e4931041e  headwater-release-pull-1.schema.json
+10fef633b5ab4c24108b3ff1f7328656ee5c25863f8fc9373f43c10065c00a45  headwater-schema-1.schema.json
+d76589c7228579f13fe0c763bb0b53bbce0f794961db75d6b7ea4e510e8b70b4  headwater-sensitivity-1.schema.json
+464c4015c724177d51e60c6e9347fe386325b7c1bc13a3fdf187ed9067d8ab11  headwater-skill-install-1.schema.json
+fc7a438aa13ef3f8c1be81c306c785c9cce8c545417d8faba32bfea3717161ce  headwater-upgrade-2.schema.json
+839d97a2896e95e6005ce423de08b28d82c19d262f46a113ca11fc4fb73dd028  headwater-uses-2.schema.json
+91164960a3f8bb3a8386199146fe66ac490480895305b4f8e2e0624b58cd5fd9  headwater-validate-2.schema.json
+26325c946bfb494683e038347919786989850cf71a8f94195a898d65f76dbe10  headwater-where-1.schema.json

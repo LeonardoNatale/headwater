@@ -22,6 +22,9 @@ Guidance for anyone, human or AI, writing code in this repository.
 8. **Calculation code is pure.** Code under `calc/` takes arrays and returns arrays. No file access, no network, no global state, no caching. Caching and I/O live in the layer that calls it.
 9. **Every result carries its provenance.** Release hashes, method and version, study commit, solver settings and the residual check.
 10. **Claims are measured.** Any statement about speed, size or accuracy, in a doc, a docstring or a PR, cites a script in [bench/](bench/) and the machine it ran on. Put the number in [docs/appendix/benchmarks.md](docs/appendix/benchmarks.md) and link to it.
+11. **Every command has `--json`, a help example, a schema and a line in the skill.** Example: `headwater calc ... --json` prints `headwater-calc/3`, which [src/headwater/cli/schemas/headwater-calc-3.schema.json](src/headwater/cli/schemas/headwater-calc-3.schema.json) describes. Keys may be added within a version. A released schema never changes: a renamed, removed or retyped key is a new format version, `headwater-calc/4`, in a new file. Tests: [tests/cli/test_examples_and_json.py](tests/cli/test_examples_and_json.py), [tests/cli/test_schemas.py](tests/cli/test_schemas.py) with its hash list [tests/cli/schemas.sha256](tests/cli/schemas.sha256), and [tests/cli/test_skill.py](tests/cli/test_skill.py). `skill show` is the one command without `--json`.
+12. **The public API changes only with D38.** Update [D38](docs/decisions.md) first, then the list of names in [tests/query/test_api.py](tests/query/test_api.py), then the code.
+13. **`calc/` imports only `headwater.model`, numpy, scipy and the standard library.** `model/` imports no other part of headwater, and nothing imports `cli/`. Checked by `uv run lint-imports`, with the contracts in [pyproject.toml](pyproject.toml), and by [tests/test_layers.py](tests/test_layers.py).
 
 ## Tests
 
@@ -34,17 +37,29 @@ Guidance for anyone, human or AI, writing code in this repository.
 ```
 uv sync
 uv run ruff check . && uv run ruff format --check .
+uv run lint-imports
 uv run pyright
 uv run pytest
 ```
 
+Git hooks run the quick ones for you: ruff and `lint-imports` on each commit, pyright and the contract tests of rules 11 to 13 on each push. Install them once in a clone with `uv run pre-commit install --hook-type pre-commit --hook-type pre-push` ([.pre-commit-config.yaml](.pre-commit-config.yaml)). CI runs all of it.
+
 Python 3.14 for development (`.python-version`); the package supports 3.13+. Tools come from the project's dev dependencies, pinned in `uv.lock`; never rely on globally installed ones.
+
+## Skills for contributors
+
+Two skills in [.claude/skills/](.claude/skills/) hold checklists for work on headwater. Claude Code loads them; any other agent or person can read them as docs.
+
+- [add-command](.claude/skills/add-command/SKILL.md): add or change a command, with where each required piece lives.
+- [review-pr](.claude/skills/review-pr/SKILL.md): check a diff against the rules above and the pull request checklist.
+
+They are not the skill for users of headwater, which ships in the package ([src/headwater/.agents/skills/headwater/SKILL.md](src/headwater/.agents/skills/headwater/SKILL.md)).
 
 ## Branches, commits and pull requests
 
 - One task, one branch, one pull request. Branch names: `<milestone>/<slug>`, for example `m0/calc-core`.
 - Commit messages follow Conventional Commits: `feat(calc): rank-1 score update`.
-- Open the pull request ready for review, never as a draft. The body says: the goal in two sentences, what changed, the tests and checks run with their result, and the proof (for calculation code: hand-checked numbers or a comparison against a reference).
+- Open the pull request ready for review, never as a draft. The body follows [.github/pull_request_template.md](.github/pull_request_template.md): the goal in two sentences, what changed, the tests and checks run with their result, the proof (for calculation code: hand-checked numbers or a comparison against a reference), and the checklist.
 - Stay inside the files your task owns. If you need to change another file, say so in the pull request and keep the change minimal.
 - CI must pass. Never merge, never enable auto-merge, never force-push to `main`. The owner reviews and merges.
 - Plans, task notes and logs never go into the repository.

@@ -1,9 +1,12 @@
 """Helpers that the tests of several folders share."""
 
-from collections.abc import Callable, Mapping, Sequence
+import json
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from pathlib import Path
+from typing import Any
 
 import pytest
+from typer.testing import CliRunner
 
 import headwater as hw
 
@@ -143,3 +146,29 @@ def add_process(folder: Path, code: str, lines: str, details: str | None = None)
 def write_study() -> WriteStudy:
     """Write a toy database folder: see `_write_study`."""
     return _write_study
+
+
+@pytest.fixture(autouse=True, scope="session")
+def every_json_output_matches_its_schema() -> Iterator[None]:
+    """Whatever a test runs with `--json` prints a document that matches the schema of its
+    format (AGENTS.md rule 11), so every shape the tests reach is checked, not only the examples
+    of tests/cli/test_examples_and_json.py. Output that is not JSON is left to the test."""
+    from tests.cli.schemas import check
+
+    invoke = CliRunner.invoke
+
+    def checked(runner: CliRunner, *args: Any, **kwargs: Any) -> Any:
+        result = invoke(runner, *args, **kwargs)
+        words = kwargs.get("args", args[1] if len(args) > 1 else None)
+        if words is not None and "--json" in words:
+            try:
+                document = json.loads(result.stdout)
+            except ValueError:
+                return result
+            check(document)
+        return result
+
+    patch = pytest.MonkeyPatch()
+    patch.setattr(CliRunner, "invoke", checked)
+    yield
+    patch.undo()

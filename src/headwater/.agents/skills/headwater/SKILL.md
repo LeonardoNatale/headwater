@@ -3,7 +3,7 @@ name: headwater
 description: Life cycle assessment (LCA) with the headwater command line. Score a database or a study (a carbon footprint in kg CO2-eq, and other indicators), explain a score (contributions, where it is emitted, sensitivity), total each elementary flow such as CO2 or water (inventory), change a line and validate it, compare two versions in git, find a background process, import from Excel or Brightway. Use it when a folder holds database.yaml or study.yaml with processes.csv and exchanges.csv, when a release is named like name@hash, or when the user asks about a footprint or an LCA made with headwater.
 license: Apache-2.0
 metadata:
-  headwater-version: "0.4.0"
+  headwater-version: "0.4.1"
 ---
 
 # headwater
@@ -20,13 +20,14 @@ headwater release pull releases/toy-background@6864b7dbb65d
 headwater calc project/tshirt-footprint --json
 ```
 
-The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This is the skill of headwater 0.4.0. If `headwater --version` prints another version, the skill is an old copy: run `headwater skill install --force`.
+The demo is a toy, with no licence: a T-shirt of cotton fabric, electricity and dye. Its README.md says what each folder is. This is the skill of headwater 0.4.1. If `headwater --version` prints another version, the skill is an old copy: run `headwater skill install --force`.
 
 ## What the files are
 
 - A database is a folder with `database.yaml` (its name, the release it pins in `background:`, its `methods`), `processes.csv` (one row per process), `exchanges.csv` (one row per line: `process,line,role,flow,amount,unit,supplier`) and `flows.csv`. Example: `project/tshirt-dyed`.
 - A study is a folder with `study.yaml`, which names products of the databases next to it and their amounts, and optional `scenarios/`. Example: `project/tshirt-footprint`.
 - A release is a frozen background with its methods, named `name@hash`, kept in a cache (`releases/` in `HEADWATER_HOME`, `~/.headwater` by default). `headwater release pull` puts one there, and `headwater release list --json` lists what the cache holds.
+- `headwater schema project --json` writes JSON schemas of `database.yaml`, `study.yaml` and scenario files into `project/.schemas`, so an editor completes and checks them as you type.
 - A process id is `<database>:<process>`, such as `tshirt-dyed:tshirt`, or a background process such as `toy:electricity-production`. A line is its process and its line id: `tshirt-dyed:tshirt line e02`.
 
 ## Score a database or a study
@@ -92,13 +93,13 @@ headwater find electricity --release toy-background@6864b7dbb65d --json
 - A Brightway-format Excel workbook: `headwater database import-excel book.xlsx --release name@hash --out project/name --json`.
 - A database of a Brightway project: `headwater database import-brightway <project> <database> --release name@hash --out project/name --json`.
 - A folder from before 0.2.0, with `processes/` and one file per process: `headwater database convert <folder> --json`.
-- A source into a release: `headwater release import <source> --json`. An impact method: `headwater method import`. Moving databases to a newer release: `headwater upgrade`.
+- A source into a release: `headwater release import <source> --json`. An impact method: `headwater method import`. A normalisation and weighting set for it: `headwater method import-set <file.csv> --method <folder> --id <id> --version <version> --source <source> --json`. Moving databases to a newer release: `headwater upgrade`.
 
 An import that exits 1 has written the database, but some lines need a decision: `to_decide` lists each, with the reason and what it might be.
 
 ## JSON and exit codes
 
-Every command but `skill show` takes `--json`. Standard output then holds one JSON document with a `format` key, such as `headwater-calc/3`. A failure is a document too: `format` is `headwater-error/1`, with the `exit_code` and `errors`, each with `code`, `item`, `message`, `location` and `text`.
+Every command but `skill show` takes `--json`. Standard output then holds one JSON document with a `format` key, such as `headwater-calc/3`. A failure is a document too: `format` is `headwater-error/1`, with the `exit_code` and `errors`, each with `code`, `item`, `message`, `location` and `text`. Each format has a JSON schema in the installed package, `headwater/cli/schemas/headwater-calc-3.schema.json` for `headwater-calc/3`. Keys may be added within a version; a key renamed or removed means a new version.
 
 Exit codes: 0 done; 1 the data has a problem (validation errors, a line not mapped, a calculation refused); 2 the command could not run as given (a wrong option, a missing folder or release). Every `--help` ends with an example that runs.
 
@@ -112,10 +113,10 @@ Exit codes: 0 done; 1 the data has a problem (validation errors, a line not mapp
 
 ## Docs
 
-The docs of headwater 0.4.0:
+The docs of headwater 0.4.1:
 
-- [README](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/README.md)
-- [The command line](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/workflows.md#command-line)
-- [The Python API](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/calculation.md#python-api)
-- [The file formats](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/design.md#file-formats)
-- [Decisions](https://github.com/LeonardoNatale/headwater/blob/v0.4.0/docs/decisions.md)
+- [README](https://github.com/LeonardoNatale/headwater/blob/v0.4.1/README.md)
+- [The command line](https://github.com/LeonardoNatale/headwater/blob/v0.4.1/docs/workflows.md#command-line)
+- [The Python API](https://github.com/LeonardoNatale/headwater/blob/v0.4.1/docs/calculation.md#python-api)
+- [The file formats](https://github.com/LeonardoNatale/headwater/blob/v0.4.1/docs/design.md#file-formats)
+- [Decisions](https://github.com/LeonardoNatale/headwater/blob/v0.4.1/docs/decisions.md)

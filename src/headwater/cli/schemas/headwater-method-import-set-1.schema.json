@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-method-import-set/1",
+  "description": "What `headwater method import-set --json` prints: the normalisation and weighting set written beside its method. Example: `headwater method import-set toy-nw.csv --method toy-impacts --id toy-nw --version 1 --source \"toy numbers\" --unit Pt --json`.",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "headwater-method-import-set/1"
+    },
+    "folder": {
+      "type": "string",
+      "description": "The set folder written."
+    },
+    "set": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The unit of weighted scores and of the single score. Null for a set with no weights."
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "unit"
+      ]
+    },
+    "method": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "hash"
+      ],
+      "description": "The method the set is for, pinned by its hash."
+    },
+    "rows": {
+      "type": "integer"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "normalised",
+          "weighted"
+        ]
+      },
+      "description": "What the set does: `normalised`, `weighted`, or both."
+    },
+    "indicators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The ids of the indicators the set adds."
+    },
+    "left_out": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The indicators of the method the set has no row for: they count in none of its scores."
+    }
+  },
+  "required": [
+    "format",
+    "folder",
+    "set",
+    "method",
+    "rows",
+    "steps",
+    "indicators",
+    "left_out"
+  ]
+}

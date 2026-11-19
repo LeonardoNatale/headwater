@@ -1,0 +1,659 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "headwater-diff/2",
+  "description": "What `headwater diff --json` prints: each score of a database or a study at two git refs, and the differences that explain the change. Example: `headwater diff HEAD project/tshirt-footprint --json`.",
+  "type": "object",
+  "required": [
+    "format",
+    "path",
+    "kind",
+    "validation"
+  ],
+  "properties": {
+    "format": {
+      "const": "headwater-diff/2"
+    },
+    "path": {
+      "type": "string",
+      "description": "The folder as given."
+    },
+    "kind": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "database",
+        "study",
+        null
+      ],
+      "description": "`database` or `study`. Null only when the folder at the new ref did not read."
+    },
+    "created": {
+      "type": "boolean",
+      "description": "True when the folder is not at the old ref: every result has only a new score, and a new database is counted, not scored."
+    },
+    "old": {
+      "$ref": "#/$defs/side"
+    },
+    "new": {
+      "$ref": "#/$defs/side"
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "solver": {
+      "$ref": "#/$defs/solver"
+    },
+    "background": {
+      "type": "object",
+      "required": [
+        "release",
+        "folder"
+      ],
+      "properties": {
+        "release": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "`name@hash` of the release the background was read from."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The folder the background was read from, when it was not a release."
+        }
+      }
+    },
+    "method": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "id",
+        "version",
+        "hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "description": "Null for several methods used together, whose joined id is not written to a file: `methods` lists their ids."
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tolerance": {
+      "type": "number",
+      "description": "Two scores are the same when they differ by less than this share of the larger one."
+    },
+    "old_background": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "release",
+        "folder",
+        "method_hash"
+      ],
+      "properties": {
+        "release": {
+          "type": "string",
+          "description": "`name@hash` of the release the old side was scored on."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null: the old side is scored on a release."
+        },
+        "method_hash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "description": "Across a release change, the background of the old side. Null on one release."
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/product"
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/result"
+      }
+    },
+    "differences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/difference"
+      }
+    },
+    "processes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "name",
+          "location"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "The name and location of each process that the lines of either side buy from, by process id."
+    },
+    "validation": {
+      "anyOf": [
+        {
+          "$ref": "headwater-validate-2.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The `validate --json` document of the new side, checked before comparing. Null in a diff that `upgrade --json` prints."
+    }
+  },
+  "anyOf": [
+    {
+      "description": "The two sides compared.",
+      "required": [
+        "format",
+        "path",
+        "kind",
+        "created",
+        "old",
+        "new",
+        "engine_version",
+        "solver",
+        "background",
+        "method",
+        "methods",
+        "tolerance",
+        "old_background",
+        "products",
+        "results",
+        "differences",
+        "processes",
+        "validation"
+      ]
+    },
+    {
+      "description": "The folder at the new ref has validation errors, so nothing is compared: `validation` says what is wrong. Exit code 1.",
+      "required": [
+        "format",
+        "path",
+        "kind",
+        "validation"
+      ],
+      "properties": {
+        "validation": {
+          "$ref": "headwater-validate-2.schema.json"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "side": {
+      "type": "object",
+      "required": [
+        "ref",
+        "commit",
+        "input_hash",
+        "residual"
+      ],
+      "properties": {
+        "ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The git ref, or null for the working tree."
+        },
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The full hash the ref named when it was read, or null for the working tree."
+        },
+        "input_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null for a side that is not scored: the old side of a new folder, and the new side of a new database."
+        },
+        "residual": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "The largest residual of the side's results."
+        }
+      }
+    },
+    "solver": {
+      "type": "object",
+      "required": [
+        "solver",
+        "ordering",
+        "diag_pivot_thresh",
+        "scaling",
+        "tolerance",
+        "condition_limit"
+      ],
+      "properties": {
+        "solver": {
+          "type": "string"
+        },
+        "ordering": {
+          "type": "string"
+        },
+        "diag_pivot_thresh": {
+          "type": "number"
+        },
+        "scaling": {
+          "type": "string"
+        },
+        "tolerance": {
+          "type": "number"
+        },
+        "condition_limit": {
+          "type": "number"
+        }
+      },
+      "description": "How the background and the study blocks were factorized."
+    },
+    "product": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "process",
+        "status",
+        "amount"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The id of the process that makes it."
+        },
+        "name": {
+          "type": "string",
+          "description": "What it makes, in words."
+        },
+        "process": {
+          "type": "string",
+          "description": "The name of the process that makes it."
+        },
+        "status": {
+          "enum": [
+            "both",
+            "new",
+            "removed"
+          ],
+          "description": "`new` when only the new side has it, `removed` when only the old one did."
+        },
+        "amount": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "old",
+            "new"
+          ],
+          "properties": {
+            "old": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "new": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "description": "For a product of a study, its amount on each side, null on a side that does not have it. Null for a database, which scores one unit of each product."
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": [
+        "product",
+        "indicator",
+        "old",
+        "new",
+        "change",
+        "percent",
+        "changed",
+        "drivers",
+        "interaction",
+        "background",
+        "moved"
+      ],
+      "properties": {
+        "product": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "process"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The id of the process that makes the product."
+            },
+            "name": {
+              "type": "string"
+            },
+            "process": {
+              "type": "string"
+            }
+          }
+        },
+        "indicator": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "unit"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "string",
+              "description": "Empty for a normalised score, which has no unit."
+            }
+          }
+        },
+        "old": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Null when the old side has no such score."
+        },
+        "new": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Null when the new side has no such score."
+        },
+        "change": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "New minus old, null when a score is missing."
+        },
+        "percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "The change in percent of the old score, null when a score is missing or the old one is 0."
+        },
+        "changed": {
+          "type": "boolean",
+          "description": "False when a score is missing on one side, or the two are the same within `tolerance`."
+        },
+        "drivers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "difference",
+              "contribution"
+            ],
+            "properties": {
+              "difference": {
+                "type": "string",
+                "description": "The `id` of a difference."
+              },
+              "contribution": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "The change of the score it causes alone, or null when it cannot be applied to the old side on its own."
+              }
+            }
+          },
+          "description": "The scored differences, the largest effect first. Empty unless both scores exist."
+        },
+        "interaction": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "The change that the effects of the differences alone do not add up to."
+        },
+        "background": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Across a release change, what the release changed. Null on one release."
+        },
+        "moved": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/moved"
+          },
+          "description": "The lines the release change moved, the largest effect first. They add up to `background`."
+        }
+      },
+      "description": "The score of one product on one indicator, on each side."
+    },
+    "moved": {
+      "type": "object",
+      "required": [
+        "process",
+        "line",
+        "flow",
+        "unit",
+        "old_supplier",
+        "new_supplier",
+        "old_value",
+        "new_value",
+        "effect",
+        "how"
+      ],
+      "properties": {
+        "process": {
+          "type": "string"
+        },
+        "line": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null for a copy that an override makes: its lines move as a whole."
+        },
+        "flow": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "old_supplier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null for an emission."
+        },
+        "new_supplier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null for an emission, and for a line with no successor."
+        },
+        "old_value": {
+          "type": "number",
+          "description": "What one unit of the supplier scored, or the factor of the emission."
+        },
+        "new_value": {
+          "type": "number"
+        },
+        "effect": {
+          "type": "number"
+        },
+        "how": {
+          "type": "string",
+          "description": "`same-id` or `same-dataset` (the rule that moved the supplier), `new-study`, `no-successor`, `factor` or `override`."
+        }
+      },
+      "description": "What the release change did to one line, alone."
+    },
+    "difference": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "change",
+        "item",
+        "description",
+        "text",
+        "fields",
+        "affects",
+        "scored",
+        "flow",
+        "database"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable: the kind and the item, such as `line tshirt:tshirt line e02`."
+        },
+        "kind": {
+          "type": "string",
+          "description": "`line`, `process`, `parameter`, `override`, `flow`, `flow_property`, `unit`, `cut_off`, `scenario`, `no_factor`, `database`, `study`, `product` or `comment`."
+        },
+        "change": {
+          "enum": [
+            "added",
+            "removed",
+            "changed"
+          ]
+        },
+        "item": {
+          "type": "string",
+          "description": "What is named in messages: `tshirt:tshirt line e02`, `fabric_kg`."
+        },
+        "description": {
+          "type": "string",
+          "description": "What is different, in one short phrase: `amount 0.25 → 0.22 kg`."
+        },
+        "text": {
+          "type": "string",
+          "description": "The description with suppliers and flows named in words."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "old",
+              "new"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "old": {
+                "description": "The value on the old side: any JSON value, or null."
+              },
+              "new": {
+                "description": "The value on the new side: any JSON value, or null."
+              }
+            }
+          },
+          "description": "The fields that are not the same on the two sides."
+        },
+        "affects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The lines whose amounts a changed parameter moves."
+        },
+        "scored": {
+          "type": "boolean",
+          "description": "True when the difference can change a score, so its effect is calculated."
+        },
+        "flow": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "database": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The database the difference is in, when it is not the folder's own: `dyes`."
+        }
+      },
+      "description": "One thing that differs between the old and the new side."
+    }
+  }
+}
