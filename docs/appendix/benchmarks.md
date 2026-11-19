@@ -615,18 +615,21 @@ The values differ by the same amount from both of Brightway's solves, so the dif
 
 Script: [bench/inventory_check.py](../../bench/inventory_check.py). Raw output: [bench/results/inventory_check_results.json](../../bench/results/inventory_check_results.json).
 
-**Scope:** one Apple Silicon Mac (M2 Pro, arm64), macOS 26.6.2, 18 November 2026. headwater 0.4.0 on Python 3.14.8, NumPy 2.5.3, SciPy 1.18.1. Release `ecoinvent-3.13-cutoff@9bbbb9d97a81`, and EF v3.1 imported from ecoinvent's `LCIA Implementation 3.13.xlsx` (25 indicators). The 10 products of [Top contributors against Brightway](#top-contributors-against-brightway), one market per sector, each in GLO, or in RoW where 3.13 has no GLO one (the cotton fibre market). Counts, pass or fail and relative differences only. Other work ran on the machine at the same time.
+**Scope:** one Apple Silicon Mac (M2 Pro, arm64), macOS 26.6.2, 19 November 2026. headwater 0.4.0 on Python 3.14.8, NumPy 2.5.3, SciPy 1.18.1. Release `ecoinvent-3.13-cutoff@9bbbb9d97a81`, and EF v3.1 imported from ecoinvent's `LCIA Implementation 3.13.xlsx` (25 indicators). The 10 products of [Top contributors against Brightway](#top-contributors-against-brightway), one market per sector, each in GLO, or in RoW where 3.13 has no GLO one (the cotton fibre market). Counts, pass or fail and relative differences only. Other work ran on the machine at the same time.
 
-For each product, `bg.inventory(product)` gives the total of each elementary flow. Times the factors of each indicator, read from the method folder by flow id, it must give the stored score: |Σ amount × factor − score| ≤ 10⁻⁹ × Σ |amount × factor|. The bound is relative to the sum of the terms' sizes, since land use has negative factors.
+For each product, `bg.inventory(product)` gives the total of each elementary flow. Times the factors of each indicator, read from the method folder by flow id, it must give the stored score: |Σ amount × factor − score| ≤ 10⁻⁹ × Σ |amount × factor|. The bound is relative to the sum of the terms' sizes, since land use has negative factors. The script also counts how each product's water flows split, as yes or no, for the water note of [workflows.md](../workflows.md#command-line).
 
 | Check | Result |
 |---|---|
 | Products and indicators checked | 10 × 25 = 250 |
 | Within 10⁻⁹ | 250 of 250, the largest difference 5.3 × 10⁻¹⁵ of the terms' sizes |
 | Flows listed per product | 2,780 in 8 units for each of the 10, of which 560 have no factor in EF v3.1 |
-| `bg.inventory` on one product, 5 calls each | median 11 ms (10.8 to 11.7 ms across the 10 products) |
+| `bg.inventory` on one product, 5 calls each | median 12 ms (11.2 to 12.1 ms across the 10 products) |
 | The first call, which also reads the release's flow table once | 18 ms |
-| Loading the background with EF v3.1 | 5.5 s |
+| Loading the background with EF v3.1 | 6.0 s |
+| Turbine water (`Water, turbine use, unspecified natural origin`) more than half of the water taken from nature | 10 of 10 products |
+| Water to air, which ecoinvent counts as used up, less than a fifth of the water taken | 10 of 10 products |
+| Water taken equal to the water to water and to air, within 5% | 10 of 10 products |
 
 ## Monte Carlo on ecoinvent 3.12
 

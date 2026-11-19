@@ -14,6 +14,11 @@ and the EF 3.1 method folder imported from the 3.13 LCIA workbook:
     export INVENTORY_METHOD=/path/to/methods-3.13/EF-3.1
     uv run python bench/inventory_check.py
 
+It also counts how each product's water flows split, for the water note of
+docs/workflows.md: whether turbine water is more than half of the water taken from nature,
+whether the water to air (what ecoinvent counts as used up) is under a fifth of it, and whether
+the water taken matches the water put back to water and to air within 5%.
+
 Values are licensed, so `bench/results/inventory_check_results.json` holds pass or fail, the
 largest relative difference, counts and times only.
 """
@@ -25,6 +30,7 @@ import platform
 import statistics
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
@@ -76,6 +82,26 @@ def check(
     return relative <= TOLERANCE, relative
 
 
+def water(totals: tuple[hw.FlowTotal, ...]) -> dict[str, bool]:
+    """How the water flows split, as yes or no: the amounts are licensed."""
+    flows = [t for t in totals if t.unit == "m3" and t.name.casefold().startswith("water")]
+
+    def total(keep: Callable[[hw.FlowTotal], bool]) -> float:
+        return math.fsum(t.amount for t in flows if keep(t))
+
+    taken = total(lambda t: (t.compartment or "").startswith("natural resource"))
+    turbine = total(lambda t: "turbine use" in t.name)
+    to_water = total(lambda t: (t.compartment or "").startswith("water"))
+    to_air = total(lambda t: (t.compartment or "").startswith("air"))
+    return {
+        "turbine_over_half_of_water_taken": turbine > 0.5 * taken,
+        "water_to_air_under_a_fifth_of_water_taken": to_air < 0.2 * taken,
+        "water_taken_matches_water_put_back_within_5_percent": (
+            abs(taken - to_water - to_air) <= 0.05 * taken
+        ),
+    }
+
+
 def main() -> None:
     method_folder = Path(os.environ["INVENTORY_METHOD"]).expanduser()
     method = read_method(method_folder)
@@ -116,6 +142,7 @@ def main() -> None:
                 "largest_relative_difference": max(relative for _, relative in checked),
                 "ms_median": statistics.median(times),
                 "ms_best": min(times),
+                "water": water(totals),
             }
         )
         print(
@@ -139,6 +166,9 @@ def main() -> None:
         "first_call_ms": first_ms,
         "ms_median_of_medians": statistics.median(r["ms_median"] for r in rows),
         "repeats": REPEATS,
+        "water": {
+            key: sum(r["water"][key] for r in rows) for key in rows[0]["water"]
+        },
         "versions": _versions(),
     }
     RESULTS.write_text(json.dumps(results, indent=2) + "\n")

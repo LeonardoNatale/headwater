@@ -1,6 +1,6 @@
 ---
 name: headwater
-description: Life cycle assessment (LCA) with the headwater command line. Score a database or a study (a carbon footprint in kg CO2-eq, and other indicators), explain a score (contributions, where it is emitted, sensitivity), total each flow such as water or energy (inventory), change a line and validate it, compare two versions in git, find a background process, import from Excel or Brightway. Use it when a folder holds database.yaml or study.yaml with processes.csv and exchanges.csv, when a release is named like name@hash, or when the user asks about a footprint or an LCA made with headwater.
+description: Life cycle assessment (LCA) with the headwater command line. Score a database or a study (a carbon footprint in kg CO2-eq, and other indicators), explain a score (contributions, where it is emitted, sensitivity), total each elementary flow such as CO2 or water (inventory), change a line and validate it, compare two versions in git, find a background process, import from Excel or Brightway. Use it when a folder holds database.yaml or study.yaml with processes.csv and exchanges.csv, when a release is named like name@hash, or when the user asks about a footprint or an LCA made with headwater.
 license: Apache-2.0
 metadata:
   headwater-version: "0.4.0"
@@ -45,7 +45,7 @@ Read `results[].score`, with `results[].indicator.unit`. A study scores each of 
 - `headwater where <folder> --json`: which processes emit the score, anywhere upstream, and in which locations.
 - `headwater sensitivity <folder> --top 10 --json`: the lines a person can change, largest elasticity first. The elasticity is the % change of the score per 1% change of the line. `sensitivity` is the change of the score per one more unit of the line.
 
-- `headwater inventory <folder> --json`: the total of each elementary flow over the whole life cycle, with no method, in `results[].flows`. `--flow water --compartment "natural resource"` keeps the water taken and adds its total in `results[].sums`. It also takes a background process id with `--release`.
+- `headwater inventory <folder> --json`: the total of each elementary flow over the whole life cycle, with no method, in `results[].flows`. `--flow water --compartment "natural resource"` keeps the water taken and adds its total in `results[].sums`. On ecoinvent that total is mostly hydropower turbine water, which goes back to the river: the water used up is `--flow water --compartment air`. Energy in MJ needs a method (EF 3.1's `energy-resources-non-renewable`, or CED), since fuels are in kg or Sm3. It also takes a background process id with `--release`.
 
 Each takes a database or a study, `--product`, and for a study `--scenario`. Example: on the demo, `headwater contributions project/tshirt-footprint --json` gives 1.24265 kg CO2-eq, and the cotton fabric, line e02 of `tshirt-dyed:tshirt`, is 74.6% of it.
 

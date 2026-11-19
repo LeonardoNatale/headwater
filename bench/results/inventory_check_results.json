@@ -17,8 +17,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 4.322358720536952e-15,
-      "ms_median": 11.034417009796016,
-      "ms_best": 10.94429098884575
+      "ms_median": 11.247957998421043,
+      "ms_best": 10.978958001942374,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "metals",
@@ -30,8 +35,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 5.061692432254923e-15,
-      "ms_median": 11.740916001144797,
-      "ms_best": 11.121291987365112
+      "ms_median": 11.391666004783474,
+      "ms_best": 11.044291997677647,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "minerals",
@@ -43,8 +53,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 5.307915199831476e-15,
-      "ms_median": 11.099499999545515,
-      "ms_best": 11.01054200262297
+      "ms_median": 11.587083004997112,
+      "ms_best": 11.361124998074956,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "plastics",
@@ -56,8 +71,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 4.052870397202602e-15,
-      "ms_median": 10.855917003937066,
-      "ms_best": 10.841042007086799
+      "ms_median": 11.885082989465445,
+      "ms_best": 11.612583009991795,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "chemicals",
@@ -69,8 +89,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 2.2074260142168185e-15,
-      "ms_median": 10.96299999335315,
-      "ms_best": 10.81049999629613
+      "ms_median": 11.648082989268005,
+      "ms_best": 11.420124996220693,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "fibres",
@@ -82,8 +107,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 4.203038980478992e-15,
-      "ms_median": 11.040707991924137,
-      "ms_best": 10.884957999223843
+      "ms_median": 12.032542013912462,
+      "ms_best": 11.72549999319017,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "agriculture",
@@ -95,8 +125,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 3.353479219529032e-15,
-      "ms_median": 10.871207996387966,
-      "ms_best": 10.788125000544824
+      "ms_median": 12.084791000233963,
+      "ms_best": 11.41516599454917,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "transport",
@@ -108,8 +143,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 4.263060859301824e-15,
-      "ms_median": 10.84041700232774,
-      "ms_best": 10.75933400716167
+      "ms_median": 11.935832997551188,
+      "ms_best": 11.425415999838151,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "paper",
@@ -121,8 +161,13 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 4.075964006495914e-15,
-      "ms_median": 10.850332997506484,
-      "ms_best": 10.749249995569699
+      "ms_median": 11.68320799479261,
+      "ms_best": 11.460124995210208,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     },
     {
       "sector": "waste",
@@ -134,18 +179,28 @@
       "indicators": 25,
       "passed": 25,
       "largest_relative_difference": 1.6009298279347945e-15,
-      "ms_median": 10.90712500445079,
-      "ms_best": 10.742166006821208
+      "ms_median": 11.728500001481734,
+      "ms_best": 11.428000012529083,
+      "water": {
+        "turbine_over_half_of_water_taken": true,
+        "water_to_air_under_a_fifth_of_water_taken": true,
+        "water_taken_matches_water_put_back_within_5_percent": true
+      }
     }
   ],
   "checks": 250,
   "passed": 250,
   "pass": true,
   "largest_relative_difference": 5.307915199831476e-15,
-  "load_seconds": 5.466687457999797,
-  "first_call_ms": 17.814291990362108,
-  "ms_median_of_medians": 10.93506249890197,
+  "load_seconds": 6.015665708007873,
+  "first_call_ms": 18.029166996711865,
+  "ms_median_of_medians": 11.705853998137172,
   "repeats": 5,
+  "water": {
+    "turbine_over_half_of_water_taken": 10,
+    "water_to_air_under_a_fifth_of_water_taken": 10,
+    "water_taken_matches_water_put_back_within_5_percent": 10
+  },
   "versions": {
     "python": "3.14.8",
     "headwater": "0.4.0",
