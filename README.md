@@ -4,6 +4,22 @@ A Python library and command line for life cycle assessment (LCA). A background 
 
 **Status: alpha.** File formats and the Python API may change before 1.0 ([roadmap](https://github.com/LeonardoNatale/headwater/blob/main/docs/roadmap.md)).
 
+## Why I built it
+
+I started headwater after working with Brightway, the leading open-source Python framework for LCA. Brightway is battle tested, but it did not fit the way I work. Every project imports and stores its own copy of ecoinvent. When a footprint changes, there is no easy way to see what changed and why, or to have someone review it. And when an input does not link to a supplier, it can be dropped without a word while you still get a number. None of this matters much for a one-off study. It matters a lot when a team maintains thousands of footprints for years.
+
+headwater is built on a few convictions:
+
+- **A footprint is like code.** It lives in plain tables in git, and a change to it is reviewed like a change to code: `headwater diff` shows every score that moved and the line that moved it.
+- **An error is better than a wrong number.** Unlinked inputs, unknown units and numerically unsafe results stop the work with a list of what is wrong. A flow the method does not count is listed on the result, never dropped.
+- **Every number can be explained and reproduced.** What a product buys, where its emissions happen, which lines move it most. A result records the release, the method, the solver settings and the accuracy check behind it.
+- **Fast enough to ask anything.** ecoinvent is solved once, at import. On a synthetic background the size of ecoinvent, a study then scores in 42 ms ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#study-queries-on-a-release)) and 50,000 SKUs in 55 ms ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#calculation-from-a-release)).
+- **Commands first.** Every command prints JSON, so a script, CI or an AI agent works from the real numbers instead of writing code and guessing.
+
+**Can it replace Brightway?** It can, for this kind of work: keeping many footprints right over time, with a team. headwater owes a lot to Brightway. It reads Brightway projects and Excel files as they are, so you can move at your own pace, and Brightway is the reference it checks itself against: on ecoinvent 3.12, both build the same matrices, and an accurate solve of Brightway's matrices gives every product's score within one part in a million of headwater's ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#parity-with-brightway)). On ecoinvent 3.13, every product's score is within one part in a million of ecoinvent's own published one, or of its gross where the score nearly cancels out ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#ecoinvent-313-against-ecoinvents-scores)). What I learned from Brightway is in [docs/findings.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/findings.md).
+
+**How it is made.** I designed headwater with Claude, and Claude wrote the code. What I trust are the checks: toy numbers worked out by hand, Brightway's matrices and ecoinvent's published scores, run by the tests.
+
 ## Install
 
 headwater needs Python 3.13 or later. With uv you do not need to install Python first: uv gets it for you.
@@ -70,16 +86,9 @@ headwater skill install
 
 Then ask Claude "what drives the footprint of project/tshirt-footprint?". It runs `headwater contributions project/tshirt-footprint --json` and answers from the output. The links in `.claude/skills` and `.agents/skills` serve Claude Code, Codex, Copilot and Cursor, and follow upgrades of headwater. `uv tool run library-skills --claude` makes the same links, for every library of a project that ships a skill. `headwater skill show` prints the skill. Every command but `skill show` takes `--json`. Details in [workflows.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/workflows.md#using-headwater-with-an-ai-agent).
 
-## Why headwater
+## One example
 
-- **An error, never a wrong number.** Unlinked inputs, unknown units and numerically unsafe results stop the work with a list of what is wrong. A flow the method does not count is listed on the result, never dropped.
-- **Every number explained.** What a product buys, where its emissions happen, which lines move it most, and why it changed between two commits.
-- **Every number reproducible.** A result records the release, the method, the solver settings and the accuracy check behind it.
-- **Fast once loaded.** On a synthetic background the size of ecoinvent, a study scores in 42 ms ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#study-queries-on-a-release)) and 50,000 SKUs in 55 ms ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#calculation-from-a-release)).
-
-We studied Brightway, the leading open-source Python LCA framework, before we built headwater: [docs/findings.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/findings.md) says what we found.
-
-One example. A toy T-shirt factory buys 0.25 kg of cotton fabric and 0.5 kWh of electricity per T-shirt. The background already knows the score of each thing it buys:
+A toy T-shirt factory buys 0.25 kg of cotton fabric and 0.5 kWh of electricity per T-shirt. The background already knows the score of each thing it buys:
 
 | Bought | Amount | Stored score (kg CO₂-eq per unit) | Contribution |
 |---|---|---|---|
