@@ -17,9 +17,6 @@ headwater is built on a few convictions:
 - **Commands first.** Every command prints JSON, so a script, CI or an AI agent works from the real numbers instead of writing code and guessing.
 
 **Can it replace Brightway?** It can, for this kind of work: keeping many footprints right over time, with a team. headwater owes a lot to Brightway. It reads Brightway projects and Excel files as they are, so you can move at your own pace, and Brightway is the reference it checks itself against: on ecoinvent 3.12, both build the same matrices, and an accurate solve of Brightway's matrices gives every product's score within one part in a million of headwater's ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#parity-with-brightway)). On ecoinvent 3.13, every product's score is within one part in a million of ecoinvent's own published one, or of its gross where the score nearly cancels out ([benchmarks](https://github.com/LeonardoNatale/headwater/blob/main/docs/appendix/benchmarks.md#ecoinvent-313-against-ecoinvents-scores)). What I learned from Brightway is in [docs/findings.md](https://github.com/LeonardoNatale/headwater/blob/main/docs/findings.md).
-
-**How it is made.** I designed headwater with Claude, and Claude wrote the code. What I trust are the checks: toy numbers worked out by hand, Brightway's matrices and ecoinvent's published scores, run by the tests.
-
 ## Install
 
 headwater needs Python 3.13 or later. With uv you do not need to install Python first: uv gets it for you.
